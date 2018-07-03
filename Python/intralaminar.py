@@ -24,6 +24,7 @@ parser = argparse.ArgumentParser(description='Parameters for the simulation')
 parser.add_argument('-tau_e', type=float, dest='tau_e', help='Excitatory membrane time constant (tau_e)')
 parser.add_argument('-tau_i', type=float, dest='tau_i', help='Inhibitory membrane time constant (tau_i)')
 parser.add_argument('-sei', type=float, dest='sei', help='Deviation for the Gaussian white noise (s_ei)')
+parser.add_argument('-layer', type=str, dest='layer', help='Layer of interest')
 
 args = parser.parse_args()
 
@@ -34,7 +35,7 @@ wie = 3.5
 wii = -2.5
 
 dt = .05
-tstop = 100
+tstop = 700
 t = np.linspace(0, tstop, tstop/dt)
 uu_p = np.zeros((len(t) + 1, 1))
 vv_p = np.zeros((len(t) + 1, 1))
@@ -50,12 +51,16 @@ tplot = np.linspace(0, tstop, tstop/dt + 1)
 plt.plot(tplot, uu_p, label='uu', color='red')
 plt.plot(tplot, vv_p, label='vv', color='blue')
 plt.legend()
+plt.xlim([350, 700])
+plt.title(args.layer)
 plt.xlabel('Time')
 plt.ylabel('Proportion of firing cells')
 plt.savefig('EI_activity.png')
 
 plt.figure()
 plt.plot(tplot, abs(uu_p - vv_p), label='sum', color='green')
+plt.xlim([350, 700])
+plt.title(args.layer)
 plt.ylabel('Proportion of firing cells')
 plt.xlabel('Time')
 plt.legend()
