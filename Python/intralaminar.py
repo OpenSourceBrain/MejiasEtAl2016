@@ -1,7 +1,11 @@
+from __future__ import print_function
+
 import numpy as np
 import math
 import matplotlib.pylab as plt
 import argparse
+from scipy import signal
+from scipy.fftpack import fft
 
 def transduction_function(x):
     # note: define boundary conditions for the transduction function
@@ -23,7 +27,7 @@ def calculate_firing_rate(dt, re, ri, wee, wie, wei, wii, tau_e, tau_i, sei):
 parser = argparse.ArgumentParser(description='Parameters for the simulation')
 parser.add_argument('-tau_e', type=float, dest='tau_e', help='Excitatory membrane time constant (tau_e)')
 parser.add_argument('-tau_i', type=float, dest='tau_i', help='Inhibitory membrane time constant (tau_i)')
-parser.add_argument('-sei', type=float, dest='sei', help='Deviation for the Gaussian white noise (s_ei)')
+parser.add_argument('-sei',   type=float, dest='sei', help='Deviation for the Gaussian white noise (s_ei)')
 parser.add_argument('-layer', type=str, dest='layer', help='Layer of interest')
 
 args = parser.parse_args()
@@ -65,3 +69,19 @@ plt.ylabel('Proportion of firing cells')
 plt.xlabel('Time')
 plt.legend()
 plt.show()
+
+
+y = abs(fft(np.squeeze(uu_p)))
+freqs, P_xx = signal.periodogram(y, 2**8, scaling='density')
+plt.plot(freqs, P_xx)
+plt.xlabel('Frequency')
+plt.ylabel('PSD')
+plt.show()
+
+# plot semilogaritmic plot
+plt.semilogy(freqs, P_xx)
+plt.xlabel('Frequency')
+plt.ylabel('PSD')
+plt.ylim(10**-5, 10**3)
+plt.show()
+print('hi')
