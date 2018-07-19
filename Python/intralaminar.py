@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, division
 
 import numpy as np
 import math
@@ -6,6 +6,9 @@ import matplotlib.pylab as plt
 import argparse
 from scipy import signal
 from scipy.fftpack import fft
+# set random set
+#np.random.seed(42)
+
 
 def transduction_function(x):
     # note: define boundary conditions for the transduction function
@@ -17,9 +20,11 @@ def transduction_function(x):
         return x / (1 - math.exp(-x))
 
 
-def calculate_firing_rate(dt, re, ri, wee, wie, wei, wii, tau_e, tau_i, sei):
-    dE = dt * (-re + transduction_function((wee * re) + (wei * ri)) + math.sqrt(tau_e) * np.random.normal(0, sei))/tau_e
-    dI = dt * (-ri + transduction_function((wie * re) + (wii * ri)) + math.sqrt(tau_i) * np.random.normal(0, sei))/tau_i
+def calculate_firing_rate(dt, re, ri, wee, wie, wei, wii, tau_e, tau_i, sei, xi_i, xi_e):
+    tstep2e = ((dt * sei * sei) / tau_e) ** .5
+    tstep2i = ((dt * sei * sei) / tau_i) ** .5
+    dE = dt * (-re + transduction_function((wee * re) + (wei * ri)) + tstep2e * xi_e)/tau_e
+    dI = dt * (-ri + transduction_function((wie * re) + (wii * ri)) + tstep2i * xi_i)/tau_i
     uu_p = re + dE
     vv_p = ri + dI
     return uu_p, vv_p
@@ -38,32 +43,49 @@ wei = -3.25
 wie = 3.5
 wii = -2.5
 
-dt = .05
-tstop = 700
+dt = 0.2e-3
+tstop = 25
 t = np.linspace(0, tstop, tstop/dt)
 uu_p = np.zeros((len(t) + 1, 1))
 vv_p = np.zeros((len(t) + 1, 1))
-# note: I am assuming the initial condition is close to zero (not specified on the paper)
-uu_p[0] = 0.0001
-vv_p[0] = 0.0001
+
+mean_xi = 0
+std_xi = 1
+xi_e = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
+xi_i = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
+
+# Initial rate values
+# Note: the 5 ensures that you have between 0 and 10 spikes/s
+uu_p[0] = 5 * (1 + np.tanh(2 * xi_e[0]))
+vv_p[0] = 5 * (1 + np.tanh(2 * xi_i[0]))
 
 for dt_idx in range(len(t)):
     uu_p[dt_idx + 1], vv_p[dt_idx + 1] = calculate_firing_rate(dt, uu_p[dt_idx], vv_p[dt_idx], wee, wie, wei, wii,
-                                                               args.tau_e, args.tau_i, args.sei)
+                                                               args.tau_e, args.tau_i, args.sei, xi_i[dt_idx + 1], xi_e[dt_idx + 1])
 
 tplot = np.linspace(0, tstop, tstop/dt + 1)
-plt.plot(tplot, uu_p, label='uu', color='red')
+plt.figure()
 plt.plot(tplot, vv_p, label='vv', color='blue')
 plt.legend()
-plt.xlim([350, 700])
 plt.title(args.layer)
+plt.ylim(0.6, 0.8)
 plt.xlabel('Time')
 plt.ylabel('Proportion of firing cells')
-plt.savefig('EI_activity.png')
+plt.savefig('E_activity.png')
+plt.show()
+
+plt.figure()
+plt.plot(tplot, uu_p, label='uu', color='red')
+plt.legend()
+plt.title(args.layer)
+plt.ylim(0.2, 0.6)
+plt.xlabel('Time')
+plt.ylabel('Proportion of firing cells')
+plt.savefig('I_activity.png')
+plt.show()
 
 plt.figure()
 plt.plot(tplot, abs(uu_p - vv_p), label='sum', color='green')
-plt.xlim([350, 700])
 plt.title(args.layer)
 plt.ylabel('Proportion of firing cells')
 plt.xlabel('Time')
