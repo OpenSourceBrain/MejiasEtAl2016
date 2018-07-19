@@ -2,5 +2,7 @@
 
 set -e
 
-python intralaminar.py -tau_e 6  -tau_i 15 -sei .3  -layer L2/3
-python intralaminar.py -tau_e 30 -tau_i 75 -sei .45 -layer L5/6
+# Note: the values for tau in the paper represent the values in ms. Here we use
+# s.
+python intralaminar.py -tau_e .006  -tau_i .015 -sei .3  -layer L2/3
+python intralaminar.py -tau_e .030 -tau_i .075 -sei .45 -layer L5/6
