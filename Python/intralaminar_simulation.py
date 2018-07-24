@@ -5,6 +5,7 @@ import math
 import matplotlib.pylab as plt
 import argparse
 from scipy import signal
+import pickle
 import scipy.io.matlab as scmat
 # set random set
 #np.random.seed(42)
@@ -104,6 +105,7 @@ def down_sampled_periodogram(restate, fft, fs, win, min_freq):
 
     return pxx_bin, fxx_bin
 
+
 parser = argparse.ArgumentParser(description='Parameters for the simulation')
 parser.add_argument('-tau_e', type=float, dest='tau_e', help='Excitatory membrane time constant (tau_e)')
 parser.add_argument('-tau_i', type=float, dest='tau_i', help='Inhibitory membrane time constant (tau_i)')
@@ -142,7 +144,6 @@ for Iext in Iexts:
 
     psd_dic[Iext] = {}
     psd_dic[Iext]['pxx'] = []
-    psd_dic[Iext]['fxx'] = []
     # run each combination of external input multiple times an take the average PSD
     nruns = 10
 
@@ -172,7 +173,7 @@ for Iext in Iexts:
         pow2 = int(round(math.log(N, 2)))
         fft = max(256, 2 ** pow2)
 
-        # perform periodogram on restate
+        # perform periodogram on restate. As the fxx_bin is constant for all runs we do not save it
         pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win, min_freq)
 
         window_size = 81
@@ -180,27 +181,32 @@ for Iext in Iexts:
         s = np.r_[pxx_bin[window_size-1:0:-1], pxx_bin, pxx_bin[-2:window_size-1:1]]
         pxx = np.convolve(mask/mask.sum(), s, mode='valid')
 
-
         psd_dic[Iext]['pxx'].append(pxx)
-        psd_dic[Iext]['fxx'].append(fxx_bin)
         # transform array into numpy array
     # take the mean and std over the different runs
     psd_dic[Iext]['pxx'] = np.array(psd_dic[Iext]['pxx'])
-    psd_dic[Iext]['fxx'] = np.array(psd_dic[Iext]['fxx'])
     psd_dic[Iext]['mean_pxx'] = np.mean(psd_dic[Iext]['pxx'], axis=0)
-    psd_dic[Iext]['mean_fxx'] = np.mean(psd_dic[Iext]['fxx'], axis=0)
     psd_dic[Iext]['std_pxx'] = np.std(psd_dic[Iext]['pxx'], axis=0)
-    psd_dic[Iext]['std_fxx'] = np.std(psd_dic[Iext]['fxx'], axis=0)
+
+# add fxx_bin to dictionary
+psd_dic['fxx_bin'] = fxx_bin
 
 for Iext in Iexts:
     fig = plt.figure()
-    plt.semilogy(psd_dic[Iext]['mean_fxx'], psd_dic[Iext]['mean_pxx'])
+    plt.semilogy(fxx_bin, psd_dic[Iext]['mean_pxx'])
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('PSD (V**2/Hz)')
     plt.xlim(0, max(fxx_bin))
 
+
 if not args.nogui:
     plt.show()
 
+# save the results into a pickle file
+with open('intralaminar_simulation.pckl', 'w') as file:
+    file.write(pickle.dumps(psd_dic))
+
 print('Done')
+
+
 
