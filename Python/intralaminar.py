@@ -20,17 +20,17 @@ def transduction_function(x):
         return x / (1 - math.exp(-x))
 
 
-def calculate_firing_rate(dt, re, ri, wee, wie, wei, wii, tau_e, tau_i, sei, xi_i, xi_e):
+def calculate_firing_rate(dt, re, ri, wee, wie, wei, wii, tau_e, tau_i, sei, xi_i, xi_e, Iext_e, Iext_i):
     tstep2e = ((dt * sei * sei) / tau_e) ** .5
     tstep2i = ((dt * sei * sei) / tau_i) ** .5
-    dE = dt * (-re + transduction_function((wee * re) + (wei * ri)) + tstep2e * xi_e)/tau_e
-    dI = dt * (-ri + transduction_function((wie * re) + (wii * ri)) + tstep2i * xi_i)/tau_i
+    dE = dt * (-re + transduction_function((wee * re) + (wei * ri) + Iext_e) + tstep2e * xi_e)/tau_e
+    dI = dt * (-ri + transduction_function((wie * re) + (wii * ri) + Iext_i) + tstep2i * xi_i)/tau_i
     uu_p = re + dE
     vv_p = ri + dI
     return uu_p, vv_p
 
 
-def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, plot=False):
+def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, Iext_i, plot=False):
     uu_p = np.zeros((len(t) + 1, 1))
     vv_p = np.zeros((len(t) + 1, 1))
 
@@ -46,11 +46,12 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, plot=Fal
 
     for dt_idx in range(len(t)):
         uu_p[dt_idx + 1], vv_p[dt_idx + 1] = calculate_firing_rate(dt, uu_p[dt_idx], vv_p[dt_idx], wee, wie, wei, wii,
-                                                                   tau_e, tau_i, sei, xi_i[dt_idx + 1], xi_e[dt_idx + 1])
+                                                                   tau_e, tau_i, sei, xi_i[dt_idx + 1], xi_e[dt_idx + 1],
+                                                                   Iext_e, Iext_i)
 
     if plot:
         tplot = np.linspace(0, tstop, tstop/dt + 1)
-        plt.figure()
+        fig = plt.figure()
         plt.plot(tplot, vv_p, label='vv', color='blue')
         plt.legend()
         plt.title(args.layer)
@@ -58,9 +59,8 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, plot=Fal
         plt.xlabel('Time')
         plt.ylabel('Proportion of firing cells')
         plt.savefig('E_activity.png')
-        plt.show()
 
-        plt.figure()
+        fig = plt.figure()
         plt.plot(tplot, uu_p, label='uu', color='red')
         plt.legend()
         plt.title(args.layer)
@@ -70,7 +70,7 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, plot=Fal
         plt.savefig('I_activity.png')
         plt.show()
 
-        plt.figure()
+        fig = plt.figure()
         plt.plot(tplot, abs(uu_p - vv_p), label='sum', color='green')
         plt.title(args.layer)
         plt.ylabel('Proportion of firing cells')
@@ -109,6 +109,7 @@ parser.add_argument('-tau_e', type=float, dest='tau_e', help='Excitatory membran
 parser.add_argument('-tau_i', type=float, dest='tau_i', help='Inhibitory membrane time constant (tau_i)')
 parser.add_argument('-sei',   type=float, dest='sei', help='Deviation for the Gaussian white noise (s_ei)')
 parser.add_argument('-layer', type=str, dest='layer', help='Layer of interest')
+parser.add_argument('-nogui', dest='nogui', action='store_true',  help='No gui')
 
 args = parser.parse_args()
 
@@ -124,44 +125,82 @@ transient = 5
 
 t = np.linspace(0, tstop, tstop/dt)
 
-uu_p, vv_p = calculate_rate(t, dt, tstop, wee, wie, wei, wii, args.tau_e, args.tau_i, args.sei, plot=False)
+# Iterate over different input strength
+Imin = 0
+Istep = 2
+Imax = 6
+# Note: the range function does not include the end
+Iexts = range(Imin, Imax + Istep, Istep)
+psd_dic = {}
 
 dt = 2e-04
 min_freq = 10
 # sampling frequency to calculate the peridogram
 fs = 1/dt
 
-# matfile = '../Matlab/fig2/peridogram.mat'
-# m_file = scmat.loadmat(matfile)
-# restate = np.transpose(m_file['restate'])
-restate = uu_p
-# discard the first time points
-# lower_boundary = int((round(transient + dt) / dt))
-# restate = restate[lower_boundary:-1]
+for Iext in Iexts:
 
-# define window to use for the periodogram calculation
-N = restate.shape[0]
-win = signal.get_window('boxcar', N)
-# Calculate fft (number of freq. points at which the psd is estimated)
-# Calculate the max power of 2 and find the maximum value
-pow2 = int(round(math.log(N, 2)))
-fft = max(256, 2 ** pow2)
+    psd_dic[Iext] = {}
+    psd_dic[Iext]['pxx'] = []
+    psd_dic[Iext]['fxx'] = []
+    # run each combination of external input multiple times an take the average PSD
+    nruns = 10
 
-# perform periodogram on restate
-pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win, min_freq)
+    for nrun in range(nruns):
 
-window_size = 81
-mask = np.ones(81, 'd')
-s = np.r_[pxx_bin[window_size-1:0:-1], pxx_bin, pxx_bin[-2:window_size-1:1]]
-pxx = np.convolve(mask/mask.sum(), s, mode='valid')
 
-plt.figure()
-plt.semilogy(fxx_bin, pxx_bin)
-plt.xlabel('Frequency (Hz)')
-plt.ylabel('PSD (V**2/Hz)')
-plt.xlim(0, max(fxx_bin))
-plt.show()
-print('hello')
+        # inject current only on excitatory layer
+        Iext_e = Iext * 1
+        Iext_i = 0
+        uu_p, vv_p = calculate_rate(t, dt, tstop, wee, wie, wei, wii, args.tau_e, args.tau_i, args.sei, Iext_e,
+                                    Iext_i, plot=False)
 
-# The fancy plot is only for layer 2/3 and it is average over 10 rounds.
-# TODO:smooth data and save it
+
+        # matfile = '../Matlab/fig2/peridogram.mat'
+        # m_file = scmat.loadmat(matfile)
+        # restate = np.transpose(m_file['restate'])
+        restate = uu_p
+        # discard the first time points
+        # lower_boundary = int((round(transient + dt) / dt))
+        # restate = restate[lower_boundary:-1]
+
+        # define window to use for the periodogram calculation
+        N = restate.shape[0]
+        win = signal.get_window('boxcar', N)
+        # Calculate fft (number of freq. points at which the psd is estimated)
+        # Calculate the max power of 2 and find the maximum value
+        pow2 = int(round(math.log(N, 2)))
+        fft = max(256, 2 ** pow2)
+
+        # perform periodogram on restate
+        pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win, min_freq)
+
+        window_size = 81
+        mask = np.ones(81, 'd')
+        s = np.r_[pxx_bin[window_size-1:0:-1], pxx_bin, pxx_bin[-2:window_size-1:1]]
+        pxx = np.convolve(mask/mask.sum(), s, mode='valid')
+
+
+        psd_dic[Iext]['pxx'].append(pxx)
+        psd_dic[Iext]['fxx'].append(fxx_bin)
+        # transform array into numpy array
+    # take the mean and std over the different runs
+    psd_dic[Iext]['pxx'] = np.array(psd_dic[Iext]['pxx'])
+    psd_dic[Iext]['fxx'] = np.array(psd_dic[Iext]['fxx'])
+    psd_dic[Iext]['mean_pxx'] = np.mean(psd_dic[Iext]['pxx'], axis=0)
+    psd_dic[Iext]['mean_fxx'] = np.mean(psd_dic[Iext]['fxx'], axis=0)
+    psd_dic[Iext]['std_pxx'] = np.std(psd_dic[Iext]['pxx'], axis=0)
+    psd_dic[Iext]['std_fxx'] = np.std(psd_dic[Iext]['fxx'], axis=0)
+
+for Iext in Iexts:
+    fig = plt.figure()
+    plt.semilogy(psd_dic[Iext]['mean_fxx'], psd_dic[Iext]['mean_pxx'])
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('PSD (V**2/Hz)')
+    plt.xlim(0, max(fxx_bin))
+
+if not args.nogui:
+    plt.show()
+
+print('Done')
+
