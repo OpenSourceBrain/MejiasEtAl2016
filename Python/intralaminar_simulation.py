@@ -8,7 +8,7 @@ from scipy import signal
 import pickle
 import scipy.io.matlab as scmat
 # set random set
-#np.random.seed(42)
+np.random.RandomState(seed=42)
 
 
 def transduction_function(x):
@@ -24,8 +24,8 @@ def transduction_function(x):
 def calculate_firing_rate(dt, re, ri, wee, wie, wei, wii, tau_e, tau_i, sei, xi_i, xi_e, Iext_e, Iext_i):
     tstep2e = ((dt * sei * sei) / tau_e) ** .5
     tstep2i = ((dt * sei * sei) / tau_i) ** .5
-    dE = dt * (-re + transduction_function((wee * re) + (wei * ri) + Iext_e) + tstep2e * xi_e)/tau_e
-    dI = dt * (-ri + transduction_function((wie * re) + (wii * ri) + Iext_i) + tstep2i * xi_i)/tau_i
+    dE = dt/tau_e * (-re + transduction_function((wee * re) + (wei * ri) + Iext_e)) + tstep2e * xi_e
+    dI = dt/tau_i * (-ri + transduction_function((wie * re) + (wii * ri) + Iext_i)) + tstep2i * xi_i
     uu_p = re + dE
     vv_p = ri + dI
     return uu_p, vv_p
@@ -39,6 +39,12 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, 
     std_xi = 1
     xi_e = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
     xi_i = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
+    # Todo: Test if calculations are correct by loading the random generated numbers from matlab
+    # matfile = '../Matlab/fig2/random_xi.mat'
+    # m_file = scmat.loadmat(matfile)
+    # xi_e = m_file['xi'][0, :]
+    # xi_i = m_file['xi'][1, :]
+
 
     # Initial rate values
     # Note: the 5 ensures that you have between 0 and 10 spikes/s
@@ -47,7 +53,7 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, 
 
     for dt_idx in range(len(t)):
         uu_p[dt_idx + 1], vv_p[dt_idx + 1] = calculate_firing_rate(dt, uu_p[dt_idx], vv_p[dt_idx], wee, wie, wei, wii,
-                                                                   tau_e, tau_i, sei, xi_i[dt_idx + 1], xi_e[dt_idx + 1],
+                                                                   tau_e, tau_i, sei, xi_i[dt_idx], xi_e[dt_idx],
                                                                    Iext_e, Iext_i)
 
     if plot:
