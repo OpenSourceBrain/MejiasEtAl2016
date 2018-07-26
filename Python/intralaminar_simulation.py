@@ -6,7 +6,6 @@ import matplotlib.pylab as plt
 import argparse
 from scipy import signal
 import pickle
-import scipy.io.matlab as scmat
 # set random set
 np.random.RandomState(seed=42)
 
@@ -39,11 +38,6 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, 
     std_xi = 1
     xi_e = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
     xi_i = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
-    # Todo: Test if calculations are correct by loading the random generated numbers from matlab
-    # matfile = '../Matlab/fig2/random_xi.mat'
-    # m_file = scmat.loadmat(matfile)
-    # xi_e = m_file['xi'][0, :]
-    # xi_i = m_file['xi'][1, :]
 
 
     # Initial rate values
@@ -184,10 +178,6 @@ for Iext in Iexts:
         uu_p, vv_p = calculate_rate(t, dt, tstop, wee, wie, wei, wii, args.tau_e, args.tau_i, args.sei, Iext_e,
                                     Iext_i, plot=False)
 
-
-        # matfile = '../Matlab/fig2/test_rate2.mat'
-        # m_file = scmat.loadmat(matfile)
-        # restate = np.expand_dims(m_file['rate'][0, :], axis=1)
         restate = uu_p
         # define window to use for the periodogram calculation
         N = restate.shape[0]
