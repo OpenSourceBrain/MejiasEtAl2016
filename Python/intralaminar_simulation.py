@@ -82,11 +82,10 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, 
     return uu_p, vv_p
 
 
-def down_sampled_periodogram(re, fft, fs, win, min_freq):
+def down_sampled_periodogram(re, fft, fs, win, min_freq, transient, dt):
 
-    # discart the first 25000 points
-    # Todo: improve how this is calculated
-    restate = re[25000:]
+    # discard the first 25000 points
+    restate = re[int(round((transient + dt)/dt)) - 1:]
 
     # perform periodogram on restate
     sq_data = np.squeeze(restate)
@@ -137,7 +136,7 @@ parser.add_argument('-nogui', dest='nogui', action='store_true',  help='No gui')
 
 args = parser.parse_args()
 
-## superficial layer
+# superficial layer
 wee = 1.5
 wei = -3.25
 wie = 3.5
@@ -188,13 +187,13 @@ for Iext in Iexts:
         fft = max(256, 2 ** pow2)
 
         # perform periodogram on restate.
-        pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win, min_freq)
-        # pxx = pxx_bin
-        # # smooth the data
+        pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win, min_freq, transient, dt)
+        # smooth the data
+        # Note: The matlab code transforms an even-window size into an odd number by subtracting by one.
+        # So for simplicity I already define the window size as an odd number
         window_size = 79
         mask = np.ones((window_size))/window_size
         pxx = matlab_smooth(pxx_bin, window_size)
-        # pxx = np.convolve(pxx_bin, mask, mode='same')
 
         psd_dic[Iext][nrun]['pxx'] = pxx
     # take the mean and std over the different runs

@@ -47,5 +47,6 @@ plt_filled_std(ax, fxx_plt, psd_mean_0_6, psd_std_0_6, lcolours[2], 'Input = 6')
 plt.xlim([10, 80])
 plt.ylim([0, 0.003])
 plt.legend()
-plt.show()
+if not '-nogui' in sys.argv:
+    plt.show()
 
