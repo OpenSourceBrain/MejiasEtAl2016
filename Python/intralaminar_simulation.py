@@ -82,10 +82,16 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, 
     return uu_p, vv_p
 
 
-def down_sampled_periodogram(restate, fft, fs, win, min_freq):
+def down_sampled_periodogram(re, fft, fs, win, min_freq):
+
+    # discart the first 25000 points
+    # Todo: improve how this is calculated
+    restate = re[25000:]
+
     # perform periodogram on restate
-    fxx2, pxx2 = signal.periodogram(np.squeeze(restate), nfft=fft, fs=fs, window=win, return_onesided=True,
-                                    scaling='density', detrend=False)
+    sq_data = np.squeeze(restate)
+    fxx2, pxx2 = signal.periodogram(sq_data, fs=fs, window=win[25000:], nfft=fft, detrend=False, return_onesided=True,
+                                    scaling='density')
 
     # Compress the data by sampling every 5 points.
     bin_size = 5
@@ -93,7 +99,7 @@ def down_sampled_periodogram(restate, fft, fs, win, min_freq):
     remaining = fxx2.shape[0] - (fxx2.shape[0] % bin_size)
     fxx2 = fxx2[0:remaining]
     pxx2 = pxx2[0:remaining]
-    # Then we calculate the average signal inside the specified bins
+    # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
     # Note: the output needs to be an np.array in order to be able to use np.where afterwards
     pxx_bin = np.asarray([np.mean(pxx2[i:i+bin_size]) for i in range(0, len(pxx2), bin_size)])
     fxx_bin = np.asarray([np.mean(fxx2[i:i+bin_size]) for i in range(0, len(fxx2), bin_size)])
@@ -104,6 +110,22 @@ def down_sampled_periodogram(restate, fft, fs, win, min_freq):
     fxx_freq = fxx_bin[z]
 
     return pxx_bin, fxx_bin
+
+def matlab_smooth(data, window_size):
+    # asummes the data is one dimensional
+    n = data.shape[0]
+    c = signal.lfilter(np.ones(window_size)/window_size, 1, data)
+    idx_begin = range(0, window_size - 2)
+    cbegin = data[idx_begin].cumsum()
+    # select every second elemeent and divide by their index
+    cbegin = cbegin[0::2] / range(1, window_size - 1, 2)
+    # select the list backwards
+    idx_end = range(n-1, n-window_size + 1, -1)
+    cend = data[idx_end].cumsum()
+    # select every other element until the end backwards
+    cend = cend[-1::-2] / (range(window_size - 2, 0, -2))
+    c = np.concatenate([cbegin, c[window_size-1:], cend])
+    return c
 
 
 parser = argparse.ArgumentParser(description='Parameters for the simulation')
@@ -143,12 +165,12 @@ fs = 1/dt
 for Iext in Iexts:
 
     psd_dic[Iext] = {}
-    psd_dic[Iext]['pxx'] = []
     # run each combination of external input multiple times an take the average PSD
     nruns = 10
 
     for nrun in range(nruns):
 
+        psd_dic[Iext][nrun] = {}
 
         # inject current only on excitatory layer
         Iext_e = Iext * 1
@@ -157,14 +179,10 @@ for Iext in Iexts:
                                     Iext_i, plot=False)
 
 
-        # matfile = '../Matlab/fig2/peridogram.mat'
+        # matfile = '../Matlab/fig2/test_rate2.mat'
         # m_file = scmat.loadmat(matfile)
-        # restate = np.transpose(m_file['restate'])
+        # restate = np.expand_dims(m_file['rate'][0, :], axis=1)
         restate = uu_p
-        # discard the first time points
-        # lower_boundary = int((round(transient + dt) / dt))
-        # restate = restate[lower_boundary:-1]
-
         # define window to use for the periodogram calculation
         N = restate.shape[0]
         win = signal.get_window('boxcar', N)
@@ -173,20 +191,19 @@ for Iext in Iexts:
         pow2 = int(round(math.log(N, 2)))
         fft = max(256, 2 ** pow2)
 
-        # perform periodogram on restate. As the fxx_bin is constant for all runs we do not save it
+        # perform periodogram on restate.
         pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win, min_freq)
+        # pxx = pxx_bin
+        # # smooth the data
+        window_size = 79
+        mask = np.ones((window_size))/window_size
+        pxx = matlab_smooth(pxx_bin, window_size)
+        # pxx = np.convolve(pxx_bin, mask, mode='same')
 
-        window_size = 81
-        mask = np.ones(81, 'd')
-        s = np.r_[pxx_bin[window_size-1:0:-1], pxx_bin, pxx_bin[-2:window_size-1:1]]
-        pxx = np.convolve(mask/mask.sum(), s, mode='valid')
-
-        psd_dic[Iext]['pxx'].append(pxx)
-        # transform array into numpy array
+        psd_dic[Iext][nrun]['pxx'] = pxx
     # take the mean and std over the different runs
-    psd_dic[Iext]['pxx'] = np.array(psd_dic[Iext]['pxx'])
-    psd_dic[Iext]['mean_pxx'] = np.mean(psd_dic[Iext]['pxx'], axis=0)
-    psd_dic[Iext]['std_pxx'] = np.std(psd_dic[Iext]['pxx'], axis=0)
+    psd_dic[Iext]['mean_pxx'] = np.mean([psd_dic[Iext][i]['pxx'] for i in range(nruns)], axis=0)
+    psd_dic[Iext]['std_pxx'] = np.std([psd_dic[Iext][i]['pxx'] for i in range(nruns)], axis=0)
 
 # add fxx_bin to dictionary
 psd_dic['fxx_bin'] = fxx_bin
