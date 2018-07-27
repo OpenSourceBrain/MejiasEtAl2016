@@ -1,6 +1,8 @@
 import pickle
 import numpy as np
 import matplotlib.pylab as plt
+import sys
+
 
 def plt_filled_std(ax, fxx_plt, data_mean, data_std, color, label):
     # calculate upper and lower bounds of the plot
@@ -46,6 +48,8 @@ plt_filled_std(ax, fxx_plt, psd_mean_0_4, psd_std_0_4, lcolours[1], 'Input = 4')
 plt_filled_std(ax, fxx_plt, psd_mean_0_6, psd_std_0_6, lcolours[2], 'Input = 6')
 plt.xlim([10, 80])
 plt.ylim([0, 0.003])
+plt.xlabel('Frequency(Hz)')
+plt.ylabel('Power (resp. rest)')
 plt.legend()
 if not '-nogui' in sys.argv:
     plt.show()
