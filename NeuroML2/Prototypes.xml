@@ -1,0 +1,25 @@
+<Lems>
+
+    
+    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="1Hz"/>
+    <!--<wilsonCowanCell id="L23_Ew" tau="1ms" r0="0.1Hz" z="0nA" />-->
+    
+    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="2Hz"/>
+    
+    <mejiasEtAl2016Cell id="L5_E" tau="30ms" r0="1.66Hz"/>
+    <mejiasEtAl2016Cell id="L5_I" tau="75ms" r0="1.33Hz"/>
+    
+    <pulseGenerator id="baselineE" delay="10ms" duration="30ms" amplitude="-0.5nA" />
+
+    <noisyCurrentSource id="noiseL23_E" delay="50ms" duration="40ms" mean="0 nA" stdev="3 nA" noiseDt="0.01ms"/>
+    <noisyCurrentSource id="noiseL23_I" delay="100ms" duration="40ms" mean="0 nA" stdev="4 nA" noiseDt="0.01ms"/>
+    
+    <noisyCurrentSource id="noiseL5_E" delay="150ms" duration="40ms" mean="0 nA" stdev="3 nA" noiseDt="0.01ms"/>
+    <noisyCurrentSource id="noiseL5_I" delay="200ms" duration="40ms" mean="0 nA" stdev="4 nA" noiseDt="0.01ms"/>
+    
+    
+    <!--Dummy synapse which emits no current. Used as presynaptic endpoint for analog synaptic connection.-->
+    <silentSynapse id="silent1"/>
+    <rateSynapse id="rs" />
+    
+</Lems>

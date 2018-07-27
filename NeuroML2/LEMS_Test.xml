@@ -10,90 +10,44 @@
     <Include file="RateBased.xml" />
     
 
+    <Include file="Prototypes.xml" />
     <Include file="NoisyCurrentSource.xml" />
     
     
-    <ComponentType  name="mejiasEtAl2016Cell"
-                    extends="baseRateUnit"
-                    description="Work in progress...">
-
-        <Parameter name="tau" dimension="time"/>
-        <Parameter name="r0" dimension="per_time"/>
-
-        <Attachments name="synapses" type="basePointCurrent"/>
-
-        <Exposure name="phi" dimension="none"/>
-        <Exposure name="iSyn" dimension="current"/>
-
-        <Constant name="NAMP_SCALE" dimension="current" value="1 nA"/>
-        <Constant name="HZ_SCALE" dimension="per_time" value="1 Hz"/>
-        <Constant name="MVOLT_SCALE" dimension="voltage" value="1mV"/>
-
-        <Dynamics>
-
-            <StateVariable name="r" dimension="per_time" exposure="r" description="Rate..."/>
-            <StateVariable name="v" dimension="voltage" exposure="v"/>
-
-            <DerivedVariable name="iSyn" dimension="current" exposure="iSyn" select="synapses[*]/i" reduce="add" />
-            <DerivedVariable name="x" dimension="none" value="(iSyn)/NAMP_SCALE"/>
-
-            <ConditionalDerivedVariable name="phi" dimension="none" exposure="phi">
-            	<Case condition="x .eq. 0" value="1"/>
-            	<Case condition="x .neq. 0" value="x / (1 - exp(-1*x))"/>
-            </ConditionalDerivedVariable> 
-
-            <!-- Set v to r for now...
-            <DerivedVariable name="v" dimension="voltage" exposure="v" value="0*MVOLT_SCALE"/>-->
-
-            <TimeDerivative variable="r" value="(-1*r + phi*HZ_SCALE)/tau"/>
-
-            <OnStart>
-                <StateAssignment variable="r" value="r0"/>
-            </OnStart>
-
-            <!-- On condition is not need on the model but NeuroML requires its definition -->
-            <OnCondition test="r .lt. 0">
-                <EventOut port="spike"/>
-            </OnCondition>
-
-        </Dynamics>
-
-    </ComponentType>
     
-    <mejiasEtAl2016Cell id="L23_E" tau="1ms" r0="0.1Hz"/>
-    
-    <wilsonCowanCell id="L23_Ew" tau="1ms" r0="0.1Hz" z="0nA" />
-    
-    <mejiasEtAl2016Cell id="L23_I" tau="2ms" r0="0.2Hz"/>
-    
-    <pulseGenerator id="baselineE" delay="10ms" duration="30ms" amplitude="-0.5nA" />
-
-    <noisyCurrentSource id="noisyCurrentSource1" delay="50ms" duration="100ms" mean="0 nA" stdev=".1 nA" noiseDt="0.01ms"/>
     
     <network id="net1">
         
-        <population id="ePop" component="L23_E" size="1" />
-        <population id="iPop" component="L23_I" size="1" />
+        <population id="l23ePop" component="L23_E" size="1" />
+        <population id="l23iPop" component="L23_I" size="1" />
         
-        <explicitInput target="ePop[0]" input="baselineE" destination="synapses"/>
-        <explicitInput target="ePop[0]" input="noisyCurrentSource1" destination="synapses"/>
+        <population id="l5ePop" component="L5_E" size="1" />
+        <population id="l5iPop" component="L5_I" size="1" />
+        
+        <explicitInput target="l23ePop[0]" input="noiseL23_E" destination="synapses"/>
+        <explicitInput target="l23iPop[0]" input="noiseL23_I" destination="synapses"/>
+        <explicitInput target="l5ePop[0]" input="noiseL5_E" destination="synapses"/>
+        <explicitInput target="l5iPop[0]" input="noiseL5_I" destination="synapses"/>
         
     </network>
 
     <!-- End of NeuroML2 content -->
 
 
-    <Simulation id="sim1" length="200ms" step="0.01ms" target="net1">
+    <Simulation id="sim1" length="300ms" step="0.01ms" target="net1">
 
-        <Display id="d3" title="Rates" timeScale="1s" xmin="-20" xmax="220" ymin="-1" ymax="11">
-            <Line id="rate e" quantity="ePop[0]/r" scale="1Hz" color="#0000ff" timeScale="1ms" />
-            <Line id="rate i" quantity="iPop[0]/r" scale="1Hz" color="#ff0000" timeScale="1ms" />
+        <Display id="d3" title="Rates" timeScale="1s" xmin="-20" xmax="320" ymin="-1" ymax="11">
+            <Line id="L23 E" quantity="l23ePop[0]/r" scale="1Hz" color="#0000ff" timeScale="1ms" />
+            <Line id="L23 I" quantity="l23iPop[0]/r" scale="1Hz" color="#ff0000" timeScale="1ms" />
+            <Line id="L5 E" quantity="l5ePop[0]/r" scale="1Hz" color="#00ffff" timeScale="1ms" />
+            <Line id="L5 I" quantity="l5iPop[0]/r" scale="1Hz" color="#ff00ff" timeScale="1ms" />
         </Display>
         
         
-        <Display id="d1" title="Inputs" timeScale="1s" xmin="-20" xmax="220" ymin="-1" ymax="11">
-            <Line id="isyn e" quantity="ePop[0]/iSyn" scale="1nA" color="#0000ff" timeScale="1ms" />
-            <Line id="phi e" quantity="ePop[0]/phi" scale="1" color="#7777ff" timeScale="1ms" />
+        <Display id="d1" title="Inputs" timeScale="1s" xmin="-20" xmax="320" ymin="-1" ymax="11">
+            <Line id="isyn l23 e" quantity="l23ePop[0]/iSyn" scale="1nA" color="#0000ff" timeScale="1ms" />
+            <Line id="phi l23 e" quantity="l23ePop[0]/phi" scale="1" color="#3333ff" timeScale="1ms" />
+            
             <!--<Line id="isyn i" quantity="iPop[0]/iSyn" scale="1nA" color="#ff0000" timeScale="1ms" />
             <Line id="phi i" quantity="iPop[0]/phi" scale="1" color="#ff7777" timeScale="1ms" />-->
         </Display>
