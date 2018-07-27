@@ -30,12 +30,12 @@ def calculate_firing_rate(dt, re, ri, wee, wie, wei, wii, tau_e, tau_i, sei, xi_
     return uu_p, vv_p
 
 
-def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, Iext_i, plot=False):
+def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, Iext_i, noise, plot=False):
     uu_p = np.zeros((len(t) + 1, 1))
     vv_p = np.zeros((len(t) + 1, 1))
 
     mean_xi = 0
-    std_xi = 1
+    std_xi = noise
     xi_e = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
     xi_i = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
 
@@ -176,29 +176,29 @@ for Iext in Iexts:
         Iext_e = Iext * 1
         Iext_i = 0
         uu_p, vv_p = calculate_rate(t, dt, tstop, wee, wie, wei, wii, args.tau_e, args.tau_i, args.sei, Iext_e,
-                                    Iext_i, plot=False)
+                                    Iext_i, args.noise, plot=False)
 
         restate = uu_p
         # define window to use for the periodogram calculation
 
         # Plot the layers time course
         plt.figure()
-        plt.plot(uu_p)
-        plt.plot(vv_p)
+        plt.plot(uu_p, label='excitatory')
+        plt.plot(vv_p, label='inhibitory')
         plt.ylim([-.5, 2])
-        plt.title('noise=.01')
-        filename = args.layer + '_simulation_' + str(nrun) + '.pckl'
+        plt.legend()
+        plt.title('noise=' + str(args.noise))
+        filename = args.layer + '_simulation_' + str(nrun)
         if args.txt_traces:
             activity = np.concatenate((uu_p, vv_p), axis=1)
-            np.savetxt(filename, activity)
+            np.savetxt(filename + '.txt', activity)
         else:
         # save time series as pickle
             activity = {}
             activity['uu'] = uu_p
             activity['vv'] = vv_p
-            with open(filename, 'wb') as file1:
+            with open(filename + 'pckl', 'wb') as file1:
                 pickle.dump(activity, file1)
-
 
         N = restate.shape[0]
         win = signal.get_window('boxcar', N)

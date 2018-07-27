@@ -5,7 +5,7 @@ set -e
 # Note: the values for tau in the paper represent the values in ms. Here we use
 # s.
 echo "Runing intralaminar simulation for L2/3...(it will take a few min)"
-python intralaminar_simulation.py -tau_e .006  -tau_i .015 -sei .3  -layer L2/3
+python intralaminar_simulation.py -tau_e .006 -tau_i .015 -sei .3 -layer L2_3 -noise 1 -txt_traces
 
 # plot Figure 2b
 # Note: this script assumes that the simulation has been saved a dictionary
