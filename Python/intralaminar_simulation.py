@@ -39,7 +39,6 @@ def calculate_rate(t, dt, tstop, wee, wie, wei, wii, tau_e, tau_i, sei, Iext_e, 
     xi_e = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
     xi_i = np.random.normal(mean_xi, std_xi, int(round(tstop/dt)) + 1)
 
-
     # Initial rate values
     # Note: the 5 ensures that you have between 0 and 10 spikes/s
     uu_p[0] = 5 * (1 + np.tanh(2 * xi_e[0]))
@@ -132,6 +131,9 @@ parser.add_argument('-tau_e', type=float, dest='tau_e', help='Excitatory membran
 parser.add_argument('-tau_i', type=float, dest='tau_i', help='Inhibitory membrane time constant (tau_i)')
 parser.add_argument('-sei',   type=float, dest='sei', help='Deviation for the Gaussian white noise (s_ei)')
 parser.add_argument('-layer', type=str, dest='layer', help='Layer of interest')
+parser.add_argument('-noise', type=float, dest='noise', help='Specifiy sigma of the Gausian Noise')
+parser.add_argument('-txt_traces', action="store_true", dest='txt_traces', help='Specifiy sigma of the Gausian Noise')
+
 parser.add_argument('-nogui', dest='nogui', action='store_true',  help='No gui')
 
 args = parser.parse_args()
@@ -143,7 +145,7 @@ wie = 3.5
 wii = -2.5
 
 dt = 2e-4
-tstop = 25
+tstop = 1
 transient = 5
 
 t = np.linspace(0, tstop, tstop/dt)
@@ -156,7 +158,6 @@ Imax = 6
 Iexts = range(Imin, Imax + Istep, Istep)
 psd_dic = {}
 
-dt = 2e-04
 min_freq = 10
 # sampling frequency to calculate the peridogram
 fs = 1/dt
@@ -179,6 +180,26 @@ for Iext in Iexts:
 
         restate = uu_p
         # define window to use for the periodogram calculation
+
+        # Plot the layers time course
+        plt.figure()
+        plt.plot(uu_p)
+        plt.plot(vv_p)
+        plt.ylim([-.5, 2])
+        plt.title('noise=.01')
+        filename = args.layer + '_simulation_' + str(nrun) + '.pckl'
+        if args.txt_traces:
+            activity = np.concatenate((uu_p, vv_p), axis=1)
+            np.savetxt(filename, activity)
+        else:
+        # save time series as pickle
+            activity = {}
+            activity['uu'] = uu_p
+            activity['vv'] = vv_p
+            with open(filename, 'wb') as file1:
+                pickle.dump(activity, file1)
+
+
         N = restate.shape[0]
         win = signal.get_window('boxcar', N)
         # Calculate fft (number of freq. points at which the psd is estimated)
@@ -215,7 +236,7 @@ if not args.nogui:
     plt.show()
 
 # save the results into a pickle file
-with open('intralaminar_simulation.pckl', 'w') as file:
+with open('intralaminar_simulation.pckl', 'wb') as file:
     file.write(pickle.dumps(psd_dic))
 
 print('Done')
