@@ -1,0 +1,53 @@
+<Lems>
+
+
+
+    <ComponentType name="noisyCurrentSource" extends="baseVoltageDepPointCurrentSpiking"
+                   description="NeuroML implementation of PyNN's NoisyCurrentSource: a Gaussian 'white' noise current source. The current amplitude changes at fixed
+    intervals, with the new value drawn from a Gaussian distribution.">
+
+        <Parameter name="delay" dimension="time" description="Delay before change in current. Current is zero  prior to this."/>
+        <Parameter name="duration" dimension="time" description="Duration for holding current at amplitude. Current is zero after delay + duration."/>
+        <Parameter name="mean" dimension="current" description="Amplitude of current pulse"/>
+        <Parameter name="stdev" dimension="current" description="Standard deviation of current pulse"/>
+        <Parameter name="noiseDt" dimension="time" description="Interval between updates of the current amplitude. Should be a
+            multiple of the simulation time step. "/>
+
+
+        <EventPort name="in" direction="in" description="Note this is not used here. Will be removed in future"/>
+
+        <Dynamics>
+
+            <StateVariable name="i" exposure="i" dimension="current"/>
+            <StateVariable name="tsince" dimension="time"/>
+            <TimeDerivative variable="tsince" value="1"/>
+
+
+            <StateVariable name="U" dimension="none"/>
+            <StateVariable name="V" dimension="none"/>
+            <StateVariable name="randn" dimension="none"/>
+
+            <OnCondition test="t .lt. delay-noiseDt">
+                <StateAssignment variable="i" value="0"/>
+                <StateAssignment variable="tsince" value="0"/>
+            </OnCondition>
+
+            <OnCondition test="tsince .geq. noiseDt">
+                <StateAssignment variable="U" value="random(1)"/>
+                <StateAssignment variable="V" value="random(1)"/>
+                <StateAssignment variable="randn" value="sqrt(-2*log(U))*cos(2*3.14159265359*V)"/>
+
+                <StateAssignment variable="i" value="mean+stdev*randn"/>
+                
+                <StateAssignment variable="tsince" value="0"/>
+            </OnCondition>
+
+            <OnCondition test="t .geq. duration + delay">
+                <StateAssignment variable="i" value="0"/>
+            </OnCondition>
+
+        </Dynamics>
+    </ComponentType>
+
+</Lems>
+
