@@ -5,21 +5,20 @@ import matplotlib.pylab as plt
 from calculate_rate import calculate_rate
 
 
-def debug_neuroml(analysis, layer, t, dt, tstop, wee, wei, wie, wii, tau_e,
-                  tau_i, sei, Iexts, nruns, noise, nogui):
+def debug_neuroml(analysis, layer, t, dt, tstop, J, tau, sig, Iexts, nruns, noise, nogui):
 
 
     # calculate the firing rate
-    for Iext in Iexts:
+    for i in Iexts:
         # inject current only on excitatory layer
-        Iext_e = Iext * 1
-        Iext_i = 0
+        Iext = np.array([[i], [0], [i], [0]])
 
         for nrun in nruns:
-            uu_p, vv_p = calculate_rate(layer, t, dt, tstop, wee, wie, wei, wii,
-                                       tau_e, tau_i, sei, Iext_e, Iext_i,
-                                       noise)
+            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, noise)
 
+            # select only the excitatory and inhibitory layers for L2/3
+            uu_p = np.expand_dims(rate[0, :], axis=1)
+            vv_p = np.expand_dims(rate[1, :], axis=1)
             # Plot the layers time course
             plt.figure()
             plt.plot(uu_p, label='excitatory', color='r')
@@ -30,7 +29,7 @@ def debug_neuroml(analysis, layer, t, dt, tstop, wee, wei, wie, wii, tau_e,
 
             # save the simulation as a txt file
             filename = os.path.join(analysis, layer + '_simulation_Iext_'+
-                                    str(Iext) + '_nrun_' + str(nrun))
+                                    str(i) + '_nrun_' + str(nrun))
             activity = np.concatenate((uu_p, vv_p), axis=1)
             np.savetxt(filename + '.txt', activity)
 

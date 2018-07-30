@@ -7,7 +7,7 @@ import math
 
 from calculate_rate import calculate_rate
 
-def down_sampled_periodogram(re, fft, fs, win, min_freq, transient, dt):
+def down_sampled_periodogram(re, fft, fs, win, transient, dt):
 
     # discard the first 25000 points
     restate = re[int(round((transient + dt)/dt)) - 1:]
@@ -27,11 +27,6 @@ def down_sampled_periodogram(re, fft, fs, win, min_freq, transient, dt):
     # Note: the output needs to be an np.array in order to be able to use np.where afterwards
     pxx_bin = np.asarray([np.mean(pxx2[i:i+bin_size]) for i in range(0, len(pxx2), bin_size)])
     fxx_bin = np.asarray([np.mean(fxx2[i:i+bin_size]) for i in range(0, len(fxx2), bin_size)])
-
-    # find the frequency of the oscillations (note used at the moment)
-    z = np.where(fxx_bin > min_freq)
-    pxx_freq = pxx_bin[z]
-    fxx_freq = fxx_bin[z]
 
     return pxx_bin, fxx_bin
 
@@ -59,7 +54,6 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
 
     # sampling frequency to calculate the peridogram
     fs = 1/dt
-    min_freq = 10
     psd_dic = {}
 
     for Iext in Iexts:
@@ -78,7 +72,7 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
 
             # perform periodogram on restate.
             pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win,
-                                                        min_freq, transient, dt)
+                                                        transient, dt)
             # smooth the data
             # Note: The matlab code transforms an even-window size into an odd number by subtracting by one.
             # So for simplicity I already define the window size as an odd number
@@ -161,25 +155,20 @@ def intralaminar_plt(layer):
 
 
 def intralaminar_simulation(analysis, layer, Iexts, nruns, t, dt, tstop,
-                            wee, wei, wie, wii, tau_e, tau_i, sei, noise):
+                            J, tau, sig, noise):
     simulation = {}
     for Iext in Iexts:
-
         simulation[Iext] = {}
+        Iext_a = np.array([[Iext], [0], [Iext], [0]])
         # run each combination of external input multiple times an take the average PSD
-
         for nrun in range(nruns):
 
             simulation[Iext][nrun] = {}
-            # inject current only on excitatory layer
-            Iext_e = Iext * 1
-            Iext_i = 0
-            uu_p, vv_p = calculate_rate(layer, t, dt, tstop, wee, wie, wei, wii, tau_e,
-                                        tau_i, sei, Iext_e,
-                                        Iext_i, noise, plot=False)
+            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext_a, noise)
 
-            simulation[Iext][nrun]['uu'] = uu_p
-            simulation[Iext][nrun]['vv'] = vv_p
+            # Note: Save only the excitatory and inhibitory signal from L2/3
+            simulation[Iext][nrun]['uu'] = np.expand_dims(rate[0, :], axis=1)
+            simulation[Iext][nrun]['vv'] = np.expand_dims(rate[1, :], axis=1)
 
     picklename = os.path.join(analysis, layer + '_simulation.pckl')
     with open(picklename, 'wb') as file1:
