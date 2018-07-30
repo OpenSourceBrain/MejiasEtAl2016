@@ -51,7 +51,7 @@ def matlab_smooth(data, window_size):
     c = np.concatenate([cbegin, c[window_size-1:], cend])
     return c
 
-def intralaminar_analysis(Iexts, nruns, layer, dt, nogui):
+def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
     # load pickle with all the results
     picklename = os.path.join('intralaminar', layer + '_simulation.pckl')
     with open(picklename, 'rb') as file1:
@@ -60,7 +60,6 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, nogui):
     # sampling frequency to calculate the peridogram
     fs = 1/dt
     min_freq = 10
-    transient = 5
     psd_dic = {}
 
     for Iext in Iexts:
@@ -84,7 +83,6 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, nogui):
             # Note: The matlab code transforms an even-window size into an odd number by subtracting by one.
             # So for simplicity I already define the window size as an odd number
             window_size = 79
-            mask = np.ones((window_size))/window_size
             pxx = matlab_smooth(pxx_bin, window_size)
 
             psd_dic[Iext][nrun]['pxx'] = pxx
@@ -120,7 +118,7 @@ def plt_filled_std(ax, fxx_plt, data_mean, data_std, color, label):
     ax.margins(x=0)
 
 
-def intralaminar_plt(layer, nogui):
+def intralaminar_plt(layer):
     # load simulation results and plot
     analysis_pickle = os.path.join('intralaminar', layer + '_analysis.pckl')
     with open(analysis_pickle, 'rb') as filename:

@@ -65,9 +65,11 @@ if args.analysis == 'debug_neuroML':
                   args.tau_e, args.tau_i, args.sei, Iexts, nruns, args.noise, args.nogui)
 
 if args.analysis == 'intralaminar':
+    # Define dt and the trial length
     dt = 2e-4
     tstop = 25 # ms
     t = np.linspace(0, tstop, tstop/dt)
+    transient = 5
 
     # Iterate over different input strength
     Imin = 0
@@ -78,8 +80,9 @@ if args.analysis == 'intralaminar':
     nruns = 10
     intralaminar_simulation(args.analysis, args.layer, Iexts, nruns, t, dt, tstop, wee, wei, wie, wii,
                             args.tau_e, args.tau_i, args.sei, args.noise)
-    intralaminar_analysis(Iexts, nruns, args.layer, dt, args.nogui)
-    intralaminar_plt(args.layer, args.nogui)
+    intralaminar_analysis(Iexts, nruns, args.layer, dt, transient)
+    intralaminar_plt(args.layer)
+
 
 
 if not args.nogui:
