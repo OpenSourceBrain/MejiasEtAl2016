@@ -6,5 +6,6 @@ NeuroML2/*dat
 NeuroML2/x86_64
 Python/*pckl
 Python/*pyc
-
+Python/debug_neuroML
+Python/intralaminar
 
