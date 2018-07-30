@@ -34,6 +34,4 @@ def debug_neuroml(analysis, layer, t, dt, tstop, wee, wei, wie, wii, tau_e,
             activity = np.concatenate((uu_p, vv_p), axis=1)
             np.savetxt(filename + '.txt', activity)
 
-            if not nogui:
-                plt.show()
     print('Done debugging!')

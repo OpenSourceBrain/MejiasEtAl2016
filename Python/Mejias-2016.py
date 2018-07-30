@@ -3,6 +3,8 @@ from __future__ import print_function, division
 import os
 import numpy as np
 import argparse
+import matplotlib.pylab as plt
+
 # set random set
 np.random.RandomState(seed=42)
 
@@ -80,4 +82,6 @@ if args.analysis == 'intralaminar':
     intralaminar_plt(args.layer, args.nogui)
 
 
+if not args.nogui:
+    plt.show()
 

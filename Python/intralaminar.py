@@ -102,10 +102,6 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, nogui):
         plt.ylabel('PSD (V**2/Hz)')
         plt.xlim(0, max(fxx_bin))
 
-
-    if not nogui:
-        plt.show()
-
     # save the results into a pickle file
     picklename = os.path.join('intralaminar', layer + '_analysis.pckl')
     with open(picklename, 'wb') as file1:
@@ -165,8 +161,6 @@ def intralaminar_plt(layer, nogui):
     plt.ylabel('Power (resp. rest)')
     plt.legend()
 
-    if not nogui:
-        plt.show()
 
 def intralaminar_simulation(analysis, layer, Iexts, nruns, t, dt, tstop,
                             wee, wei, wie, wii, tau_e, tau_i, sei, noise):
