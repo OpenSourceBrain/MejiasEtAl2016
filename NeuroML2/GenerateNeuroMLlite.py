@@ -30,21 +30,14 @@ input_source0 = InputSource(id='iclamp0',
                            
 net.input_sources.append(input_source0)
 
-r1 = RectangularRegion(id='network', x=0,y=0,z=0,width=100,height=100,depth=10)
-net.regions.append(r1)
+l23 = RectangularRegion(id='L23', x=0,y=0,z=0,width=100,height=100,depth=10)
+net.regions.append(l23)
 
-colors = [[8,48,107],         # dark-blue
-          [228,26,28]]
     
-color_str = {}
-for i in range(len(colors)):
-    color_str[i] = ''
-    for c in colors[i]:
-        color_str[i]+='%s '%(c/255.)
-    color_str[i] = color_str[i][:-1]
+color_str = {'l23e':'.8 0 0','l23i':'0 0 .8'}
 
-pE = Population(id='L23_E', size=1, component=l23ecell.id, properties={'color':color_str[0]},random_layout = RandomLayout(region=r1.id))
-pI = Population(id='L23_I', size=1, component=l23icell.id, properties={'color':color_str[1]},random_layout = RandomLayout(region=r1.id))
+pE = Population(id='L23_E', size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
+pI = Population(id='L23_I', size=1, component=l23icell.id, properties={'color':color_str['l23i']},random_layout = RandomLayout(region=l23.id))
 
 net.populations.append(pE)
 net.populations.append(pI)
@@ -56,10 +49,10 @@ net.synapses.append(Synapse(id='rs',
                             lems_source_file='Prototypes.xml'))
                             
 
-W = [[2.4167,   -0.3329],
-    [2.9706,   -3.4554]]
-W = [[0,   0],
-    [2.9706,   0]]
+wee = 1.5; wei = -3.25
+wie = 3.5; wii = -2.5
+W = [[wee,   wei],
+    [wie,   wii]]
     
 for pre in pops:
     for post in pops:
@@ -77,11 +70,11 @@ for pre in pops:
                                               weight=weight,
                                               random_connectivity=RandomConnectivity(probability=1)))
                                
-                        
+'''
 net.inputs.append(Input(id='modulation',
                         input_source=input_source0.id,
                         population=pE.id,
-                        percentage=100))
+                        percentage=100))'''
 
 print(net)
 print(net.to_json())
@@ -93,7 +86,7 @@ new_file = net.to_json_file('%s.json'%net.id)
 
 sim = Simulation(id='Sim%s'%net.id,
                  network=new_file,
-                 duration='200',
+                 duration='1000',
                  dt='0.025',
                  recordTraces={'all':'*'},
                  recordRates={'all':'*'})
