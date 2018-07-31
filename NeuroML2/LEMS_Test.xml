@@ -21,13 +21,13 @@
         <population id="l23ePop" component="L23_E" size="1" />
         <population id="l23iPop" component="L23_I" size="1" />
         
-        <population id="l5ePop" component="L5_E" size="1" />
-        <population id="l5iPop" component="L5_I" size="1" />
+        <population id="l56ePop" component="L56_E" size="1" />
+        <population id="l56iPop" component="L56_I" size="1" />
         
         <explicitInput target="l23ePop[0]" input="noiseL23_E" destination="synapses"/>
         <explicitInput target="l23iPop[0]" input="noiseL23_I" destination="synapses"/>
-        <explicitInput target="l5ePop[0]" input="noiseL5_E" destination="synapses"/>
-        <explicitInput target="l5iPop[0]" input="noiseL5_I" destination="synapses"/>
+        <explicitInput target="l56ePop[0]" input="noiseL56_E" destination="synapses"/>
+        <explicitInput target="l56iPop[0]" input="noiseL56_I" destination="synapses"/>
         
     </network>
 
@@ -39,8 +39,8 @@
         <Display id="d3" title="Rates" timeScale="1s" xmin="-20" xmax="320" ymin="-1" ymax="11">
             <Line id="L23 E" quantity="l23ePop[0]/r" scale="1Hz" color="#0000ff" timeScale="1ms" />
             <Line id="L23 I" quantity="l23iPop[0]/r" scale="1Hz" color="#ff0000" timeScale="1ms" />
-            <Line id="L5 E" quantity="l5ePop[0]/r" scale="1Hz" color="#00ffff" timeScale="1ms" />
-            <Line id="L5 I" quantity="l5iPop[0]/r" scale="1Hz" color="#ff00ff" timeScale="1ms" />
+            <Line id="L56 E" quantity="l56ePop[0]/r" scale="1Hz" color="#00ffff" timeScale="1ms" />
+            <Line id="L56 I" quantity="l56iPop[0]/r" scale="1Hz" color="#ff00ff" timeScale="1ms" />
         </Display>
         
         

@@ -6,16 +6,16 @@
     
     <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="5Hz"/>
     
-    <mejiasEtAl2016Cell id="L5_E" tau="30ms" r0="1.66Hz"/>
-    <mejiasEtAl2016Cell id="L5_I" tau="75ms" r0="1.33Hz"/>
+    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="5Hz"/>
+    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="5Hz"/>
     
     <pulseGenerator id="baselineE" delay="10ms" duration="30ms" amplitude="-0.5nA" />
 
     <noisyCurrentSource id="noiseL23_E" delay="50ms" duration="40ms" mean="0 nA" stdev="3 nA" noiseDt="0.01ms"/>
     <noisyCurrentSource id="noiseL23_I" delay="100ms" duration="40ms" mean="0 nA" stdev="4 nA" noiseDt="0.01ms"/>
     
-    <noisyCurrentSource id="noiseL5_E" delay="150ms" duration="40ms" mean="0 nA" stdev="3 nA" noiseDt="0.01ms"/>
-    <noisyCurrentSource id="noiseL5_I" delay="200ms" duration="40ms" mean="0 nA" stdev="4 nA" noiseDt="0.01ms"/>
+    <noisyCurrentSource id="noiseL56_E" delay="150ms" duration="40ms" mean="0 nA" stdev="3 nA" noiseDt="0.01ms"/>
+    <noisyCurrentSource id="noiseL56_I" delay="200ms" duration="40ms" mean="0 nA" stdev="4 nA" noiseDt="0.01ms"/>
     
     
     <!--Dummy synapse which emits no current. Used as presynaptic endpoint for analog synaptic connection.-->
