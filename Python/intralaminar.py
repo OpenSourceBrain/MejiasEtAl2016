@@ -3,32 +3,10 @@ import numpy as np
 import pickle
 from scipy import signal
 import matplotlib.pylab as plt
-import math
 
 from calculate_rate import calculate_rate
+from helper_functions import down_sampled_periodogram
 
-def down_sampled_periodogram(re, fft, fs, win, transient, dt):
-
-    # discard the first 25000 points
-    restate = re[int(round((transient + dt)/dt)) - 1:]
-
-    # perform periodogram on restate
-    sq_data = np.squeeze(restate)
-    fxx2, pxx2 = signal.periodogram(sq_data, fs=fs, window=win[25000:], nfft=fft, detrend=False, return_onesided=True,
-                                    scaling='density')
-
-    # Compress the data by sampling every 5 points.
-    bin_size = 5
-    # We start by calculating the number of index needed to in order to sample every 5 points and select only those
-    remaining = fxx2.shape[0] - (fxx2.shape[0] % bin_size)
-    fxx2 = fxx2[0:remaining]
-    pxx2 = pxx2[0:remaining]
-    # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
-    # Note: the output needs to be an np.array in order to be able to use np.where afterwards
-    pxx_bin = np.asarray([np.mean(pxx2[i:i+bin_size]) for i in range(0, len(pxx2), bin_size)])
-    fxx_bin = np.asarray([np.mean(fxx2[i:i+bin_size]) for i in range(0, len(fxx2), bin_size)])
-
-    return pxx_bin, fxx_bin
 
 def matlab_smooth(data, window_size):
     # asummes the data is one dimensional
@@ -45,6 +23,7 @@ def matlab_smooth(data, window_size):
     cend = cend[-1::-2] / (range(window_size - 2, 0, -2))
     c = np.concatenate([cbegin, c[window_size-1:], cend])
     return c
+
 
 def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
     # load pickle with all the results
@@ -63,16 +42,9 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
 
             psd_dic[Iext][nrun] = {}
             restate = simulation[Iext][nrun]['uu']
-            N = restate.shape[0]
-            win = signal.get_window('boxcar', N)
-            # Calculate fft (number of freq. points at which the psd is estimated)
-            # Calculate the max power of 2 and find the maximum value
-            pow2 = int(round(math.log(N, 2)))
-            fft = max(256, 2 ** pow2)
 
             # perform periodogram on restate.
-            pxx_bin, fxx_bin = down_sampled_periodogram(restate, fft, fs, win,
-                                                        transient, dt)
+            pxx_bin, fxx_bin = down_sampled_periodogram(restate, transient, dt)
             # smooth the data
             # Note: The matlab code transforms an even-window size into an odd number by subtracting by one.
             # So for simplicity I already define the window size as an odd number
