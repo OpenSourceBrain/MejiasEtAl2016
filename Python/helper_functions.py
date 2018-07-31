@@ -36,7 +36,7 @@ def debug_neuroml(analysis, layer, t, dt, tstop, J, tau, sig, Iexts, nruns, nois
     print('Done debugging!')
 
 
-def down_sampled_periodogram(re, transient, dt):
+def calculate_periodogram(re, transient, dt):
     # calculate fft and sampling frequency for the peridogram
     fs = 1 / dt
     N = re.shape[0]
@@ -54,16 +54,4 @@ def down_sampled_periodogram(re, transient, dt):
     fxx2, pxx2 = signal.periodogram(sq_data, fs=fs, window=win[int(round((transient + dt)/dt)) - 1:],
                                     nfft=fft, detrend=False, return_onesided=True,
                                     scaling='density')
-
-    # Compress the data by sampling every 5 points.
-    bin_size = 5
-    # We start by calculating the number of index needed to in order to sample every 5 points and select only those
-    remaining = fxx2.shape[0] - (fxx2.shape[0] % bin_size)
-    fxx2 = fxx2[0:remaining]
-    pxx2 = pxx2[0:remaining]
-    # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
-    # Note: the output needs to be an np.array in order to be able to use np.where afterwards
-    pxx_bin = np.asarray([np.mean(pxx2[i:i+bin_size]) for i in range(0, len(pxx2), bin_size)])
-    fxx_bin = np.asarray([np.mean(fxx2[i:i+bin_size]) for i in range(0, len(fxx2), bin_size)])
-
-    return pxx_bin, fxx_bin
+    return pxx2, fxx2

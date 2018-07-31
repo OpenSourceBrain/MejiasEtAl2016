@@ -5,7 +5,7 @@ from scipy import signal
 import matplotlib.pylab as plt
 
 from calculate_rate import calculate_rate
-from helper_functions import down_sampled_periodogram
+from helper_functions import calculate_periodogram
 
 
 def matlab_smooth(data, window_size):
@@ -44,7 +44,20 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
             restate = simulation[Iext][nrun]['uu']
 
             # perform periodogram on restate.
-            pxx_bin, fxx_bin = down_sampled_periodogram(restate, transient, dt)
+            pxx2, fxx2 = calculate_periodogram(restate, transient, dt)
+
+            # Compress the data by sampling every 5 points.
+            bin_size = 5
+            # We start by calculating the number of index needed to in order to sample every 5 points and select only those
+            remaining = fxx2.shape[0] - (fxx2.shape[0] % bin_size)
+            fxx2 = fxx2[0:remaining]
+            pxx2 = pxx2[0:remaining]
+            # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
+            # Note: the output needs to be an np.array in order to be able to use np.where afterwards
+            pxx_bin = np.asarray([np.mean(pxx2[i:i+bin_size]) for i in range(0, len(pxx2), bin_size)])
+            fxx_bin = np.asarray([np.mean(fxx2[i:i+bin_size]) for i in range(0, len(fxx2), bin_size)])
+
+
             # smooth the data
             # Note: The matlab code transforms an even-window size into an odd number by subtracting by one.
             # So for simplicity I already define the window size as an odd number
