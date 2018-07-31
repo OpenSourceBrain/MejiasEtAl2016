@@ -9,6 +9,7 @@ import matplotlib.pylab as plt
 np.random.RandomState(seed=42)
 
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
+from interlaminar import interlaminar_simulation, interlaminar_analysis
 from helper_functions import debug_neuroml
 
 parser = argparse.ArgumentParser(description='Parameters for the simulation')
@@ -19,6 +20,10 @@ parser.add_argument('-noise',
 parser.add_argument('-analysis',
                     type=str,
                     dest='analysis',
+                    help='Specifiy type of analysis to be used')
+parser.add_argument('-debug',
+                    dest='debug',
+                    action='store_true',
                     help='Specifiy type of analysis to be used')
 
 parser.add_argument('-nogui',
@@ -102,6 +107,45 @@ if args.analysis == 'intralaminar':
                         J, tau, sig, args.noise)
     intralaminar_analysis(Iexts, nruns, layer, dt, transient)
     intralaminar_plt(layer)
+
+if args.analysis == 'interlaminar':
+    # Define dt and the trial length
+    dt = 2e-4
+    tstop = 6000
+    transient = 10
+    # Note: np.arange exlcudes the stop so we add dt to include the last value
+    t = np.arange(dt+transient, tstop + dt, dt)
+
+    # define interlaminar synaptic coupling strenghts
+    J_2e = 1; J_2i = 0
+    J_5e = 0; J_5i = 0.75
+
+    J = np.array([[wee, wei, J_5e,   0],
+                  [wie, wii, J_5i,   0],
+                  [J_2e, 0,   wee, wei],
+                  [J_2i, 0,   wie, wii]])
+
+    Iext = np.array([[6], [0], [8], [0]])
+
+    min_freq = 4
+
+    if args.debug:
+        # for testing purposes load the matfile from the simulation form matlab
+        from scipy.io import loadmat
+        import pickle
+        mat = '../Matlab/Fig3/rate.mat'
+        rate = loadmat(mat)
+        # save as a pickle to keep consistency with the non debug version
+        picklename = os.path.join(args.analysis, 'simulation.pckl')
+        with open(picklename, 'wb') as filename:
+            pickle.dump(rate['rate'], filename)
+        print('Done Simulation!')
+    else:
+        # check if file with simulation exists, if not calculate the simulation
+        if not os.path.isfile('interlaminar/simulation.pckl'):
+            interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, args.noise)
+
+    interlaminar_analysis(args.analysis, transient, dt, t, min_freq)
 
 
 if not args.nogui:
