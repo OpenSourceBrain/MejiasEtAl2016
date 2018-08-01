@@ -9,7 +9,7 @@ from helper_functions import calculate_periodogram
 
 
 def matlab_smooth(data, window_size):
-    # asummes the data is one dimensional
+    # assumes the data is one dimensional
     n = data.shape[0]
     c = signal.lfilter(np.ones(window_size)/window_size, 1, data)
     idx_begin = range(0, window_size - 2)
