@@ -19,25 +19,32 @@ print centres
 ################################################################################
 ###   Build a new network
 
-net = Network(id='net0')
+net = Network(id='MejiasNetwork')
 net.notes = "...."
 net.parameters = {}
 
-cell = Cell(id='testcell', pynn_cell='IF_cond_alpha')
-cell.parameters = { "tau_refrac":5, "i_offset":0 }
-net.cells.append(cell)
+l23ecell = Cell(id='L23_E', lems_source_file='Prototypes.xml')
+l23icell = Cell(id='L23_I', lems_source_file='RateBased.xml') #  hack to include this file too.  
 
-net.synapses.append(Synapse(id='ampa', 
-                            pynn_receptor_type='excitatory', 
-                            pynn_synapse_type='cond_alpha', 
-                            parameters={'e_rev':0, 'tau_syn':2}))
+net.cells.append(l23ecell)
+net.cells.append(l23icell)
+
+
+net.synapses.append(Synapse(id='rs', 
+                            lems_source_file='NoisyCurrentSource.xml')) #  hack to include this file too.  
                             
-net.parameters['stim_amp'] = '850pA'
-input_source = InputSource(id='iclamp_0', 
-                           neuroml2_input='PulseGenerator', 
-                           parameters={'amplitude':'stim_amp', 'delay':'100ms', 'duration':'500ms'})
+net.parameters['stim_amp'] = '1nA'
 
-net.input_sources.append(input_source)
+input_source_0 = InputSource(id='iclamp_0', 
+                           neuroml2_input='PulseGenerator', 
+                           parameters={'amplitude':'stim_amp', 'delay':'50ms', 'duration':'400ms'})
+                           
+input_source_1 = InputSource(id='iclamp_1', 
+                           neuroml2_input='PulseGenerator', 
+                           parameters={'amplitude':'stim_amp', 'delay':'550ms', 'duration':'400ms'})
+
+net.input_sources.append(input_source_0)
+net.input_sources.append(input_source_1)
 
 
 
@@ -50,7 +57,7 @@ for l in f:
     tgt = w[0]
     src = w[1]
     if tgt!='TARGET':
-        if not tgt in all_tgts:
+        if not tgt in all_tgts: #and 'V' in tgt and 'V' in src:
             all_tgts.append(tgt)
         
 print all_tgts
@@ -82,7 +89,7 @@ for l in f:
 
                 p0 = Population(id=used_ids[pop_id], 
                                 size=1, 
-                                component=cell.id, 
+                                component=l23ecell.id, 
                                 properties={'color':'%s %s %s'%(random.random(),random.random(),random.random()),
                                             'radius':scale},
                                 random_layout = RandomLayout(region=r.id))
@@ -94,35 +101,38 @@ for l in f:
         ################################################################################
         ###   Add a projection
 
-        if fln>0.0:
+        if fln>0:
             net.projections.append(Projection(id='proj_%s_%s'%(used_ids[src],used_ids[tgt]),
                                               presynaptic=used_ids[src], 
                                               postsynaptic=used_ids[tgt],
-                                              synapse='ampa',
+                                              synapse='rs',
+                                              type='continuousProjection',
                                               weight=fln,
                                               random_connectivity=RandomConnectivity(probability=1)))
 
 
 
 stim_pops = ['V1', '_8m']
+stim_ids = [input_source_0.id, input_source_1.id]
 
-for pop in stim_pops:
+for i in range(len(stim_pops)):
+    pop = stim_pops[i]
+    stim = stim_ids[i]
     net.inputs.append(Input(id='Stim_%s'%pop,
-                            input_source=input_source.id,
+                            input_source=stim,
                             population=pop,
                             percentage=100))
 
 print(net)
-net.id = 'TestNetwork'
 
 print(net.to_json())
-new_file = net.to_json_file('Example1_%s.json'%net.id)
+new_file = net.to_json_file('%s.json'%net.id)
 
-sim = Simulation(id='SimExample',
+sim = Simulation(id='Sim%s'%net.id,
                  network=new_file,
-                 duration='700',
+                 duration='1000',
                  dt='0.025',
-                 recordTraces={'all':'*'})
+                 recordRates={'all':'*'})
 
 
 ################################################################################

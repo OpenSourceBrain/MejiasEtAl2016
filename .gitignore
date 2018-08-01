@@ -19,4 +19,8 @@ Python/debug_neuroML
 Python/intralaminar
 Python/interlaminar
 
-
+NeuroML2/LEMS_SimExample.xml
+NeuroML2/LEMS_SimMejiasNetwork.xml
+NeuroML2/MejiasNetwork.net.nml
+NeuroML2/TestNetwork.net.nml
+NeuroML2/*.png
