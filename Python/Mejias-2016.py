@@ -9,7 +9,7 @@ import matplotlib.pylab as plt
 np.random.RandomState(seed=42)
 
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
-from interlaminar import interlaminar_simulation, interlaminar_analysis
+from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces
 from helper_functions import debug_neuroml
 
 parser = argparse.ArgumentParser(description='Parameters for the simulation')
@@ -127,7 +127,9 @@ if args.analysis == 'interlaminar':
 
     Iext = np.array([[6], [0], [8], [0]])
 
-    min_freq = 4
+    # frequencies of interest
+    min_freq5 = 4 # alpha range
+    min_freq2 = 30 # gama range
 
     if args.debug:
         # for testing purposes load the matfile from the simulation form matlab
@@ -145,8 +147,8 @@ if args.analysis == 'interlaminar':
         if not os.path.isfile('interlaminar/simulation.pckl'):
             interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, args.noise)
 
-    interlaminar_analysis(args.analysis, transient, dt, t, min_freq)
-
+    segment5, segindex = interlaminar_activity_analysis(args.analysis, transient, dt, t, min_freq5)
+    plot_activity_traces(dt, segment5, segindex)
 
 if not args.nogui:
     plt.show()
