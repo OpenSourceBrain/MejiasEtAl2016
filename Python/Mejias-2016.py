@@ -4,12 +4,14 @@ import os
 import numpy as np
 import argparse
 import matplotlib.pylab as plt
+import pickle
 
 # set random set
 np.random.RandomState(seed=42)
 
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
-from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces
+from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
+                         interlaminar_analysis_periodeogram
 from helper_functions import debug_neuroml
 
 parser = argparse.ArgumentParser(description='Parameters for the simulation')
@@ -134,7 +136,6 @@ if args.analysis == 'interlaminar':
     if args.debug:
         # for testing purposes load the matfile from the simulation form matlab
         from scipy.io import loadmat
-        import pickle
         mat = '../Matlab/Fig3/rate.mat'
         rate = loadmat(mat)
         # save as a pickle to keep consistency with the non debug version
@@ -144,11 +145,21 @@ if args.analysis == 'interlaminar':
         print('Done Simulation!')
     else:
         # check if file with simulation exists, if not calculate the simulation
+        # TODO: include the option to return rate
         if not os.path.isfile('interlaminar/simulation.pckl'):
             interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, args.noise)
+        else:
+            # load pickle file with results
+            picklename = os.path.join(args.analysis, 'simulation.pckl')
+            with open(picklename, 'rb') as filename:
+                rate = pickle.load(filename)
 
-    segment5, segindex = interlaminar_activity_analysis(args.analysis, transient, dt, t, min_freq5)
+    # Analyse and Plot traces of activity in layer 5/6
+    segment5, segindex, numberofzones = interlaminar_activity_analysis(rate, transient, dt, t, min_freq5)
     plot_activity_traces(dt, segment5, segindex)
+    # Analyse and Plot periodogram of layer L2/3
+    interlaminar_analysis_periodeogram(rate, transient, dt, min_freq2, numberofzones)
+
 
 if not args.nogui:
     plt.show()

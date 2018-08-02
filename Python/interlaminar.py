@@ -53,11 +53,8 @@ def my_pretransformations(x, window, noverlap, fs):
     t = coloffsets + (window.shape[0]/2)/ fs
     return xin, t
 
-def interlaminar_activity_analysis(analysis, transient, dt, t, min_freq5):
-    # load data
-    picklename = os.path.join(analysis, 'simulation.pckl')
-    with open(picklename, 'rb') as filename:
-        rate = pickle.load(filename)
+
+def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
 
     # Note: This analysis selects only the excitatory populations from L2/3 and L5/6
     x_2 = rate[0, int(round((transient + dt)/dt)) - 1:]
@@ -105,7 +102,7 @@ def interlaminar_activity_analysis(analysis, transient, dt, t, min_freq5):
     if seglength/2 >= tzi_bottom * dt:
         print('Problems with segment window!')
 
-    # segment semi-lenght in indices
+    # segment semi-length in indices
     segindex = int(round(0.5 * seglength/dt))
     # Note: The + 2 corrects for indexing in python
     segind1 = int(round(aploc[0] - segindex) + 2)
@@ -117,9 +114,63 @@ def interlaminar_activity_analysis(analysis, transient, dt, t, min_freq5):
         if alpha_peaks[i] >= 0:
             segment5[:, i] = zones5[segind1:segind2 + 1, i]
             segment2[:, i] = zones2[segind1:segind2 + 1, i]
-    return segment5, segindex
+    return segment5, segindex, numberofzones
 
-    ###
+def interlaminar_analysis_periodeogram(rate, transient, dt, min_freq2, numberofzones):
+    # TODO: still in construction
+    # calculate the spectogram for L2/3 and average the results over the segments
+    pxx2, fxx2 = calculate_periodogram(rate[0, :], transient, dt)
+    f_peakgamma = find_peak_frequency(fxx2, pxx2, min_freq2)
+    print('Average peak frequency on the gamma range: %.02f Hz' %f_peakgamma)
+    timewindow = 7/f_peakgamma
+    window_len = int(round(timewindow/dt))
+    window = signal.get_window('hamming', window_len)
+    noverlap = int(round(0.95 * window_len))
+
+
+    # try loading mat file with the correct input to the spectogram
+    from scipy.io import loadmat
+    matfile = '../Matlab/fig3/segment2.mat'
+    mat = loadmat(matfile)
+    segment2 = mat['segment2']
+
+    # calculate nfft
+    lowest_frequency = 25; highest_frequency = 45; step_frequency = .25
+    freq_displayed = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
+    fs = 1/dt
+
+    xin, t = my_pretransformations(segment2[:, 0], window, noverlap, fs)
+    data = np.multiply(np.expand_dims(window, axis=1), xin)
+    # TODO: Try to use fft instead of the goertzel algorithm to calculate the fft
+    Xx = np.zeros((freq_displayed.shape[0], xin.shape[1]), dtype=complex)
+    for i in range(xin.shape[1]):
+        Xx[:, i] = fftpack.fft(data[:, i], freq_displayed.shape[0])
+
+
+    nfft = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
+
+    # obtain spectograms
+    for i in range(numberofzones):
+        # first one is the one working the best
+        ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, window=window, noverlap=noverlap, return_onesided=True,
+                                         detrend=False, scaling='density', mode='psd')
+        # try to get only the frequencies between 25 and 45
+        ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, nfft=nfft, return_onesided=True, detrend=False, scaling='density',
+                                         mode='psd')
+        ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, return_onesided=True, detrend=False,
+                                         scaling='density', mode='psd')
+
+    print('Done Analysis!')
+
+
+def my_spectrogram(x, window, noverlap, f, fs):
+    # Process the frequency-specific arguments
+    nfft = f
+
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return array[idx], idx
 
 def plot_activity_traces(dt, segment5, segindex):
     # calculate the peak-centered alpha wave by averaging
