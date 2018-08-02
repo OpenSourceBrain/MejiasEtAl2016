@@ -105,13 +105,16 @@ def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
     # segment semi-length in indices
     segindex = int(round(0.5 * seglength/dt))
     # Note: The + 2 corrects for indexing in python
-    segind1 = int(round(aploc[0] - segindex) + 2)
-    segind2 = int(round(aploc[0] + segindex) + 2)
     # Note: + 1 correct for inclusive range in matlab
-    segment2 = np.zeros((segind2 - segind1 + 1, numberofzones))
-    segment5 = np.zeros((segind2 - segind1 + 1, numberofzones))
+    # Calculate the size of the resulting matrix
+    segind01 = int(round(aploc[0] - segindex) + 2)
+    segind02 = int(round(aploc[0] + segindex) + 2)
+    segment2 = np.zeros((segind02 - segind01 + 1, numberofzones))
+    segment5 = np.zeros((segind02 - segind01 + 1, numberofzones))
     for i in range(numberofzones):
-        if alpha_peaks[i] >= 0:
+        segind1 = int(round(aploc[i] - segindex) + 2)
+        segind2 = int(round(aploc[i] + segindex) + 2)
+        if alpha_peaks[i] >= 0.:
             segment5[:, i] = zones5[segind1:segind2 + 1, i]
             segment2[:, i] = zones2[segind1:segind2 + 1, i]
     return segment5, segindex, numberofzones
