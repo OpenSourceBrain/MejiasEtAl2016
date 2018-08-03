@@ -142,32 +142,25 @@ if args.analysis == 'interlaminar':
     min_freq5 = 4 # alpha range
     min_freq2 = 30 # gama range
 
-    if args.debug:
-        # for testing purposes load the matfile from the simulation form matlab
-        from scipy.io import loadmat
-        mat = '../Matlab/Fig3/rate.mat'
-        rate = loadmat(mat)
-        # save as a pickle to keep consistency with the non debug version
-        picklename = os.path.join(args.analysis, 'simulation.pckl')
-        with open(picklename, 'wb') as filename:
-            pickle.dump(rate['rate'], filename)
-        print('Done Simulation!')
+    # check if file with simulation exists, if not calculate the simulation
+    if not os.path.isfile('interlaminar/simulation.pckl'):
+        rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
     else:
-        # check if file with simulation exists, if not calculate the simulation
-        # TODO: include the option to return rate
-        if not os.path.isfile('interlaminar/simulation.pckl'):
-            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
-        else:
-            # load pickle file with results
-            picklename = os.path.join(args.analysis, 'simulation.pckl')
-            with open(picklename, 'rb') as filename:
-                rate = pickle.load(filename)
+        # load pickle file with results
+        picklename = os.path.join(args.analysis, 'simulation.pckl')
+        with open(picklename, 'rb') as filename:
+            rate = pickle.load(filename)
 
     # Analyse and Plot traces of activity in layer 5/6
     segment5, segment2, segindex, numberofzones = interlaminar_activity_analysis(rate, transient, dt, t, min_freq5)
     plot_activity_traces(dt, segment5, segindex)
-    # Analyse and Plot periodogram of layer L2/3
-    interlaminar_analysis_periodeogram(rate, transient, dt, min_freq2, numberofzones)
+
+    # Analyse and Plot spectrogram of layer L2/3
+    # For now, ignore this function as I cannot generate the correct output
+    # ff, tt, Sxx = interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones)
+    # plot_spectrogram(ff, tt, Sxx)
+
+
 
 
 if not args.nogui:
