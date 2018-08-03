@@ -1,13 +1,13 @@
 <Lems>
 
     
-    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="5Hz"/>
+    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="5Hz" stdev="2nA"/>
     <!--<wilsonCowanCell id="L23_Ew" tau="1ms" r0="0.1Hz" z="0nA" />-->
     
-    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="5Hz"/>
+    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="5Hz" stdev="2nA"/>
     
-    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="5Hz"/>
-    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="5Hz"/>
+    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="5Hz" stdev="2nA"/>
+    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="5Hz" stdev="2nA"/>
     
     <pulseGenerator id="baselineE" delay="10ms" duration="30ms" amplitude="-0.5nA" />
 

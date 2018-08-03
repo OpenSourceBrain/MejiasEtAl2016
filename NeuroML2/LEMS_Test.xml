@@ -24,11 +24,6 @@
         <population id="l56ePop" component="L56_E" size="1" />
         <population id="l56iPop" component="L56_I" size="1" />
         
-        <explicitInput target="l23ePop[0]" input="noiseL23_E" destination="synapses"/>
-        <explicitInput target="l23iPop[0]" input="noiseL23_I" destination="synapses"/>
-        <explicitInput target="l56ePop[0]" input="noiseL56_E" destination="synapses"/>
-        <explicitInput target="l56iPop[0]" input="noiseL56_I" destination="synapses"/>
-        
     </network>
 
     <!-- End of NeuroML2 content -->

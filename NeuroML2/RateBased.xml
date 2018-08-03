@@ -28,6 +28,8 @@
 
         <Parameter name="tau" dimension="time"/>
         <Parameter name="r0" dimension="per_time"/>
+                
+        <Parameter name="stdev" dimension="current" description="Standard deviation of current"/>
 
         <Attachments name="synapses" type="basePointCurrent"/>
 
@@ -42,9 +44,14 @@
 
             <StateVariable name="r" dimension="per_time" exposure="r" description="Rate..."/>
             <StateVariable name="v" dimension="voltage" exposure="v"/>
+            
+            <StateVariable name="U" dimension="none"/>
+            <StateVariable name="V" dimension="none"/>
+            <StateVariable name="randn" dimension="none"/>
+            <StateVariable name="i"  dimension="current"/>
 
             <DerivedVariable name="iSyn" dimension="current" exposure="iSyn" select="synapses[*]/i" reduce="add" />
-            <DerivedVariable name="x" dimension="none" value="(iSyn)/NAMP_SCALE"/>
+            <DerivedVariable name="x" dimension="none" value="(iSyn + i)/NAMP_SCALE"/>
 
             <ConditionalDerivedVariable name="phi" dimension="none" exposure="phi">
             	<Case condition="x .eq. 0" value="1"/>
@@ -63,6 +70,15 @@
             <!-- On condition is not need on the model but NeuroML requires its definition -->
             <OnCondition test="r .lt. 0">
                 <EventOut port="spike"/>
+            </OnCondition>
+            
+            <OnCondition test="t .geq. 0">
+                <StateAssignment variable="U" value="random(1)"/>
+                <StateAssignment variable="V" value="random(1)"/>
+                <StateAssignment variable="randn" value="sqrt(-2*log(U))*cos(2*3.14159265359*V)"/>
+
+                <StateAssignment variable="i" value="stdev*randn"/>
+               
             </OnCondition>
 
         </Dynamics>
