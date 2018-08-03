@@ -58,6 +58,8 @@ if args.analysis == 'debug_neuroML':
     dt = 2e-4
     tstop = 1 # ms
     t = np.linspace(0, tstop, tstop/dt)
+    # speciy number of areas that communicate with each other
+    Nareas = 1
 
     # define interlaminar synaptic coupling strenghts
     J_2e = 0; J_2i = 0
@@ -69,12 +71,13 @@ if args.analysis == 'debug_neuroML':
                   [J_2i, 0,   wie, wii]])
 
     Iexts = [0]
+    Ibgk = np.zeros((J.shape[0], 1))
     nruns = [1]
     # For testing purpose test only L2_3 layer
     layer = 'L2_3'
 
     debug_neuroml(args.analysis, layer, t, dt, tstop, J,
-                  tau, sig, Iexts, nruns, args.noise, args.nogui)
+                  tau, sig, Iexts, Ibgk, nruns, args.noise, args.nogui, Nareas)
 
 if args.analysis == 'intralaminar':
     # Define dt and the trial length
@@ -82,6 +85,8 @@ if args.analysis == 'intralaminar':
     tstop = 25 # ms
     t = np.linspace(0, tstop, tstop/dt)
     transient = 5
+    # speciy number of areas that communicate with each other
+    Nareas = 1
 
     # define interlaminar synaptic coupling strenghts
     J_2e = 0; J_2i = 0
@@ -98,6 +103,7 @@ if args.analysis == 'intralaminar':
     Imax = 6
     # Note: the range function does not include the end
     Iexts = range(Imin, Imax + Istep, Istep)
+    Ibgk = np.zeros((J.shape[0], 1))
     nruns = 10
 
     # Note: Because of the way the way intralaminar_simulation is defined only the results for L2/3
@@ -105,8 +111,8 @@ if args.analysis == 'intralaminar':
     layer = 'L2_3'
     # check if simulation file already exists, if not run the simulation
     if not os.path.isfile('intralaminar/L2_3_simulation.pckl'):
-        intralaminar_simulation(args.analysis, layer, Iexts, nruns, t, dt, tstop,
-                        J, tau, sig, args.noise)
+        intralaminar_simulation(args.analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
+                        J, tau, sig, args.noise, Nareas)
     intralaminar_analysis(Iexts, nruns, layer, dt, transient)
     intralaminar_plt(layer)
 
@@ -115,6 +121,8 @@ if args.analysis == 'interlaminar':
     dt = 2e-4
     tstop = 6000
     transient = 10
+    # speciy number of areas that communicate with each other
+    Nareas = 1
     # Note: np.arange exlcudes the stop so we add dt to include the last value
     t = np.arange(dt+transient, tstop + dt, dt)
 
@@ -128,6 +136,7 @@ if args.analysis == 'interlaminar':
                   [J_2i, 0,   wie, wii]])
 
     Iext = np.array([[6], [0], [8], [0]])
+    Ibgk = np.zeros((J.shape[0], 1))
 
     # frequencies of interest
     min_freq5 = 4 # alpha range
@@ -147,7 +156,7 @@ if args.analysis == 'interlaminar':
         # check if file with simulation exists, if not calculate the simulation
         # TODO: include the option to return rate
         if not os.path.isfile('interlaminar/simulation.pckl'):
-            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, args.noise)
+            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
         else:
             # load pickle file with results
             picklename = os.path.join(args.analysis, 'simulation.pckl')

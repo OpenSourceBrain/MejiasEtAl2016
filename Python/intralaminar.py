@@ -139,8 +139,8 @@ def intralaminar_plt(layer):
     plt.legend()
 
 
-def intralaminar_simulation(analysis, layer, Iexts, nruns, t, dt, tstop,
-                            J, tau, sig, noise):
+def intralaminar_simulation(analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
+                            J, tau, sig, noise, Nareas):
     simulation = {}
     for Iext in Iexts:
         simulation[Iext] = {}
@@ -149,7 +149,7 @@ def intralaminar_simulation(analysis, layer, Iexts, nruns, t, dt, tstop,
         for nrun in range(nruns):
 
             simulation[Iext][nrun] = {}
-            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext_a, noise)
+            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext_a, Ibgk, noise, Nareas)
 
             # Note: Save only the excitatory and inhibitory signal from L2/3
             simulation[Iext][nrun]['uu'] = np.expand_dims(rate[0, :], axis=1)

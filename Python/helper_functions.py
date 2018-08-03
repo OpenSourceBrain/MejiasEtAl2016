@@ -7,18 +7,18 @@ import math
 from calculate_rate import calculate_rate
 
 
-def debug_neuroml(analysis, layer, t, dt, tstop, J, tau, sig, Iexts, nruns, noise, nogui):
+def debug_neuroml(analysis, layer, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, noise, nogui, Nareas):
     # calculate the firing rate
     for i in Iexts:
         # inject current only on excitatory layer
         Iext = np.array([[i], [0], [i], [0]])
 
         for nrun in nruns:
-            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, noise)
+            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
 
             # select only the excitatory and inhibitory layers for L2/3
-            uu_p = np.expand_dims(rate[0, :], axis=1)
-            vv_p = np.expand_dims(rate[1, :], axis=1)
+            uu_p = np.expand_dims(rate[0, :, 0], axis=1)
+            vv_p = np.expand_dims(rate[1, :, 0], axis=1)
             # Plot the layers time course
             plt.figure()
             plt.plot(uu_p, label='excitatory', color='r')

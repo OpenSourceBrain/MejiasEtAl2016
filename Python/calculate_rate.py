@@ -22,30 +22,33 @@ def transduction_function(x):
     return x_transducted
 
 
-def calculate_rate(t, dt, tstop, J, tau, sig, Iext, noise):
+def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
 
-    rate = np.zeros((4, int(round(tstop/dt)) + 1))
+    rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
     tstep2 = ((dt * sig * sig) / tau) ** .5
     mean_xi = 0
     std_xi = noise
-    xi = np.random.normal(mean_xi, std_xi, (4, int(round(tstop/dt)) + 1))
+    xi = np.random.normal(mean_xi, std_xi, (4, int(round(tstop/dt)) + 1, Nareas))
 
     # Initial rate values
     # Note: the 5 ensures that you have between 0 and 10 spikes/s
-    rate[:, 0] = 5 * (1 + np.tanh(2 * xi[:, 0]))
+    rate[:, 0, :] = 5 * (1 + np.tanh(2 * xi[:, 0, :]))
 
     for dt_idx in range(len(t)):
+        # iterate over different areas. Only true for the interareal simulation
+        for area in range(Nareas):
+            # calculate total input current
+            total_input = Ibgk + Iext + np.expand_dims(np.dot(J, rate[:, dt_idx, area]), axis=1)
+            # Do some transformations if analysis type is interareal:
 
-        # calculate total input current
-        total_input = Iext + np.expand_dims(np.dot(J, rate[:, dt_idx]), axis=1)
-        # calculate input after the transfer function
-        transfer_input = transduction_function(total_input)
-        delta_rate = dt / tau * (- np.expand_dims(rate[:, dt_idx], axis=1) + transfer_input) + \
-                                 tstep2 * np.expand_dims(xi[:, dt_idx], axis=1)
-        rate[:, dt_idx + 1] = np.squeeze(np.expand_dims(rate[:, dt_idx], axis=1) + delta_rate)
+            # calculate input after the transfer function
+            transfer_input = transduction_function(total_input)
+            delta_rate = dt / tau * (- np.expand_dims(rate[:, dt_idx, area], axis=1) + transfer_input) + \
+                                     tstep2 * np.expand_dims(xi[:, dt_idx, area], axis=1)
+            rate[:, dt_idx + 1, area] = np.squeeze(np.expand_dims(rate[:, dt_idx, area], axis=1) + delta_rate)
 
     # exclude the initial point that corresponds to the initial conditions
-    rate = rate[:, 1:]
+    rate = rate[:, 1:, :]
 
     return rate
