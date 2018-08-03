@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pickle
 from scipy import signal, fftpack
+import math
 import matplotlib.pylab as plt
 
 from calculate_rate import calculate_rate
@@ -14,6 +15,7 @@ def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext_a, noise):
     with open(picklename, 'wb') as filename:
         pickle.dump(rate, filename)
     print('Done Simulation!')
+    return rate
 
 
 def find_peak_frequency(fxx,pxx, min_freq):
@@ -72,7 +74,6 @@ def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
     # simulated LFP
     re5bp = -signal.filtfilt(bf, af, x_5, padlen=3*(max(len(af), len(bf)) - 1))
 
-
     # Locate N well spaced peaks along the trial
     tzone = 4
     # length of the tzone in indices
@@ -117,9 +118,10 @@ def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
         if alpha_peaks[i] >= 0.:
             segment5[:, i] = zones5[segind1:segind2 + 1, i]
             segment2[:, i] = zones2[segind1:segind2 + 1, i]
-    return segment5, segindex, numberofzones
+    return segment5, segment2, segindex, numberofzones
 
-def interlaminar_analysis_periodeogram(rate, transient, dt, min_freq2, numberofzones):
+
+def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones):
     # TODO: still in construction
     # calculate the spectogram for L2/3 and average the results over the segments
     pxx2, fxx2 = calculate_periodogram(rate[0, :], transient, dt)
@@ -182,8 +184,19 @@ def plot_activity_traces(dt, segment5, segindex):
     plt.figure()
     # plot the first 100 elements from segment5
     grey_rgb = (.7, .7, .7)
+    plt.figure()
     plt.plot(alphatime, segment5[:, 0:100], color=grey_rgb)
     plt.plot(alphatime, alphawaves, 'b')
     plt.xlabel('Time relative to alpha peak (s)')
     plt.ylabel('LFP, L5/6')
     plt.xlim([-.24, .24])
+
+
+
+def plot_spectrogram(ff, tt, Sxx):
+    plt.figure()
+    plt.pcolormesh(tt, ff, Sxx, cmap='jet')
+    plt.ylim([25, 45])
+    plt.show()
+
+

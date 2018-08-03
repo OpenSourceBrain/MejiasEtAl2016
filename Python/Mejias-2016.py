@@ -147,7 +147,7 @@ if args.analysis == 'interlaminar':
         # check if file with simulation exists, if not calculate the simulation
         # TODO: include the option to return rate
         if not os.path.isfile('interlaminar/simulation.pckl'):
-            interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, args.noise)
+            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, args.noise)
         else:
             # load pickle file with results
             picklename = os.path.join(args.analysis, 'simulation.pckl')
@@ -155,7 +155,7 @@ if args.analysis == 'interlaminar':
                 rate = pickle.load(filename)
 
     # Analyse and Plot traces of activity in layer 5/6
-    segment5, segindex, numberofzones = interlaminar_activity_analysis(rate, transient, dt, t, min_freq5)
+    segment5, segment2, segindex, numberofzones = interlaminar_activity_analysis(rate, transient, dt, t, min_freq5)
     plot_activity_traces(dt, segment5, segindex)
     # Analyse and Plot periodogram of layer L2/3
     interlaminar_analysis_periodeogram(rate, transient, dt, min_freq2, numberofzones)
