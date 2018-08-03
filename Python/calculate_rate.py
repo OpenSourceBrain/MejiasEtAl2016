@@ -24,7 +24,7 @@ def transduction_function(x):
 
 def calculate_rate(t, dt, tstop, J, tau, sig, Iext, noise):
 
-    rate = np.zeros((4, len(t) + 1))
+    rate = np.zeros((4, int(round(tstop/dt)) + 1))
     # Apply additional input current only on excitatory layers
     tstep2 = ((dt * sig * sig) / tau) ** .5
     mean_xi = 0
@@ -44,5 +44,8 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, noise):
         delta_rate = dt / tau * (- np.expand_dims(rate[:, dt_idx], axis=1) + transfer_input) + \
                                  tstep2 * np.expand_dims(xi[:, dt_idx], axis=1)
         rate[:, dt_idx + 1] = np.squeeze(np.expand_dims(rate[:, dt_idx], axis=1) + delta_rate)
+
+    # exclude the initial point that corresponds to the initial conditions
+    rate = rate[:, 1:]
 
     return rate
