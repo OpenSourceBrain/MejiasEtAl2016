@@ -12,3 +12,7 @@ python Mejias-2016.py -noise 1 -analysis debug_neuroML
 echo "Run intralaminar simulation for L2/3...(it will take a few mins)"
 python Mejias-2016.py -noise 1 -analysis intralaminar
 
+echo "30 traces of activity in layer 5/6 (For the total time lenght the
+simulation will take ages)"
+python Mejias-2016.py -noise 1 -analysis interlaminar
+
