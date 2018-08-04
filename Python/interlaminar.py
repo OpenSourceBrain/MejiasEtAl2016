@@ -144,26 +144,45 @@ def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2,
     freq_displayed = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
     fs = int(1/dt)
 
-    xin, t = my_pretransformations(segment2[:, 0], window, noverlap, fs)
-    data = np.multiply(np.expand_dims(window, axis=1), xin)
+    Sxx = np.zeros((freq_displayed.shape[0], 83, numberofzones), dtype=complex)
+    for n in range(numberofzones):
+        print(n)
+        xin, t = my_pretransformations(segment2[:, n], window, noverlap, fs)
+        data = np.multiply(np.expand_dims(window, axis=1), xin)
+
+        for jj in range(data.shape[1]):
+            for ii in range(freq_displayed.shape[0]):
+                Sxx[ii, jj, n] = goertzel_second(data[:, jj], freq_displayed[ii], data.shape[0])
+
+    Sxx_mean = np.mean(Sxx, axis=2)
+    # perform spectrogram on results from goertzel
+    # compensate for the power of the window
+    U = np.dot(np.expand_dims(window, axis=0), window)
+    Sxx_conj = (Sxx_mean * np.conj(Sxx_mean))/U
+    # change type back to float
+    Sxx_fin = Sxx_conj.astype(float)
+
+
+    goertzel_second(data[:, 0], freq_displayed[0], data.shape[0])
+    goerzel = compute_goertzel(freq_displayed[0], fs, data[:, 0])
     # TODO: Try to use fft instead of the goertzel algorithm to calculate the fft
-    Xx = np.zeros((freq_displayed.shape[0], xin.shape[1]), dtype=complex)
-    for i in range(xin.shape[1]):
-        Xx[:, i] = fftpack.fft(data[:, i], freq_displayed.shape[0])
+    Xx = np.zeros((freq_displayed.shape[0], xin.shape[1], numberofzones), dtype=complex)
+    for n in range(numberofzones):
+        for i in range(xin.shape[1]):
+            Xx[:, i, n] = fftpack.fft(data[:, i], freq_displayed.shape[0])
 
 
-    nfft = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
-
-    # obtain spectograms
-    for i in range(numberofzones):
-        # first one is the one working the best
-        ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, window=window, noverlap=noverlap, return_onesided=True,
+    # nfft = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
+    # # obtain spectograms
+    # for i in range(numberofzones):
+    #     # first one is the one working the best
+        ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, window=window, noverlap=noverlap, return_onesided=False,
                                          detrend=False, scaling='density', mode='psd')
-        # try to get only the frequencies between 25 and 45
-        ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, nfft=nfft, return_onesided=True, detrend=False, scaling='density',
-                                         mode='psd')
-        ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, return_onesided=True, detrend=False,
-                                         scaling='density', mode='psd')
+    #     # try to get only the frequencies between 25 and 45
+    #     ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, nfft=nfft, return_onesided=False, detrend=False, scaling='density',
+    #                                      mode='psd')
+    #     ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, return_onesided=True, detrend=False,
+    #                                      scaling='density', mode='psd')
 
 
     print('Done Analysis!')
@@ -193,6 +212,55 @@ def plot_activity_traces(dt, segment5, segindex):
     plt.xlim([-.24, .24])
 
 
+def compute_goertzel(target_frequency, sampling_rate, data):
+
+    # Number of sample points
+    nsamples = data.shape[0]
+    scaling_factor = nsamples / 2.0
+    k = (.5 + ((nsamples * target_frequency) / sampling_rate))
+    omega = (2 * math.pi * k) / nsamples
+    sine = math.sin(omega)
+    cosine = math.cos(omega)
+    coeff = 2 * cosine
+    q1 = 0; q2 = 0
+
+    for i in range(nsamples):
+        q0 = coeff * q1 - q2 + data[i]
+        q2 = q1
+        q1 = q0
+
+    real = (q1 - q2 * cosine) / scaling_factor
+    imag = (q2 * sine) / scaling_factor
+    magnitude = np.sqrt(real * real + imag * imag)
+    return magnitude
+
+def goertzel_second(x, k, N):
+    #k = k1/ 5000 * 821
+    w = 2 * math.pi * k/ N
+    cw = math.cos(w); c = 2 * cw;
+    sw = math.sin(w)
+    z1 = 0; z2= 0;
+    for n in range(N):
+        z0 = x[n] + c * z1 - z2
+        z2 = z1
+        z1 = z0
+    real = cw * z1 - z2
+    imag = sw * z1
+    return complex(real, imag)
+
+def goertzel_third(x, k1, N, f, Fs):
+    k = k1/ 5000 * 821
+    w = (2 * math.pi * f)/ (Fs * N**2)
+    cw = math.cos(w); c = 2 * cw;
+    sw = math.sin(w)
+    z1 = 0; z2= 0;
+    for n in range(N):
+        z0 = x[n] + c * z1 - z2
+        z2 = z1
+        z1 = z0
+    real = cw * z1 - z2
+    imag = sw * z1
+    return complex(real, imag)
 
 def plot_spectrogram(ff, tt, Sxx):
     plt.figure()
