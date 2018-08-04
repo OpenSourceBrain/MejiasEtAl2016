@@ -9,8 +9,8 @@ from calculate_rate import calculate_rate
 from helper_functions import calculate_periodogram
 
 
-def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext_a, noise):
-    rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext_a, noise)
+def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
+    rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
     picklename = os.path.join(analysis, 'simulation.pckl')
     with open(picklename, 'wb') as filename:
         pickle.dump(rate, filename)
@@ -142,7 +142,7 @@ def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2,
     # calculate nfft
     lowest_frequency = 25; highest_frequency = 45; step_frequency = .25
     freq_displayed = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
-    fs = 1/dt
+    fs = int(1/dt)
 
     xin, t = my_pretransformations(segment2[:, 0], window, noverlap, fs)
     data = np.multiply(np.expand_dims(window, axis=1), xin)
@@ -165,8 +165,9 @@ def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2,
         ff, tt, Sxx = signal.spectrogram(segment2[:, i], fs=fs, return_onesided=True, detrend=False,
                                          scaling='density', mode='psd')
 
-    print('Done Analysis!')
 
+    print('Done Analysis!')
+    return ff, tt, Sxx
 
 def my_spectrogram(x, window, noverlap, f, fs):
     # Process the frequency-specific arguments
