@@ -2,9 +2,12 @@
 
     
     <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="5Hz" stdev="2nA"/>
+    <mejiasEtAl2016Cell id="L23_E_flat" tau="6ms" r0="1Hz" stdev="5nA"/>
     <!--<wilsonCowanCell id="L23_Ew" tau="1ms" r0="0.1Hz" z="0nA" />-->
     
-    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="5Hz" stdev="2nA"/>
+    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="5Hz" stdev="2nA"/>    
+    <mejiasEtAl2016Cell id="L23_I_flat" tau="15ms" r0="1Hz" stdev="5nA"/>
+
     
     <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="5Hz" stdev="2nA"/>
     <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="5Hz" stdev="2nA"/>
