@@ -11,8 +11,9 @@ np.random.RandomState(seed=42)
 
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
 from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
-                         interlaminar_analysis_periodeogram
+                         interlaminar_analysis_periodeogram, plot_spectrogram
 from helper_functions import debug_neuroml
+
 
 parser = argparse.ArgumentParser(description='Parameters for the simulation')
 parser.add_argument('-noise',
@@ -161,6 +162,48 @@ if args.analysis == 'interlaminar':
     # plot_spectrogram(ff, tt, Sxx)
 
 
+
+if args.analysis == 'interareal':
+    dt = 2e-04
+    tstop = 40
+    transient = 5
+    # speciy number of areas that communicate with each other
+    Nareas = 2
+    t = np.arange(dt, tstop + dt - transient, dt)
+
+    # define interlaminar synaptic coupling strenghts
+    J_2e = 1; J_2i = 0
+    J_5e = 0; J_5i = 0.75
+
+    J = np.array([[wee, wei, J_5e,   0],
+                  [wie, wii, J_5i,   0],
+                  [J_2e, 0,   wee, wei],
+                  [J_2i, 0,   wie, wii]])
+
+
+    # Interareal connectivity
+    s = .1
+    W = np.zeros((2, 2, 4, 2))
+    # W(a, b, c, d), where
+    # a = post. area
+    # b = pres. area
+    # c = post. layer
+    # d = pres. layer
+
+    W[1, 0, 0, 0] = 1       # V1 to V4, supra to supra
+    W[1, 0, 1, 0] = 0       # V1 to V4, supra to infra
+    W[0, 1, 0, 1] = s       # V4 to V1, infra to supra excit
+    W[0, 1, 2, 1] = .5      # other option, same result ?
+    W[0, 1, 1, 1] = (1 - s) # V4 to V1, infra to infra excit
+    W[0, 1, 3, 2] = .5      # other option same result
+
+    # background and injected currect
+    I0 = 2 * np.array([[1, 1], [0, 0], [2, 2], [0, 0]])
+    Iext = 15 * np.array([[1, 0], [0, 0], [1, 0], [0, 0]])
+
+    # at rest
+    interareal_simulation(t, dt, tstop, J, W, tau, I0, sig, args.noise)
+    # microstimulation
 
 
 if not args.nogui:
