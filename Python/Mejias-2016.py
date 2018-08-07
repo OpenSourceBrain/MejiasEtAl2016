@@ -70,6 +70,8 @@ if args.analysis == 'debug_neuroML':
                   [wie, wii, J_5i,   0],
                   [J_2e, 0,   wee, wei],
                   [J_2i, 0,   wie, wii]])
+                  
+    # J = np.zeros((4,4))
 
     Iexts = [0]
     Ibgk = np.zeros((J.shape[0], 1))
