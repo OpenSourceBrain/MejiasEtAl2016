@@ -30,6 +30,7 @@ mistune==0.8.3
 nbconvert==5.3.1
 nbformat==4.4.0
 NEURON==7.5
+neuromllite==0.1.4
 notebook==5.6.0
 numpy==1.14.3
 pandocfilters==1.4.2
@@ -40,6 +41,8 @@ prometheus-client==0.3.1
 prompt-toolkit==1.0.15
 ptyprocess==0.6.0
 Pygments==2.2.0
+pyNeuroML==0.3.11
+PyNN==0.9.2
 PyNEST==2.14.0
 pyparsing==2.2.0
 python-dateutil==2.7.3
