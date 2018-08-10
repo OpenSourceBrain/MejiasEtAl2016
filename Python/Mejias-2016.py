@@ -33,7 +33,10 @@ parser.add_argument('-nogui',
                     dest='nogui',
                     action='store_true',
                     help='No gui')
-
+"""
+Main Python file that contains the definitions for the simulation and
+calls the necessary functions depending on the passed parameters.
+"""
 args = parser.parse_args()
 
 # Create folder where results will be saved

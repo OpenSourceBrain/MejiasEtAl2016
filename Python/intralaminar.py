@@ -72,13 +72,6 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
     # add fxx_bin to dictionary
     psd_dic['fxx_bin'] = fxx_bin
 
-    for Iext in Iexts:
-        fig = plt.figure()
-        plt.semilogy(fxx_bin, psd_dic[Iext]['mean_pxx'])
-        plt.xlabel('Frequency (Hz)')
-        plt.ylabel('PSD (V**2/Hz)')
-        plt.xlim(0, max(fxx_bin))
-
     # save the results into a pickle file
     picklename = os.path.join('intralaminar', layer + '_analysis.pckl')
     with open(picklename, 'wb') as file1:
@@ -137,6 +130,7 @@ def intralaminar_plt(layer):
     plt.xlabel('Frequency(Hz)')
     plt.ylabel('Power (resp. rest)')
     plt.legend()
+    plt.savefig('intralaminar/intralaminar.png')
 
 
 def intralaminar_simulation(analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
