@@ -18,7 +18,7 @@ feedback pathways are modulated by alpha/low beta oscillations (8 - 15 Hz).
 ## The Simulation
 
 ### Python
-So far, we have reproduced the main findings described by Mejias et al., 2016 at the [intralaminar](Python/intralaminar.py) and [interlaminar](Python/interlaminar) level. The main results are described [here](Python/README.md).
+So far, we have reproduced the main findings described by Mejias et al., 2016 at the [intralaminar](Python/intralaminar.py) and [interlaminar](Python/interlaminar.py) level. The main results are described [here](Python/README.md).
 
 ### NeuroML2
 A basic implementation and simulation of the intralaminar model have also been implemented in NeuroML2/LEMS. [GenerateNetwork.py](NeuroML2/GenerateNetwork.py) generates the LEMS file with the description of the network.
