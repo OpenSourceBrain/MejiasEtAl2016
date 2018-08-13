@@ -214,7 +214,7 @@ if args.analysis == 'interlaminar_b':
     min_freq2 = 30 # gama range
 
     # check if file with simulation exists, if not calculate the simulation
-    if not os.path.isfile('interlaminar/simulation.pckl'):
+    if not os.path.isfile(os.path.join(args.analysis, 'simulation.pckl')):
         rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
     else:
         # load pickle file with results
@@ -224,7 +224,7 @@ if args.analysis == 'interlaminar_b':
 
     # Analyse and Plot traces of activity in layer 5/6
     segment5, segment2, segindex, numberofzones = interlaminar_activity_analysis(rate, transient, dt, t, min_freq5)
-    plot_activity_traces(dt, segment5, segindex)
+    plot_activity_traces(dt, segment5, segindex, args.analysis)
 
     # Analyse and Plot spectrogram of layer L2/3
     # For now, ignore this function as I cannot generate the correct output

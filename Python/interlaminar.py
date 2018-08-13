@@ -17,6 +17,27 @@ def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noi
     print('Done Simulation!')
     return rate
 
+def compress_data(pxx, fxx, bin):
+    """
+    Compress data
+    Input:
+        bin: Pick one point every 'bin' points
+        re: Data to be shrunken
+
+    Output:
+        pxx_bin:
+        fxx_bin:
+    """
+    # We start by calculating the number of index needed to in order to sample every 5 points and select only those
+    remaining = fxx.shape[0] - (fxx.shape[0] % bin)
+    fxx2 = fxx[0:remaining]
+    pxx2 = pxx[0:remaining]
+    # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
+    # Note: the output needs to be an np.array in order to be able to use np.where afterwards
+    pxx_bin = np.asarray([np.mean(pxx2[i:i + bin]) for i in range(0, len(pxx2), bin)])
+    fxx_bin = np.asarray([np.mean(fxx2[i:i + bin]) for i in range(0, len(fxx2), bin)])
+    return pxx_bin, fxx_bin
+
 
 def find_peak_frequency(fxx,pxx, min_freq):
     # find the frequency of the oscillations
@@ -188,16 +209,12 @@ def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2,
     print('Done Analysis!')
     return ff, tt, Sxx
 
-def my_spectrogram(x, window, noverlap, f, fs):
-    # Process the frequency-specific arguments
-    nfft = f
-
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return array[idx], idx
 
-def plot_activity_traces(dt, segment5, segindex):
+def plot_activity_traces(dt, segment5, segindex, analysis):
     # calculate the peak-centered alpha wave by averaging
     alphawaves = np.mean(segment5, axis=1)
     alphatime = [(i*dt) - (segindex*dt) for i in range(1, alphawaves.shape[0] + 1)]
@@ -210,6 +227,7 @@ def plot_activity_traces(dt, segment5, segindex):
     plt.xlabel('Time relative to alpha peak (s)')
     plt.ylabel('LFP, L5/6')
     plt.xlim([-.24, .24])
+    plt.savefig(os.path.join(analysis, 'activity_traces.png'))
 
 
 def compute_goertzel(target_frequency, sampling_rate, data):
