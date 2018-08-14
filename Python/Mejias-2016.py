@@ -11,7 +11,8 @@ np.random.RandomState(seed=42)
 
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
 from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
-                         interlaminar_analysis_periodeogram, plot_spectrogram, compress_data
+                         interlaminar_analysis_periodeogram, plot_spectrogram, calculate_interlaminar_power_spectrum, \
+                         plot_interlaminar_power_spectrum
 from helper_functions import debug_neuroml, calculate_periodogram
 
 
@@ -144,12 +145,11 @@ if args.analysis == 'interlaminar_a':
     Iext = np.array([[8], [0], [8], [0]])
     Ibgk = np.zeros((J.shape[0], 1))
 
-    bin = 100 # pick on e very 'bin' points
-    rate_coupled = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
-    pxx_coupled_l23, fxx_coupled_l23 = calculate_periodogram(rate_coupled[0, :], transient, dt)
-    pxx_coupled_l56, fxx_coupled_l56 = calculate_periodogram(rate_coupled[2, :], transient, dt)
-    pxx_coupled_l23_bin, fxx_coupled_l23_bin = compress_data(pxx_coupled_l23, fxx_coupled_l23, bin)
-    pxx_coupled_l56_bin, fxx_coupled_l56_bin = compress_data(pxx_coupled_l56, fxx_coupled_l56, bin)
+    Nbin = 100 # pick on e very 'bin' points
+    pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
+                        calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
+                                                              tstop, J, tau, sig, Iext, Ibgk,
+                                                              args.noise, Nareas, Nbin)
 
     # Run simulation when the two layers are uncoupled
     # define interlaminar synaptic coupling strengths
@@ -160,31 +160,17 @@ if args.analysis == 'interlaminar_a':
                   [J_2e, 0, wee, wei],
                   [J_2i, 0, wie, wii]])
 
-    rate_uncoupled = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
-    pxx_uncoupled_l23, fxx_uncoupled_l23 = calculate_periodogram(rate_uncoupled[0, :], transient, dt)
-    pxx_uncoupled_l56, fxx_uncoupled_l56 = calculate_periodogram(rate_uncoupled[2, :], transient, dt)
-    pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin = compress_data(pxx_uncoupled_l23, fxx_uncoupled_l23, bin)
-    pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = compress_data(pxx_uncoupled_l56, fxx_uncoupled_l56, bin)
+    pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin, pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = \
+        calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
+                                           tstop, J, tau, sig, Iext, Ibgk,
+                                           args.noise, Nareas, Nbin)
+    # Plot spectrogram
+    plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
+                                  pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
+                                  fxx_uncoupled_l56_bin, fxx_coupled_l56_bin,
+                                  pxx_uncoupled_l56_bin, pxx_coupled_l56_bin,
+                                  args.analysis)
 
-    plt.figure()
-    plt.loglog(fxx_uncoupled_l23_bin, pxx_uncoupled_l23_bin, 'k', label='no coupling')
-    plt.loglog(fxx_coupled_l23_bin, pxx_coupled_l23_bin, 'g', label='with coupling')
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('L2/3 Power')
-    plt.legend()
-    plt.xlim([1, 100])
-    plt.ylim([10**-4, 10**-2])
-    plt.savefig(os.path.join(args.analysis, 'spectrogram_l23.png'))
-
-    plt.figure()
-    plt.loglog(fxx_uncoupled_l56_bin, pxx_uncoupled_l56_bin, color='k', label='no coupling')
-    plt.loglog(fxx_coupled_l56_bin, pxx_coupled_l56_bin, color='#FF7F50', label='with coupling')
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('L5/6 Power')
-    plt.legend()
-    plt.xlim([1, 100])
-    plt.ylim([10**-5, 10**-0])
-    plt.savefig(os.path.join(args.analysis, 'spectrogram_l56.png'))
 
 if args.analysis == 'interlaminar_b':
     # Calculates the spectogram and 30 traces of actvity in layer 5/6
@@ -230,7 +216,6 @@ if args.analysis == 'interlaminar_b':
     # For now, ignore this function as I cannot generate the correct output
     # ff, tt, Sxx = interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones)
     # plot_spectrogram(ff, tt, Sxx)
-
 
 
 if args.analysis == 'interareal':

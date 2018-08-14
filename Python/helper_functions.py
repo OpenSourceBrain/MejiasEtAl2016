@@ -37,6 +37,17 @@ def debug_neuroml(analysis, layer, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns
 
 
 def calculate_periodogram(re, transient, dt):
+    """
+    Does necessary preprocssing to the data and calculates periodogram
+    Inputs
+        re: Signal to be analysed
+        transient: Number of discarted time points
+        dt: time
+
+    Returns:
+        pxx: Power spectral density
+        fxx: Array of sample frequencies
+    """
     # calculate fft and sampling frequency for the peridogram
     fs = 1 / dt
     N = re.shape[0]
@@ -51,7 +62,31 @@ def calculate_periodogram(re, transient, dt):
 
     # perform periodogram on restate
     sq_data = np.squeeze(restate)
-    fxx2, pxx2 = signal.periodogram(sq_data, fs=fs, window=win[int(round((transient + dt)/dt)) - 1:],
+    fxx, pxx = signal.periodogram(sq_data, fs=fs, window=win[int(round((transient + dt)/dt)) - 1:],
                                     nfft=fft, detrend=False, return_onesided=True,
                                     scaling='density')
-    return pxx2, fxx2
+    print('Done calculating Periodogram!')
+    return pxx, fxx
+
+
+def compress_data(pxx, fxx, bin):
+    """
+    Compress data
+    Input:
+        bin: Pick one point every 'bin' points
+        re: Data to be shrunken
+
+    Output:
+        pxx_bin:
+        fxx_bin:
+    """
+    # We start by calculating the number of index needed to in order to sample every 5 points and select only those
+    remaining = fxx.shape[0] - (fxx.shape[0] % bin)
+    fxx2 = fxx[0:remaining]
+    pxx2 = pxx[0:remaining]
+    # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
+    # Note: the output needs to be an np.array in order to be able to use np.where afterwards
+    pxx_bin = np.asarray([np.mean(pxx2[i:i + bin]) for i in range(0, len(pxx2), bin)])
+    fxx_bin = np.asarray([np.mean(fxx2[i:i + bin]) for i in range(0, len(fxx2), bin)])
+    return pxx_bin, fxx_bin
+

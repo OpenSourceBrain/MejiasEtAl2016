@@ -6,7 +6,7 @@ import math
 import matplotlib.pylab as plt
 
 from calculate_rate import calculate_rate
-from helper_functions import calculate_periodogram
+from helper_functions import calculate_periodogram, compress_data
 
 
 def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
@@ -17,26 +17,6 @@ def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noi
     print('Done Simulation!')
     return rate
 
-def compress_data(pxx, fxx, bin):
-    """
-    Compress data
-    Input:
-        bin: Pick one point every 'bin' points
-        re: Data to be shrunken
-
-    Output:
-        pxx_bin:
-        fxx_bin:
-    """
-    # We start by calculating the number of index needed to in order to sample every 5 points and select only those
-    remaining = fxx.shape[0] - (fxx.shape[0] % bin)
-    fxx2 = fxx[0:remaining]
-    pxx2 = pxx[0:remaining]
-    # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
-    # Note: the output needs to be an np.array in order to be able to use np.where afterwards
-    pxx_bin = np.asarray([np.mean(pxx2[i:i + bin]) for i in range(0, len(pxx2), bin)])
-    fxx_bin = np.asarray([np.mean(fxx2[i:i + bin]) for i in range(0, len(fxx2), bin)])
-    return pxx_bin, fxx_bin
 
 
 def find_peak_frequency(fxx,pxx, min_freq):
@@ -285,5 +265,44 @@ def plot_spectrogram(ff, tt, Sxx):
     plt.pcolormesh(tt, ff, Sxx, cmap='jet')
     plt.ylim([25, 45])
     plt.show()
+
+
+def calculate_interlaminar_power_spectrum(analysis, t, dt, transient, tstop, J, tau, sig, Iext, Ibgk,
+                                       noise, Nareas, Nbin):
+
+    # Calculate the rate for the passed connectivity
+    rate = interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
+    pxx_l23, fxx_l23 = calculate_periodogram(rate[0, :], transient, dt)
+    pxx_l56, fxx_l56 = calculate_periodogram(rate[2, :], transient, dt)
+    # Compress data by selecting one data point every "bin"
+    pxx_l23_bin, fxx_l23_bin = compress_data(pxx_l23, fxx_l23, Nbin)
+    pxx_l56_bin, fxx_l56_bin = compress_data(pxx_l56, fxx_l56, Nbin)
+    return pxx_l23_bin, fxx_l23_bin, pxx_l56_bin, fxx_l56_bin
+
+def plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
+                                  pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
+                                  fxx_uncoupled_l56_bin, fxx_coupled_l56_bin,
+                                  pxx_uncoupled_l56_bin, pxx_coupled_l56_bin,
+                                  analysis):
+    plt.figure()
+    plt.loglog(fxx_uncoupled_l23_bin, pxx_uncoupled_l23_bin, 'k', label='no coupling')
+    plt.loglog(fxx_coupled_l23_bin, pxx_coupled_l23_bin, 'g', label='with coupling')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('L2/3 Power')
+    plt.legend()
+    plt.xlim([1, 100])
+    plt.ylim([10**-4, 10**-2])
+    plt.savefig(os.path.join(analysis, 'spectrogram_l23.png'))
+
+    plt.figure()
+    plt.loglog(fxx_uncoupled_l56_bin, pxx_uncoupled_l56_bin, color='k', label='no coupling')
+    plt.loglog(fxx_coupled_l56_bin, pxx_coupled_l56_bin, color='#FF7F50', label='with coupling')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('L5/6 Power')
+    plt.legend()
+    plt.xlim([1, 100])
+    plt.ylim([10**-5, 10**-0])
+    plt.savefig(os.path.join(analysis, 'spectrogram_l56.png'))
+
 
 
