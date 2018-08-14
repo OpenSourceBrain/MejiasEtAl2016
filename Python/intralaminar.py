@@ -5,7 +5,7 @@ from scipy import signal
 import matplotlib.pylab as plt
 
 from calculate_rate import calculate_rate
-from helper_functions import calculate_periodogram
+from helper_functions import calculate_periodogram, compress_data
 
 
 def matlab_smooth(data, window_size):
@@ -48,15 +48,7 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
 
             # Compress the data by sampling every 5 points.
             bin_size = 5
-            # We start by calculating the number of index needed to in order to sample every 5 points and select only those
-            remaining = fxx2.shape[0] - (fxx2.shape[0] % bin_size)
-            fxx2 = fxx2[0:remaining]
-            pxx2 = pxx2[0:remaining]
-            # Then we calculate the average signal inside the specified non-overlapping windows of size bin-size.
-            # Note: the output needs to be an np.array in order to be able to use np.where afterwards
-            pxx_bin = np.asarray([np.mean(pxx2[i:i+bin_size]) for i in range(0, len(pxx2), bin_size)])
-            fxx_bin = np.asarray([np.mean(fxx2[i:i+bin_size]) for i in range(0, len(fxx2), bin_size)])
-
+            pxx_bin, fxx_bin = compress_data(pxx2, fxx2, bin_size)
 
             # smooth the data
             # Note: The matlab code transforms an even-window size into an odd number by subtracting by one.
@@ -71,13 +63,6 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
 
     # add fxx_bin to dictionary
     psd_dic['fxx_bin'] = fxx_bin
-
-    for Iext in Iexts:
-        fig = plt.figure()
-        plt.semilogy(fxx_bin, psd_dic[Iext]['mean_pxx'])
-        plt.xlabel('Frequency (Hz)')
-        plt.ylabel('PSD (V**2/Hz)')
-        plt.xlim(0, max(fxx_bin))
 
     # save the results into a pickle file
     picklename = os.path.join('intralaminar', layer + '_analysis.pckl')
@@ -137,6 +122,7 @@ def intralaminar_plt(layer):
     plt.xlabel('Frequency(Hz)')
     plt.ylabel('Power (resp. rest)')
     plt.legend()
+    plt.savefig('intralaminar/intralaminar.png')
 
 
 def intralaminar_simulation(analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,

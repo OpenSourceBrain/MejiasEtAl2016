@@ -11,17 +11,19 @@ interlaminar, (III) interareal, (IV) whole cortex. Interestingly, the authors sh
 that while feedforward pathways are associated with gamma oscillations (30 - 70 Hz),
 feedback pathways are modulated by alpha/low beta oscillations (8 - 15 Hz).
 
-![](NeuroML2/img/Mejias-2016.png)
+<img src="NeuroML2/img/Mejias-2016.png" width="500px"/>
+
+> Note: This repo is a work in progress. So far this repository contains the implementation for the model dynamics at the intralaminar and the interlaminar level. At the moment I am working on the implementation of the interareal level.
 
 ## The Simulation
 
 ### Python
-So far, we have reproduced the main findings described by Mejias et al., 2016 at the [intralaminar](Python/intralaminar.py) and [interlaminar](Python/interlaminar) level. The main results are described [here](Python/README.md).
+So far, we have reproduced the main findings described by Mejias et al., 2016 at the [intralaminar](Python/intralaminar.py) and [interlaminar](Python/interlaminar.py) level. The main results are described [here](Python/README.md).
 
 ### NeuroML2
 A basic implementation and simulation of the intralaminar model have also been implemented in NeuroML2/LEMS. [GenerateNetwork.py](NeuroML2/GenerateNetwork.py) generates the LEMS file with the description of the network.
 
-To run the simulation inside the NeuroML2 folder run:
+The simulation can be run by calling inside the NeuroML2 folder:
 `python GenerateNetwork.py -jnml`
 
 ## Requirements

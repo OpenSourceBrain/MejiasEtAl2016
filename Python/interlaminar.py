@@ -6,7 +6,7 @@ import math
 import matplotlib.pylab as plt
 
 from calculate_rate import calculate_rate
-from helper_functions import calculate_periodogram
+from helper_functions import calculate_periodogram, compress_data
 
 
 def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
@@ -16,6 +16,7 @@ def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noi
         pickle.dump(rate, filename)
     print('Done Simulation!')
     return rate
+
 
 
 def find_peak_frequency(fxx,pxx, min_freq):
@@ -188,16 +189,12 @@ def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2,
     print('Done Analysis!')
     return ff, tt, Sxx
 
-def my_spectrogram(x, window, noverlap, f, fs):
-    # Process the frequency-specific arguments
-    nfft = f
-
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return array[idx], idx
 
-def plot_activity_traces(dt, segment5, segindex):
+def plot_activity_traces(dt, segment5, segindex, analysis):
     # calculate the peak-centered alpha wave by averaging
     alphawaves = np.mean(segment5, axis=1)
     alphatime = [(i*dt) - (segindex*dt) for i in range(1, alphawaves.shape[0] + 1)]
@@ -210,6 +207,7 @@ def plot_activity_traces(dt, segment5, segindex):
     plt.xlabel('Time relative to alpha peak (s)')
     plt.ylabel('LFP, L5/6')
     plt.xlim([-.24, .24])
+    plt.savefig(os.path.join(analysis, 'activity_traces.png'))
 
 
 def compute_goertzel(target_frequency, sampling_rate, data):
@@ -267,5 +265,44 @@ def plot_spectrogram(ff, tt, Sxx):
     plt.pcolormesh(tt, ff, Sxx, cmap='jet')
     plt.ylim([25, 45])
     plt.show()
+
+
+def calculate_interlaminar_power_spectrum(analysis, t, dt, transient, tstop, J, tau, sig, Iext, Ibgk,
+                                       noise, Nareas, Nbin):
+
+    # Calculate the rate for the passed connectivity
+    rate = interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
+    pxx_l23, fxx_l23 = calculate_periodogram(rate[0, :], transient, dt)
+    pxx_l56, fxx_l56 = calculate_periodogram(rate[2, :], transient, dt)
+    # Compress data by selecting one data point every "bin"
+    pxx_l23_bin, fxx_l23_bin = compress_data(pxx_l23, fxx_l23, Nbin)
+    pxx_l56_bin, fxx_l56_bin = compress_data(pxx_l56, fxx_l56, Nbin)
+    return pxx_l23_bin, fxx_l23_bin, pxx_l56_bin, fxx_l56_bin
+
+def plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
+                                  pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
+                                  fxx_uncoupled_l56_bin, fxx_coupled_l56_bin,
+                                  pxx_uncoupled_l56_bin, pxx_coupled_l56_bin,
+                                  analysis):
+    plt.figure()
+    plt.loglog(fxx_uncoupled_l23_bin, pxx_uncoupled_l23_bin, 'k', label='no coupling')
+    plt.loglog(fxx_coupled_l23_bin, pxx_coupled_l23_bin, 'g', label='with coupling')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('L2/3 Power')
+    plt.legend()
+    plt.xlim([1, 100])
+    plt.ylim([10**-4, 10**-2])
+    plt.savefig(os.path.join(analysis, 'spectrogram_l23.png'))
+
+    plt.figure()
+    plt.loglog(fxx_uncoupled_l56_bin, pxx_uncoupled_l56_bin, color='k', label='no coupling')
+    plt.loglog(fxx_coupled_l56_bin, pxx_coupled_l56_bin, color='#FF7F50', label='with coupling')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('L5/6 Power')
+    plt.legend()
+    plt.xlim([1, 100])
+    plt.ylim([10**-5, 10**-0])
+    plt.savefig(os.path.join(analysis, 'spectrogram_l56.png'))
+
 
 
