@@ -23,7 +23,7 @@ def transduction_function(x):
     return x_transducted
 
 
-def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
+def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, initialrate=-1): # if initialrate <0, use random value
 
     rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
@@ -35,6 +35,8 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
     # Initial rate values
     # Note: the 5 ensures that you have between 0 and 10 spikes/s
     rate[:, 0, :] = 5 * (1 + np.tanh(2 * xi[:, 0, :]))
+    if initialrate>=0:
+        rate[:, 0, :] = initialrate
 
     for dt_idx in range(len(t)):
         # iterate over different areas. Only true for the interareal simulation

@@ -7,16 +7,16 @@ import math
 from calculate_rate import calculate_rate
 
 
-def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, noise, Nareas):
+def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate):
     # calculate the firing rate
     for i in Iexts:
         # inject current only on excitatory layer
         Iext = np.array([[i], [0], [i], [0]])
 
         for nrun in range(nruns):
-            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
-            filename = os.path.join(analysis, 'simulation_Iext_'+
-                                    str(i) + '_nrun_' + str(nrun))
+            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, initialrate)
+            filename = os.path.join(analysis, \
+                       'simulation_Iext%s_nrun%s_noise%s_dur%s%s'%(i,nrun,noise,t[-1],('_noconns' if noconns else '')))
 
             # select only the excitatory and inhibitory layers for L2/3
             uu_p_l2_3 = np.expand_dims(rate[0, :, 0], axis=1)
@@ -30,18 +30,18 @@ def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, n
             plt.plot(uu_p_l2_3, label='excitatory', color='r')
             plt.plot(vv_p_l2_3, label='inhibitory', color='b')
             # plt.ylim([-.5, 2])
-            plt.ylim(-.5, 4)
+            plt.ylim(-.5, 5.5)
             plt.legend()
-            plt.title('Layer 2/3; noise=' + str(noise))
+            plt.title('Layer 2/3; noise=%s; conns=%s'%(noise,not noconns))
             plt.savefig(filename + '_L2_3.png')
 
             # Plot the layers time course for layer L5/6
             plt.figure()
             plt.plot(uu_p_l5_6, label='excitatory', color='r')
             plt.plot(vv_p_l5_6, label='inhibitory', color='b')
-            plt.ylim(-.5, 4)
+            plt.ylim(-.5, 5.5)
             plt.legend()
-            plt.title('Layer 5/6; noise=' + str(noise))
+            plt.title('Layer 5/6; noise=%s; conns=%s'%(noise,not noconns))
             plt.savefig(filename + '_L5_6.png')
 
             # save the simulation as a txt file and figure
@@ -49,7 +49,7 @@ def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, n
             np.savetxt(filename + '.txt', activity)
             plt.close('all')
 
-    print('Done debugging!')
+        print('Saved debug info to %s!'%filename)
 
 
 def calculate_periodogram(re, transient, dt):
@@ -106,13 +106,21 @@ def compress_data(pxx, fxx, bin):
     fxx_bin = np.asarray([np.mean(fxx2[i:i + bin]) for i in range(0, len(fxx2), bin)])
     return pxx_bin, fxx_bin
 
-def firing_rate_analysis():
+def firing_rate_analysis(noconns=False, 
+                         testduration=1000, # ms
+                         noise = 1,
+                         initialrate=5): 
+                         
     ########################################################################################################################
     #                                                      Intralaminar
     ########################################################################################################################
     # Connection between layers
     wee = 1.5; wei = -3.25
     wie = 3.5; wii = -2.5
+    
+    if noconns:
+        wee = 0; wei = 0
+        wie = 0; wii = 0
 
 
     # Specify membrane time constants
@@ -125,8 +133,8 @@ def firing_rate_analysis():
     sig_5e = .45; sig_5i = .45
     sig = np.array([[sig_2e], [sig_2i], [sig_5e], [sig_5i]])
 
-    dt = 2e-4
-    tstop = 1 # ms
+    dt = 2e-4 # sec
+    tstop = testduration/1000. # sec
     t = np.linspace(0, tstop, tstop/dt)
     # speciy number of areas that communicate with each other
     Nareas = 1
@@ -147,7 +155,7 @@ def firing_rate_analysis():
     nruns = 1
 
     analysis = 'debug'
-    noise = 1
+    
     level = 'intralaminar'
     analysis = os.path.join(analysis, level)
     # check if folder exists otherwise create it
@@ -156,7 +164,9 @@ def firing_rate_analysis():
 
     # Calculate firing rate, save the results as a txt file and plot the firing rate over time for layer L2_3
     debug_firing_rate(analysis, t, dt, tstop, J,
-                      tau, sig, Iexts, Ibgk, nruns, noise, Nareas)
+                      tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate)
+                      
+    print("Finished debug simulation Intralaminar of duration %s ms; conns removed: %s"%(testduration, noconns))
 
     ########################################################################################################################
     #                                                      Interlaminar
@@ -164,7 +174,7 @@ def firing_rate_analysis():
 
     # Define dt and the trial length
     dt = 2e-4
-    tstop = 5 # ms
+    tstop = testduration/1000. # sec
     t = np.linspace(0, tstop, tstop/dt)
     transient = 5
     # speciy number of areas that communicate with each other
@@ -189,7 +199,7 @@ def firing_rate_analysis():
     nruns = 1
 
     analysis = 'debug'
-    noise = 1
+    
     level = 'interlaminar'
     analysis = os.path.join(analysis, level)
     # check if folder exists otherwise create it
@@ -197,5 +207,6 @@ def firing_rate_analysis():
         os.mkdir(analysis)
 
     debug_firing_rate(analysis, t, dt, tstop, J,
-                      tau, sig, Iexts, Ibgk, nruns, noise, Nareas)
+                      tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate)
 
+    print("Finished debug simulation Interlaminar of duration %s ms; conns removed: %s"%(testduration, noconns))

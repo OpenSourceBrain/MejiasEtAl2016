@@ -11,6 +11,10 @@
     <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="5Hz" stdev="5.5"/>
     <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="5Hz" stdev="8.5"/>
     
+    <!-- Two cells with zero noisy input -->
+    <mejiasEtAl2016Cell id="L56_E_flat" tau="30ms" r0="5Hz" stdev="0"/>
+    <mejiasEtAl2016Cell id="L56_I_flat" tau="75ms" r0="5Hz" stdev="0"/>
+    
     <pulseGenerator id="baselineE" delay="10ms" duration="30ms" amplitude="-0.5nA" />
     
     <!--

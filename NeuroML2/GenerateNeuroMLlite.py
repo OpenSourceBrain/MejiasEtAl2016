@@ -4,7 +4,7 @@ import sys
 import numpy
 
      
-def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=.45, duration=1000, dt = 0.025):
+def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.025):
 
     ################################################################################
     ###   Build new network
@@ -19,10 +19,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
                        'sigma23': sigma23,
                        'sigma56': sigma56 }
 
-    l23ecell = Cell(id='L23_E', lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I', lems_source_file='RateBased.xml') #  hack to include this file too.  
-    l56ecell = Cell(id='L56_E', lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.  
-    l56icell = Cell(id='L56_I', lems_source_file='Prototypes.xml')
+    suffix = '' if noise else '_flat'
+    l23ecell = Cell(id='L23_E'+suffix, lems_source_file='Prototypes.xml')
+    l23icell = Cell(id='L23_I'+suffix, lems_source_file='RateBased.xml') #  hack to include this file too.  
+    l56ecell = Cell(id='L56_E'+suffix, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.  
+    l56icell = Cell(id='L56_I'+suffix, lems_source_file='Prototypes.xml')
 
 
     net.cells.append(l23ecell)
@@ -129,139 +130,168 @@ if __name__ == "__main__":
         
         pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
                       'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
+                      
+                      
+        arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0, 
+                                                    'duration':1000, 'dt':0.2, 'noise':False}, 
+                                                    'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns.txt'], 
+                       'With connections; no noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5, 
+                                                      'duration':1000, 'dt':0.2, 'noise':False},
+                                                      'simulation_Iext0_nrun0_noise0.0_dur1.0.txt'],
+                        'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0, 
+                                                    'duration':50000, 'dt':0.2, 'noise':True}, 
+                                                    'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns.txt'], 
+                       'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5, 
+                                                      'duration':50000, 'dt':0.2, 'noise':True},
+                                                      'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
+                                                      
+        #sim, net = generate(wee = 0, wei = 0, wie = 0, wii = 0, duration=50000, dt=0.2)
+        #sim, net = generate(duration=50000, dt=0.2)
         
-        sim, net = generate(wee = 0, wei = 0, wie = 0, wii = 0, duration=50000, dt=0.2)
-        sim, net = generate(duration=50000, dt=0.2)
-        
-        simulator = 'jNeuroML'
+        for a in arg_options:
+            print("Running: %s"%arg_options[a])
+       
+            sim, net = generate(**arg_options[a][0])
 
-        nmllr = NeuroMLliteRunner('%s.json'%sim.id,
-                                  simulator=simulator)
-                       
-        incl_23 = False               
-        incl_23 = True    
-        incl_56 = False
-        incl_56 = True
-        traces, events = nmllr.run_once('/tmp')
-        xs = []
-        ys = []
-        labels = []
-        colors = []
-        histxs = []
-        histys = []
-        histlabels = []
-        histcolors = []
-        bins = 150
-        
-        for tr in traces:
-            if tr!='t':
-                if ('23' in tr and incl_23) or ('56' in tr and incl_56):
-                    xs.append(traces['t'])
-                    ys.append(traces[tr])
-                    pop = tr.split('/')[0]
+            simulator = 'jNeuroML'
+
+            nmllr = NeuroMLliteRunner('%s.json'%sim.id,
+                                      simulator=simulator)
+
+            incl_23 = False               
+            incl_23 = True    
+            incl_56 = False
+            incl_56 = True
+            traces, events = nmllr.run_once('/tmp')
+            xs = []
+            ys = []
+            labels = []
+            colors = []
+            histxs = []
+            histys = []
+            histlabels = []
+            histcolors = []
+            bins = 150
+
+            for tr in traces:
+                if tr!='t':
+                    if ('23' in tr and incl_23) or ('56' in tr and incl_56):
+                        xs.append(traces['t'])
+                        ys.append(traces[tr])
+                        pop = tr.split('/')[0]
+                        labels.append(pop)
+                        colors.append(pop_colors[pop])
+
+                        hist1, edges1 = numpy.histogram(traces[tr],bins=bins)
+                        mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
+                        histxs.append(mid1)
+                        histys.append(hist1)
+                        histcolors.append(pop_colors[pop])
+                        histlabels.append(pop)
+
+
+            debug_datafile = '../Python/debug/intralaminar/%s'%arg_options[a][1]
+
+            with open(debug_datafile) as f:
+                l23e = []; l23i = []; l56e = []; l56i = []; ts = []
+                t=0
+                dt = 0.0002
+                count = 0
+                for line in f:
+                    w = line.split()
+                    l23e.append(float(w[0]))
+                    l23i.append(float(w[1]))
+                    l56e.append(float(w[2]))
+                    l56i.append(float(w[3]))
+                    ts.append(t)
+                    t+=dt
+                    count+=1
+                print("Read in 4 x %i data points from %s"%(count, debug_datafile))
+
+
+                if incl_23:
+                    xs.append(ts)
+                    ys.append(l23e)
+                    pop = 'L23_E Py'
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(traces[tr],bins=bins)
+                    hist1, edges1 = numpy.histogram(l23e,bins=bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
-                    histcolors.append(pop_colors[pop])
                     histlabels.append(pop)
+                    histcolors.append(pop_colors[pop])
 
-        
-        debug_datafile = '../Python/debug/intralaminar/simulation_Iext_0_nrun_0.txt'
-        
-        with open(debug_datafile) as f:
-            l23e = []; l23i = []; l56e = []; l56i = []; ts = []
-            t=0
-            dt = 0.0002
-            count = 0
-            for line in f:
-                w = line.split()
-                l23e.append(float(w[0]))
-                l23i.append(float(w[1]))
-                l56e.append(float(w[2]))
-                l56i.append(float(w[3]))
-                ts.append(t)
-                t+=dt
-                count+=1
-            print("Read in 4 x %i data points from %s"%(count, debug_datafile))
-                
-            
-            if incl_23:
-                xs.append(ts)
-                ys.append(l23e)
-                pop = 'L23_E Py'
-                labels.append(pop)
-                colors.append(pop_colors[pop])
-                
-                hist1, edges1 = numpy.histogram(l23e,bins=bins)
-                mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
-                histxs.append(mid1)
-                histys.append(hist1)
-                histlabels.append(pop)
-                histcolors.append(pop_colors[pop])
-                
-            
-                xs.append(ts)
-                ys.append(l23i)
-                pop = 'L23_I Py'
-                labels.append(pop)
-                colors.append(pop_colors[pop])
-                
-                hist1, edges1 = numpy.histogram(l23i,bins=bins)
-                mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
-                histxs.append(mid1)
-                histys.append(hist1)
-                histlabels.append(pop)
-                histcolors.append(pop_colors[pop])
-                
-            if incl_56:
-                xs.append(ts)
-                ys.append(l56e)
-                pop = 'L56_E Py'
-                labels.append(pop)
-                colors.append(pop_colors[pop])
-                
-                hist1, edges1 = numpy.histogram(l56e,bins=bins)
-                mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
-                histxs.append(mid1)
-                histys.append(hist1)
-                histlabels.append(pop)
-                histcolors.append(pop_colors[pop])
-                
-                xs.append(ts)
-                ys.append(l56i)
-                pop = 'L56_I Py'
-                labels.append(pop)
-                colors.append(pop_colors[pop])
-                
-                hist1, edges1 = numpy.histogram(l56i,bins=bins)
-                mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
-                histxs.append(mid1)
-                histys.append(hist1)
-                histlabels.append(pop)
-                histcolors.append(pop_colors[pop])
-            
-        print colors
-        pynml.generate_plot(xs,
-                            ys,
-                            'Comparison with connections',
-                            labels=labels, 
-                            colors=colors, 
-                            show_plot_already=False)
-                            
-        pynml.generate_plot(histxs,
-                            histys,
-                            'Histograms',
-                            labels=histlabels, 
-                            colors=histcolors, 
-                            show_plot_already=False, 
-                            markers=['o' for x in histxs], 
-                            markersizes=[2 for x in histxs])
-        
-        import matplotlib.pyplot as plt
+
+                    xs.append(ts)
+                    ys.append(l23i)
+                    pop = 'L23_I Py'
+                    labels.append(pop)
+                    colors.append(pop_colors[pop])
+
+                    hist1, edges1 = numpy.histogram(l23i,bins=bins)
+                    mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
+                    histxs.append(mid1)
+                    histys.append(hist1)
+                    histlabels.append(pop)
+                    histcolors.append(pop_colors[pop])
+
+                if incl_56:
+                    xs.append(ts)
+                    ys.append(l56e)
+                    pop = 'L56_E Py'
+                    labels.append(pop)
+                    colors.append(pop_colors[pop])
+
+                    hist1, edges1 = numpy.histogram(l56e,bins=bins)
+                    mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
+                    histxs.append(mid1)
+                    histys.append(hist1)
+                    histlabels.append(pop)
+                    histcolors.append(pop_colors[pop])
+
+                    xs.append(ts)
+                    ys.append(l56i)
+                    pop = 'L56_I Py'
+                    labels.append(pop)
+                    colors.append(pop_colors[pop])
+
+                    hist1, edges1 = numpy.histogram(l56i,bins=bins)
+                    mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
+                    histxs.append(mid1)
+                    histys.append(hist1)
+                    histlabels.append(pop)
+                    histcolors.append(pop_colors[pop])
+
+            print colors
+            pynml.generate_plot(xs,
+                                ys,
+                                a,
+                                labels=labels, 
+                                linewidths=[(1 if 'Py' in l else 2) for l in labels],
+                                colors=colors, 
+                                show_plot_already=False,
+                                yaxis='Rate (Hz)',
+                                xaxis='Time (s)',
+                                legend_position='right',
+                                title_above_plot=True)
+
+            if arg_options[a][0]['noise']:
+                pynml.generate_plot(histxs,
+                                    histys,
+                                    'Histograms: %s'%a,
+                                    labels=histlabels, 
+                                    colors=histcolors, 
+                                    show_plot_already=False, 
+                                    xaxis='Rate bins (Hz)',
+                                    yaxis='Num timesteps rate in bins',
+                                    markers=['o' for x in histxs], 
+                                    markersizes=[2 for x in histxs],
+                                    legend_position='right',
+                                    title_above_plot=True)
+
+            import matplotlib.pyplot as plt
 
         plt.show()
         
