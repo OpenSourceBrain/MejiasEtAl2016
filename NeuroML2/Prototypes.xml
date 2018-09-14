@@ -1,15 +1,15 @@
 <Lems>
 
     
-    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="5Hz" stdev="1.65"/>
-    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="5Hz" stdev="2.6"/>    
+    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="1Hz" stdev="1.65"/>
+    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="1Hz" stdev="2.6"/>    
     
     <!-- Two cells with zero noisy input -->
     <mejiasEtAl2016Cell id="L23_E_flat" tau="6ms" r0="5Hz" stdev="0"/>
     <mejiasEtAl2016Cell id="L23_I_flat" tau="15ms" r0="5Hz" stdev="0"/>
     
-    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="5Hz" stdev="5.5"/>
-    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="5Hz" stdev="8.5"/>
+    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="1Hz" stdev="5.5"/>
+    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="1Hz" stdev="8.5"/>
     
     <!-- Two cells with zero noisy input -->
     <mejiasEtAl2016Cell id="L56_E_flat" tau="30ms" r0="5Hz" stdev="0"/>
