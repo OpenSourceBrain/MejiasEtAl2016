@@ -9,19 +9,15 @@
     
     <Include file="RateBased.xml" />
     
-
     <Include file="Prototypes.xml" />
     <Include file="NoisyCurrentSource.xml" />
-    
-    
-    
     
     <network id="net1">
         
         <population id="l23ePop" component="L23_E" size="1" />
-        <population id="l23ePopFlat" component="L23_E_flat" size="1" />
+        <population id="l23ePopFlat" component="L23_E_flat" size="1" /> <!-- zero noisy input -->
         <population id="l23iPop" component="L23_I" size="1" />
-        <population id="l23iPopFlat" component="L23_I_flat" size="1" />
+        <population id="l23iPopFlat" component="L23_I_flat" size="1" /> <!-- zero noisy input -->
         
         <population id="l56ePop" component="L56_E" size="1" />
         <population id="l56iPop" component="L56_I" size="1" />
@@ -31,7 +27,7 @@
     <!-- End of NeuroML2 content -->
 
 
-    <Simulation id="sim1" length="100ms" step="0.01ms" target="net1">
+    <Simulation id="sim1" length="1000ms" step="0.2ms" target="net1">
 
         <Display id="d3" title="Rates" timeScale="1s" xmin="-20" xmax="1020" ymin="-1" ymax="11">
             <Line id="L23 E" quantity="l23ePop[0]/r" scale="1Hz" color="#0000ff" timeScale="1ms" />
@@ -44,12 +40,14 @@
         
         
         <Display id="d1" title="Inputs" timeScale="1s" xmin="-20" xmax="1020" ymin="-1" ymax="11">
+            <Line id="randn l23 e" quantity="l23ePop[0]/randn" scale="1" color="#33ff66" timeScale="1ms" />
             <Line id="isyn l23 e" quantity="l23ePop[0]/iSyn" scale="1nA" color="#0000ff" timeScale="1ms" />
+            <Line id="x l23 e" quantity="l23ePop[0]/x" scale="1" color="#aaa0ff" timeScale="1ms" />
             <Line id="phi l23 e" quantity="l23ePop[0]/phi" scale="1" color="#33ffff" timeScale="1ms" />
-            <Line id="isyn l23 e flat" quantity="l23ePopFlat[0]/iSyn" scale="1nA" color="#ff00ff" timeScale="1ms" />
+            <!--<Line id="isyn l23 e flat" quantity="l23ePopFlat[0]/iSyn" scale="1nA" color="#ff00ff" timeScale="1ms" />
             <Line id="isyn l23 e flat noise" quantity="l23ePopFlat[0]/iNoise" scale="1nA" color="#ffff00" timeScale="1ms" />
             
-            <!--<Line id="isyn i" quantity="iPop[0]/iSyn" scale="1nA" color="#ff0000" timeScale="1ms" />
+            <Line id="isyn i" quantity="iPop[0]/iSyn" scale="1nA" color="#ff0000" timeScale="1ms" />
             <Line id="phi i" quantity="iPop[0]/phi" scale="1" color="#ff7777" timeScale="1ms" />-->
         </Display>
         <!--
@@ -59,11 +57,11 @@
         </Display> -->
         
         <OutputFile id="of1" fileName="rates.dat">
-           <!-- <OutputColumn id="0" quantity="l23ePop[0]/r"/> 
+            <OutputColumn id="0" quantity="l23ePop[0]/r"/> 
             <OutputColumn id="1" quantity="l23iPop[0]/r"/> 
             
             <OutputColumn id="2" quantity="l56ePop[0]/r"/> 
-            <OutputColumn id="3" quantity="l56iPop[0]/r"/> -->
+            <OutputColumn id="3" quantity="l56iPop[0]/r"/>
             
             <OutputColumn id="4" quantity="l23ePopFlat[0]/r"/> 
             <OutputColumn id="5" quantity="l23iPopFlat[0]/r"/> 
