@@ -11,8 +11,9 @@ np.random.RandomState(seed=42)
 
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
 from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
-                         interlaminar_analysis_periodeogram, plot_spectrogram, calculate_interlaminar_power_spectrum, \
+                         calculate_interlaminar_power_spectrum, \
                          plot_interlaminar_power_spectrum
+from interareal import interareal_simulation
 from helper_functions import firing_rate_analysis
 
 
@@ -52,12 +53,12 @@ wie = 3.5; wii = -2.5
 # Specify membrane time constants
 tau_2e = 0.006; tau_2i = 0.015
 tau_5e = 0.030; tau_5i = 0.075
-tau = np.array([[tau_2e], [tau_2i], [tau_5e], [tau_5i]])
+tau = np.array([tau_2e, tau_2i, tau_5e, tau_5i])
 
 # sigma
 sig_2e = .3; sig_2i = .3
 sig_5e = .45; sig_5i = .45
-sig = np.array([[sig_2e], [sig_2i], [sig_5e], [sig_5i]])
+sig = np.array([sig_2e, sig_2i, sig_5e, sig_5i])
 
 if args.analysis == 'debug':
     # Call a function that plots and saves of the firing rate for the intra- and interlaminar simulation
@@ -214,7 +215,7 @@ if args.analysis == 'interareal':
 
 
     # Interareal connectivity
-    s = .1
+
     W = np.zeros((2, 2, 4, 2))
     # W(a, b, c, d), where
     # a = post. area

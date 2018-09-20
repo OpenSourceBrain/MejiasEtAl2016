@@ -8,11 +8,21 @@ import matplotlib.pylab as plt
 np.random.seed(42)
 
 
-def transduction_function(x):
+def transduction_function_(element):
+    if element == 0:
+        return 1
+    elif element <= -100:
+        return 0
+    else:
+        return element / (1 - math.exp(-element))
+transduction_function = np.vectorize(transduction_function_)
+
+def transduction_function_old(x):
     # note: define boundary conditions for the transduction function
     # Calculate the transduction function for each layer separately. This assumes that each layer is one
     # row in the passed input
-    x_transducted = np.zeros((x.shape))
+
+    x_transducted = np.zeros(len(x))
     for idx, element in enumerate(x):
         if element == 0:
             x_transducted[idx] = 1
@@ -22,8 +32,35 @@ def transduction_function(x):
             x_transducted[idx] = element / (1 - math.exp(-element))
     return x_transducted
 
+def test_zip(dt, tau, rate, dt_idx, area, transfer_input, tstep2, xi):
+    delta_rate = [dt / tau_region * (- region_rate + region_transfer_input) + region_tstep * region_initial_conditions for \
+                  tau_region, region_rate, region_transfer_input, region_tstep, region_initial_conditions in \
+                  zip(tau, rate[:, dt_idx, area], transfer_input, tstep2, xi[:, dt_idx, area])]
+    rate[:, dt_idx + 1, area] = [previous_rate + region_rate for previous_rate, region_rate in
+                                 zip(rate[:, dt_idx, area], delta_rate)]
+    return rate
 
-def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
+def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw=1):
+    """
+    Calculates the region rate over time
+
+    :param t:
+    :param dt:
+    :param tstop:
+    :param J:
+    :param tau: Membrane tiem constant
+    :param sig:
+    :param Iext: Additional current
+    :param Ibgk: Background current of the system
+    :param noise:
+    :param Nareas: Number of Areas to take into account
+    :param W: Intraareal connectivity matrix
+    :param Gw:
+    :return:
+        rate: Rate over time for the areas of interest
+        mean_input:
+    """
+
 
     rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
@@ -40,14 +77,17 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
         # iterate over different areas. Only true for the interareal simulation
         for area in range(Nareas):
             # calculate total input current
-            total_input = Ibgk + Iext + np.expand_dims(np.dot(J, rate[:, dt_idx, area]), axis=1)
-            # Do some transformations if analysis type is interareal:
+            tmp = np.dot(J, rate[:, dt_idx, area])
+
+            total_input = [Ibgki + Iexti + tmpi for Ibgki, Iexti, tmpi in zip(Ibgk, Iext, tmp)]
 
             # calculate input after the transfer function
-            transfer_input = transduction_function(total_input)
-            delta_rate = dt / tau * (- np.expand_dims(rate[:, dt_idx, area], axis=1) + transfer_input) + \
-                                     tstep2 * np.expand_dims(xi[:, dt_idx, area], axis=1)
-            rate[:, dt_idx + 1, area] = np.squeeze(np.expand_dims(rate[:, dt_idx, area], axis=1) + delta_rate)
+            transfer_input = transduction_function_old(total_input)
+            delta_rate = [dt / tau_region * (- region_rate + region_transfer_input) + region_tstep * region_initial_conditions for \
+                          tau_region, region_rate, region_transfer_input, region_tstep, region_initial_conditions in \
+                          zip(tau, rate[:, dt_idx, area], transfer_input, tstep2, xi[:, dt_idx, area])]
+            rate[:, dt_idx + 1, area] = [previous_rate + region_rate for previous_rate, region_rate in
+                                     zip(rate[:, dt_idx, area], delta_rate)]
 
     # exclude the initial point that corresponds to the initial conditions
     rate = rate[:, 1:, :]

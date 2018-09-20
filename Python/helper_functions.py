@@ -7,21 +7,22 @@ import math
 from calculate_rate import calculate_rate
 
 
+
 def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, noise, Nareas):
     # calculate the firing rate
     for i in Iexts:
         # inject current only on excitatory layer
-        Iext = np.array([[i], [0], [i], [0]])
+        Iext = np.array([i, 0, i, 0])
 
         for nrun in range(nruns):
             rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
             filename = os.path.join(analysis, 'simulation_Iext_'+
                                     str(i) + '_nrun_' + str(nrun))
 
-            # select only the excitatory and inhibitory layers for L2/3
+            # select the excitatory and inhibitory layers for L2/3
             uu_p_l2_3 = np.expand_dims(rate[0, :, 0], axis=1)
             vv_p_l2_3 = np.expand_dims(rate[1, :, 0], axis=1)
-            # select only the excitatory and inhibitory layers for L5/6
+            # select the excitatory and inhibitory layers for L5/6
             uu_p_l5_6 = np.expand_dims(rate[2, :, 0], axis=1)
             vv_p_l5_6 = np.expand_dims(rate[3, :, 0], axis=1)
 
@@ -141,7 +142,7 @@ def firing_rate_analysis():
                   [J_2i, 0,   wie, wii]])
 
     Iexts = [0]
-    Ibgk = np.zeros((J.shape[0], 1))
+    Ibgk = np.zeros((J.shape[0]))
     # For Fig2 the simulation is run 10 and the averate is taken as a signal. Just as a test,
     # here we just run the simulation once
     nruns = 1
