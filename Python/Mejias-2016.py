@@ -65,6 +65,8 @@ if args.analysis == 'debug':
     firing_rate_analysis()
 
 if args.analysis == 'intralaminar':
+    print('Intralaminar Simulation')
+    print('-----------------------')
     # Define dt and the trial length
     dt = 2e-4
     tstop = 25 # ms
@@ -94,10 +96,15 @@ if args.analysis == 'intralaminar':
     # Note: Because of the way the way intralaminar_simulation is defined only the results for L2/3
     # will be save and used for further analysis
     layer = 'L2_3'
+    print('Analysing layer %s' %layer)
     # check if simulation file already exists, if not run the simulation
-    if not os.path.isfile('intralaminar/L2_3_simulation.pckl'):
+    simulation_file = 'intralaminar/L2_3_simulation.pckl'
+    if not os.path.isfile(simulation_file):
+        print('Re-calculating the simulation')
         intralaminar_simulation(args.analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
                         J, tau, sig, args.noise, Nareas)
+    else:
+        print('Using the pre-saved simulation file: %s' %simulation_file)
     intralaminar_analysis(Iexts, nruns, layer, dt, transient)
     intralaminar_plt(layer)
 
@@ -230,12 +237,12 @@ if args.analysis == 'interareal':
     W[0, 1, 1, 1] = (1 - s) # V4 to V1, infra to infra excit
     W[0, 1, 3, 2] = .5      # other option same result
 
-    # background and injected currect
-    I0 = 2 * np.array([[1, 1], [0, 0], [2, 2], [0, 0]])
+    # background and injected current
+    Ibgk = 2 * np.array([[1, 1], [0, 0], [2, 2], [0, 0]])
     Iext = 15 * np.array([[1, 0], [0, 0], [1, 0], [0, 0]])
 
     # at rest
-    interareal_simulation(t, dt, tstop, J, W, tau, I0, sig, args.noise)
+    interareal_simulation(t, dt, tstop, J, W, tau, Iext, Ibkg, sig, args.noise)
     # microstimulation
 
 

@@ -77,17 +77,16 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
         # iterate over different areas. Only true for the interareal simulation
         for area in range(Nareas):
             # calculate total input current
-            tmp = np.dot(J, rate[:, dt_idx, area])
-
-            total_input = [Ibgki + Iexti + tmpi for Ibgki, Iexti, tmpi in zip(Ibgk, Iext, tmp)]
+            tmp = np.dot(J, rate[:, dt_idx, area]).reshape(4,1)
+            # elementwise add elements in Ibgk, Iext, tmp
+            total_input = reduce(np.add, (Ibgk, Iext, tmp))
 
             # calculate input after the transfer function
             transfer_input = transduction_function_old(total_input)
-            delta_rate = [dt / tau_region * (- region_rate + region_transfer_input) + region_tstep * region_initial_conditions for \
-                          tau_region, region_rate, region_transfer_input, region_tstep, region_initial_conditions in \
-                          zip(tau, rate[:, dt_idx, area], transfer_input, tstep2, xi[:, dt_idx, area])]
-            rate[:, dt_idx + 1, area] = [previous_rate + region_rate for previous_rate, region_rate in
-                                     zip(rate[:, dt_idx, area], delta_rate)]
+            tau_r = np.divide (dt, tau)
+            f = lambda tau_r, rate, transfer, tstep, initial_cond: tau_r * (- rate + transfer) + tstep * initial_cond
+            delta_rate = map(f, tau_r, rate[:, dt_idx, area], transfer_input, tstep2, xi[:, dt_idx, area])
+            rate[:, dt_idx + 1, area] = reduce(np.add, (rate[:, dt_idx, area], delta_rate))
 
     # exclude the initial point that corresponds to the initial conditions
     rate = rate[:, 1:, :]
