@@ -130,7 +130,7 @@ def intralaminar_simulation(analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
     simulation = {}
     for Iext in Iexts:
         simulation[Iext] = {}
-        Iext_a = np.array([[Iext], [0], [Iext], [0]])
+        Iext_a = np.array([Iext, 0, Iext, 0])
         # run each combination of external input multiple times an take the average PSD
         for nrun in range(nruns):
 

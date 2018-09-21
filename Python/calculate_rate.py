@@ -8,29 +8,13 @@ import matplotlib.pylab as plt
 np.random.seed(42)
 
 
-def transduction_function_(element):
+def transduction_function(element):
     if element == 0:
         return 1
     elif element <= -100:
         return 0
     else:
         return element / (1 - math.exp(-element))
-transduction_function = np.vectorize(transduction_function_)
-
-def transduction_function_old(x):
-    # note: define boundary conditions for the transduction function
-    # Calculate the transduction function for each layer separately. This assumes that each layer is one
-    # row in the passed input
-
-    x_transducted = np.zeros(len(x))
-    for idx, element in enumerate(x):
-        if element == 0:
-            x_transducted[idx] = 1
-        elif element <= -100:
-            x_transducted[idx] = 0
-        else:
-            x_transducted[idx] = element / (1 - math.exp(-element))
-    return x_transducted
 
 def test_zip(dt, tau, rate, dt_idx, area, transfer_input, tstep2, xi):
     delta_rate = [dt / tau_region * (- region_rate + region_transfer_input) + region_tstep * region_initial_conditions for \
@@ -77,16 +61,15 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
         # iterate over different areas. Only true for the interareal simulation
         for area in range(Nareas):
             # calculate total input current
-            tmp = np.dot(J, rate[:, dt_idx, area]).reshape(4,1)
+            tmp = np.dot(J, rate[:, dt_idx, area])
             # elementwise add elements in Ibgk, Iext, tmp
-            total_input = reduce(np.add, (Ibgk, Iext, tmp))
-
+            total_input = np.add(Ibgk, np.add(Iext, tmp))
             # calculate input after the transfer function
-            transfer_input = transduction_function_old(total_input)
-            tau_r = np.divide (dt, tau)
-            f = lambda tau_r, rate, transfer, tstep, initial_cond: tau_r * (- rate + transfer) + tstep * initial_cond
-            delta_rate = map(f, tau_r, rate[:, dt_idx, area], transfer_input, tstep2, xi[:, dt_idx, area])
-            rate[:, dt_idx + 1, area] = reduce(np.add, (rate[:, dt_idx, area], delta_rate))
+            transfer_input = map(transduction_function, total_input)
+            tau_r = np.divide(dt, tau)
+            delta_rate = np.add(np.multiply(tau_r, (np.add(-rate[:, dt_idx, area], transfer_input))),
+                                np.multiply(tstep2, xi[:, dt_idx, area]))
+            rate[:, dt_idx + 1, area] = np.add(rate[:, dt_idx, area], delta_rate)
 
     # exclude the initial point that corresponds to the initial conditions
     rate = rate[:, 1:, :]

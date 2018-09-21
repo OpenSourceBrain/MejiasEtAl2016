@@ -90,7 +90,7 @@ if args.analysis == 'intralaminar':
     Imax = 6
     # Note: the range function does not include the end
     Iexts = range(Imin, Imax + Istep, Istep)
-    Ibgk = np.zeros((J.shape[0], 1))
+    Ibgk = np.zeros((J.shape[0]))
     nruns = 10
 
     # Note: Because of the way the way intralaminar_simulation is defined only the results for L2/3
