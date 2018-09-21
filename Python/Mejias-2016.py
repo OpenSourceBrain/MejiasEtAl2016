@@ -96,19 +96,21 @@ if args.analysis == 'intralaminar':
     # Note: Because of the way the way intralaminar_simulation is defined only the results for L2/3
     # will be save and used for further analysis
     layer = 'L2_3'
-    print('Analysing layer %s' %layer)
+    print('    Analysing layer %s' %layer)
     # check if simulation file already exists, if not run the simulation
     simulation_file = 'intralaminar/L2_3_simulation.pckl'
     if not os.path.isfile(simulation_file):
-        print('Re-calculating the simulation')
+        print('    Re-calculating the simulation')
         intralaminar_simulation(args.analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
                         J, tau, sig, args.noise, Nareas)
     else:
-        print('Using the pre-saved simulation file: %s' %simulation_file)
+        print('    Loading the pre-saved simulation file: %s' %simulation_file)
     intralaminar_analysis(Iexts, nruns, layer, dt, transient)
     intralaminar_plt(layer)
 
 if args.analysis == 'interlaminar_a':
+    print('Interlaminar Simulation')
+    print('-----------------------')
     # Calculates the power spectrum for the coupled and uncoupled case for L2/3 and L5/6
     dt = 2e-4
     tstop = 600
@@ -127,8 +129,8 @@ if args.analysis == 'interlaminar_a':
                   [wie, wii, J_5i, 0],
                   [J_2e, 0, wee, wei],
                   [J_2i, 0, wie, wii]])
-    Iext = np.array([[8], [0], [8], [0]])
-    Ibgk = np.zeros((J.shape[0], 1))
+    Iext = np.array([8, 0, 8, 0])
+    Ibgk = np.zeros((J.shape[0]))
 
     Nbin = 100 # pick on e very 'bin' points
     pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
@@ -158,6 +160,8 @@ if args.analysis == 'interlaminar_a':
 
 
 if args.analysis == 'interlaminar_b':
+    print('Interlaminar Simulation')
+    print('-----------------------')
     # Calculates the spectogram and 30 traces of actvity in layer 5/6
     # Define dt and the trial length
     dt = 2e-4
@@ -177,20 +181,21 @@ if args.analysis == 'interlaminar_b':
                   [J_2e, 0,   wee, wei],
                   [J_2i, 0,   wie, wii]])
 
-    Iext = np.array([[6], [0], [8], [0]])
-    Ibgk = np.zeros((J.shape[0], 1))
+    Iext = np.array([6, 0, 8, 0])
+    Ibgk = np.zeros((J.shape[0]))
 
     # frequencies of interest
     min_freq5 = 4 # alpha range
     min_freq2 = 30 # gama range
 
     # check if file with simulation exists, if not calculate the simulation
-    if not os.path.isfile(os.path.join(args.analysis, 'simulation.pckl')):
+    simulation_file = os.path.join(args.analysis, 'simulation.pckl')
+    if not os.path.isfile(simulation_file):
+        print('    Re-calculating the simulation')
         rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
     else:
-        # load pickle file with results
-        picklename = os.path.join(args.analysis, 'simulation.pckl')
-        with open(picklename, 'rb') as filename:
+        print('    Loading the pre-saved simulation file: %s' %simulation_file)
+        with open(simulation_file, 'rb') as filename:
             rate = pickle.load(filename)
 
     # Analyse and Plot traces of activity in layer 5/6

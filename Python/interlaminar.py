@@ -14,7 +14,7 @@ def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noi
     picklename = os.path.join(analysis, 'simulation.pckl')
     with open(picklename, 'wb') as filename:
         pickle.dump(rate, filename)
-    print('Done Simulation!')
+    print('    Done Simulation!')
     return rate
 
 
@@ -60,12 +60,12 @@ def my_pretransformations(x, window, noverlap, fs):
 def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
 
     # Note: This analysis selects only the excitatory populations from L2/3 and L5/6
-    x_2 = rate[0, int(round((transient + dt)/dt)) - 1:]
-    x_5 = rate[2, int(round((transient + dt)/dt)) - 1:]
+    x_2 = rate[0, int(round((transient + dt)/dt)) - 1:, 0]
+    x_5 = rate[2, int(round((transient + dt)/dt)) - 1:, 0]
 
     pxx, fxx = calculate_periodogram(x_5, transient, dt)
     f_peakalpha = find_peak_frequency(fxx, pxx, min_freq5)
-    print('Average peak frequency on the alpha range: %.02f Hz' %f_peakalpha)
+    print('    Average peak frequency on the alpha range: %.02f Hz' %f_peakalpha)
 
     # band-pass filter L5 activity
     fmin = 7; fmax = 12; fs = 1/dt
