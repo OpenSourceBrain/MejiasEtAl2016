@@ -16,28 +16,6 @@ def transduction_function(element):
     else:
         return element / (1 - math.exp(-element))
 
-@vectorize(nopython=True)
-def numba_calculate_transfer_input(rate, Ibgk, Iext):
-    wee = 1.5; wei = -3.25
-    wie = 3.5; wii = -2.5
-    J_2e = 0; J_2i = 0
-    J_5e = 0; J_5i = 0
-    J = np.array([[wee, wei, J_5e, 0],
-                  [wie, wii, J_5i, 0],
-                  [J_2e, 0, wee, wei],
-                  [J_2i, 0, wie, wii]])
-    # elementwise add elements in Ibgk, Iext, tmp
-    total_input = Ibgk + Iext + np.dot(J, rate)
-    # calculate input after the transfer function
-    transfer_input = transduction_function(total_input)
-    return transfer_input
-
-@vectorize
-def numba_calculate_rate(rate, transfer_input, tau_r, tstep2, xi):
-    delta_rate = tau_r * (rate + transfer_input) + tstep2 * xi
-    return delta_rate
-
-
 @jit(nopython=True)
 def dt_calculate_rate(J, rate, Ibgk, Iext, dt, tau, tstep2, xi):
     # calculate total input current
@@ -88,10 +66,7 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
     for dt_idx in range(len(t)):
         # iterate over different areas. Only true for the interareal simulation
         for area in range(Nareas):
-            tau_r = np.divide(dt, tau)
-            transfer_input = numba_calculate_transfer_input(J, rate[:, dt_idx, area], Ibgk, Iext)
-            delta_rate = numba_calculate_rate(rate[:, dt_idx, area], transfer_input, tau_r, tstep2, xi[:, dt_idx, area])
-            # delta_rate = dt_calculate_rate(J, rate[:, dt_idx, area], Ibgk, Iext, dt, tau, tstep2, xi[:, dt_idx, area])
+            delta_rate = dt_calculate_rate(J, rate[:, dt_idx, area], Ibgk, Iext, dt, tau, tstep2, xi[:, dt_idx, area])
             rate[:, dt_idx + 1, area] = np.add(rate[:, dt_idx, area], delta_rate)
 
     # exclude the initial point that corresponds to the initial conditions

@@ -198,7 +198,6 @@ def plot_activity_traces(dt, segment5, segindex, analysis):
     # calculate the peak-centered alpha wave by averaging
     alphawaves = np.mean(segment5, axis=1)
     alphatime = [(i*dt) - (segindex*dt) for i in range(1, alphawaves.shape[0] + 1)]
-    plt.figure()
     # plot the first 100 elements from segment5
     grey_rgb = (.7, .7, .7)
     plt.figure()
