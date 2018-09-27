@@ -25,8 +25,11 @@ env:
 
 install: 
     - pip install git+https://github.com/OpenSourceBrain/osb-model-validation
-    - pip install pyNeuroML
-    - pip install pyelectro
+    
+    # install pyelectro
+    - pip install git+https://github.com/NeuralEnsemble/pyelectro.git
+
+    - pip install pyNpyNeuroML
     - git clone https://github.com/NeuroML/NeuroMLlite.git
     - cd NeuroMLlite
     - python setup.py install
