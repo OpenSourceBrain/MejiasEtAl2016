@@ -8,6 +8,8 @@ addons:
         - python-matplotlib 
         - python-sympy
         - python-tk
+        - python-tables 
+        - python-tornado
     
 
 language: python
@@ -23,6 +25,13 @@ env:
 
 install: 
     - pip install git+https://github.com/OpenSourceBrain/osb-model-validation
+    - pip install pyNeuroML
+    - git clone https://github.com/NeuroML/NeuroMLlite.git
+    - cd NeuroMLlite
+    - python setup.py install
+    - cd examples
+    - python Example2.py # test one example...
+    - cd ../..
 
 script:
     - omv all -V
