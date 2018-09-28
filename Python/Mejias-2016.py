@@ -13,7 +13,6 @@ from intralaminar import intralaminar_simulation, intralaminar_analysis, intrala
 from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
                          calculate_interlaminar_power_spectrum, \
                          plot_interlaminar_power_spectrum
-from interareal import interareal_simulation
 from helper_functions import firing_rate_analysis
 
 """
