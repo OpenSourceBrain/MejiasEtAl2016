@@ -52,7 +52,7 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
         rate: Rate over time for the areas of interest
         mean_input:
     """
-    #print('Calculating rates for %i area(s), duration: %s, dt: %s, Iext: %s, Ibgk: %s, J: %s, tau: %s, W: %s, Gw: %s'%(Nareas, tstop, dt, Iext, Ibgk, J, tau, W, Gw))
+    #print('Calculating rates for %i area(s), duration: %s, dt: %s, Iext: %s, Ibgk: %s, J: %s, tau: %s, W: %s, Gw: %s, initialrate: %s'%(Nareas, tstop, dt, Iext, Ibgk, J, tau, W, Gw, initialrate))
     rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
     tstep2 = ((dt * sig * sig) / tau) ** .5

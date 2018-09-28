@@ -8,14 +8,13 @@ from calculate_rate import calculate_rate
 
 
 def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate):
-
     # calculate the firing rate
     for i in Iexts:
         # inject current only on excitatory layer
         Iext = np.array([i, 0, i, 0])
 
         for nrun in range(nruns):
-            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, initialrate)
+            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, initialrate=initialrate)
             filename = os.path.join(analysis, \
                        'simulation_Iext%s_nrun%s_noise%s_dur%s%s'%(i,nrun,noise,t[-1],('_noconns' if noconns else '')))
 

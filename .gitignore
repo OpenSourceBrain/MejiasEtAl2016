@@ -26,3 +26,4 @@ NeuroML2/TestNetwork.net.nml
 NeuroML2/*.png
 /Python/__pycache__
 /Python/debug
+/Python/*/*.pckl
