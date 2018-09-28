@@ -69,7 +69,7 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
     with open(picklename, 'wb') as file1:
         pickle.dump(psd_dic, file1)
 
-    print('Done Analysis!')
+    print('    Done Analysis!')
 
 
 def plt_filled_std(ax, fxx_plt, data_mean, data_std, color, label):
@@ -130,7 +130,7 @@ def intralaminar_simulation(analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
     simulation = {}
     for Iext in Iexts:
         simulation[Iext] = {}
-        Iext_a = np.array([[Iext], [0], [Iext], [0]])
+        Iext_a = np.array([Iext, 0, Iext, 0])
         # run each combination of external input multiple times an take the average PSD
         for nrun in range(nruns):
 
@@ -144,4 +144,4 @@ def intralaminar_simulation(analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
     picklename = os.path.join(analysis, layer + '_simulation.pckl')
     with open(picklename, 'wb') as file1:
         pickle.dump(simulation, file1)
-    print('Done Simulation!')
+    print('    Done Simulation!')
