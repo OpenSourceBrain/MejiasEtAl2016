@@ -24,3 +24,6 @@ NeuroML2/LEMS_SimMejiasNetwork.xml
 NeuroML2/MejiasNetwork.net.nml
 NeuroML2/TestNetwork.net.nml
 NeuroML2/*.png
+/Python/__pycache__
+/Python/debug
+/Python/*/*.pckl

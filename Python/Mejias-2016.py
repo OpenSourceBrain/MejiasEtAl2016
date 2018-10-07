@@ -15,26 +15,43 @@ from interlaminar import interlaminar_simulation, interlaminar_activity_analysis
                          plot_interlaminar_power_spectrum
 from helper_functions import firing_rate_analysis
 
+
 """
 Main Python file that contains the definitions for the simulation and
 calls the necessary functions depending on the passed parameters.
 """
 
+
 def getArguments():
-    parser = argparse.ArgumentParser(description='Parameters for the analysis')
+    parser = argparse.ArgumentParser(description='Parameters for the simulation')
     parser.add_argument('-noise',
                         type=float,
                         dest='noise',
-                        help='Specifiy sigma of the Gausian Noise')
+                        default=1.0,
+                        help='Specify sigma of the Gaussian noise')
     parser.add_argument('-analysis',
                         type=str,
                         dest='analysis',
-                        help='Specifiy type of analysis to be used')
+                        default='debug',
+                        help='Specify type of analysis to be used')
     parser.add_argument('-debug',
                         dest='debug',
                         action='store_true',
-                        help='Specifiy type of analysis to be used')
-
+                        help='Specify whether to generate simulations for debugging')
+    parser.add_argument('-noconns',
+                        dest='noconns',
+                        action='store_true',
+                        help='Specify whether to remove connections (DEBUG MODE ONLY!)')
+    parser.add_argument('-testduration',
+                        type=float,
+                        dest='testduration',
+                        default=1000.,
+                        help='Duration of test simulation (DEBUG MODE ONLY!)')
+    parser.add_argument('-initialrate',
+                        type=float,
+                        dest='initialrate',
+                        default=-1,
+                        help='Initial rate of test simulation, if negative, use a random value (default) (DEBUG MODE ONLY!)')
     parser.add_argument('-nogui',
                         dest='nogui',
                         action='store_true',
@@ -64,8 +81,12 @@ if __name__ == "__main__":
     sig = np.array([sig_2e, sig_2i, sig_5e, sig_5i])
 
     if args.analysis == 'debug':
+        print('-----------------------')
+        print('Debugging')
+        print('-----------------------')
         # Call a function that plots and saves of the firing rate for the intra- and interlaminar simulation
-        firing_rate_analysis()
+        print('Running debug simulation/analysis with %s'%args)
+        firing_rate_analysis(tau, sig, args.noconns, args.testduration, args.noise, args.initialrate)
 
     if args.analysis == 'intralaminar':
         print('-----------------------')
