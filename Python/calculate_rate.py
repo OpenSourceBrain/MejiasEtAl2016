@@ -30,7 +30,8 @@ def dt_calculate_rate(J, rate, Ibgk, Iext, dt, tau, tstep2, xi):
     return delta_rate
 
 
-def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw=1):
+
+def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw=1, initialrate=-1):
     """
     Calculates the region rate over time
 
@@ -46,22 +47,24 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
     :param Nareas: Number of Areas to take into account
     :param W: Intraareal connectivity matrix
     :param Gw:
+    :param initialrate: Use this for t=0; if initialrate <0, use random value
     :return:
         rate: Rate over time for the areas of interest
         mean_input:
     """
-
-
+    #print('Calculating rates for %i area(s), duration: %s, dt: %s, Iext: %s, Ibgk: %s, J: %s, tau: %s, W: %s, Gw: %s, initialrate: %s'%(Nareas, tstop, dt, Iext, Ibgk, J, tau, W, Gw, initialrate))
     rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
     tstep2 = ((dt * sig * sig) / tau) ** .5
     mean_xi = 0
     std_xi = noise
     xi = np.random.normal(mean_xi, std_xi, (4, int(round(tstop/dt)) + 1, Nareas))
-
+    
     # Initial rate values
     # Note: the 5 ensures that you have between 0 and 10 spikes/s
     rate[:, 0, :] = 5 * (1 + np.tanh(2 * xi[:, 0, :]))
+    if initialrate>=0:
+        rate[:, 0, :] = initialrate
 
     for dt_idx in range(len(t)):
         # iterate over different areas. Only true for the interareal simulation

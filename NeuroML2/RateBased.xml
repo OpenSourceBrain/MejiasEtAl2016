@@ -29,13 +29,14 @@
         <Parameter name="tau" dimension="time"/>
         <Parameter name="r0" dimension="per_time"/>
                 
-        <Parameter name="stdev" dimension="current" description="Standard deviation of current"/>
+        <Parameter name="stdev" dimension="none" description="Standard deviation of noise"/>
 
         <Attachments name="synapses" type="basePointCurrent"/>
 
         <Exposure name="phi" dimension="none"/>
         <Exposure name="iSyn" dimension="current"/>
-        <Exposure name="iNoise" dimension="current"/>
+        
+        <Exposure name="randn" dimension="none"/>
 
         <Constant name="NAMP_SCALE" dimension="current" value="1 nA"/>
         <Constant name="HZ_SCALE" dimension="per_time" value="1 Hz"/>
@@ -48,11 +49,10 @@
             
             <StateVariable name="U" dimension="none"/>
             <StateVariable name="V" dimension="none"/>
-            <StateVariable name="randn" dimension="none"/>
-            <StateVariable name="iNoise" exposure="iNoise" dimension="current"/>
-
+            <StateVariable name="randn" dimension="none" exposure="randn"/>
+            
             <DerivedVariable name="iSyn" dimension="current" exposure="iSyn" select="synapses[*]/i" reduce="add" />
-            <DerivedVariable name="x" dimension="none" value="(iSyn + iNoise)/NAMP_SCALE"/>
+            <DerivedVariable name="x" dimension="none" value="(iSyn)/NAMP_SCALE"/>
 
             <ConditionalDerivedVariable name="phi" dimension="none" exposure="phi">
             	<Case condition="x .eq. 0" value="1"/>
@@ -62,7 +62,7 @@
             <!-- Set v to r for now...
             <DerivedVariable name="v" dimension="voltage" exposure="v" value="0*MVOLT_SCALE"/>-->
 
-            <TimeDerivative variable="r" value="(-1*r + phi*HZ_SCALE)/tau"/>
+            <TimeDerivative variable="r" value="(-1*r + (stdev*randn + phi)*HZ_SCALE)/tau"/>
 
             <OnStart>
                 <StateAssignment variable="r" value="r0"/>
@@ -77,9 +77,6 @@
                 <StateAssignment variable="U" value="random(1)"/>
                 <StateAssignment variable="V" value="random(1)"/>
                 <StateAssignment variable="randn" value="sqrt(-2*log(U))*cos(2*3.14159265359*V)"/>
-
-                <StateAssignment variable="iNoise" value="stdev*(2*randn-1)"/>
-               
             </OnCondition>
 
         </Dynamics>
