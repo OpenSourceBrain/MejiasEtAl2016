@@ -3,19 +3,19 @@ sudo: false
 addons:
    apt:
      packages:
-        - python-numpy 
-        - python-scipy 
-        - python-matplotlib 
+        - python-numpy
+        - python-scipy
+        - python-matplotlib
         - python-sympy
         - python-tk
-        - python-tables 
+        - python-tables
         - python-tornado
-    
+
 
 language: python
 python: 2.7
 
- 
+
 virtualenv:
    system_site_packages: true
 
@@ -23,9 +23,24 @@ env:
     - OMV_ENGINE=jNeuroML
     - OMV_ENGINE=Brian     # Python script runs with Brian; should be just Python, but Brian engine is quick to set up...
 
-install: 
+before install:
+    wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.s -O miniconda.sh
+    - bash miniconda.sh -b -p $HOME/miniconda
+    - export PATH="$HOME/miniconda/bin:$PATH"
+    - hash -r
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    # Useful for debugging any issues with conda
+    - conda info -a
+
+    # Install python packagesReplace dep1 dep2 ... with your dependencies
+    - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numba
+    - source activate test-environment
+    -  python setup.py install
+
+install:
     - pip install git+https://github.com/OpenSourceBrain/osb-model-validation
-    
+
     # install pyelectro
     - pip install git+https://github.com/NeuralEnsemble/pyelectro.git
 
@@ -38,9 +53,11 @@ install:
     - cd ../..
 
 script:
+    # Test simulation python scripts
+    - python Python/Mejias-2016.py -noise 1 -analysis debug
     - omv all -V
-    
-    
-    
-    
+
+
+
+
 
