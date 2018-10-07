@@ -20,25 +20,27 @@
         other export simulators, particularly Neuron... -->
         <Exposure name="r" dimension="per_time"/>
     </ComponentType>
-    
-    
+
+
     <ComponentType  name="mejiasEtAl2016Cell"
                     extends="baseRateUnit"
                     description="Work in progress...">
 
         <Parameter name="tau" dimension="time"/>
         <Parameter name="r0" dimension="per_time"/>
-                
-        <Parameter name="stdev" dimension="none" description="Standard deviation of noise"/>
+
+        <Parameter name="sig" dimension="none" description="Standard deviation of noise"/>
 
         <Attachments name="synapses" type="basePointCurrent"/>
 
         <Exposure name="phi" dimension="none"/>
         <Exposure name="iSyn" dimension="current"/>
-        
+        <Exposure name="tstep2" dimension="none"/>
+
         <Exposure name="randn" dimension="none"/>
 
         <Constant name="NAMP_SCALE" dimension="current" value="1 nA"/>
+        <Constant name="MS_SCALE" dimension="time" value=".001 s"/>
         <Constant name="HZ_SCALE" dimension="per_time" value="1 Hz"/>
         <Constant name="MVOLT_SCALE" dimension="voltage" value="1mV"/>
 
@@ -46,23 +48,26 @@
 
             <StateVariable name="r" dimension="per_time" exposure="r" description="Rate..."/>
             <StateVariable name="v" dimension="voltage" exposure="v"/>
-            
+            <StateVariable name="dr" dimension="per_time"/>
+
             <StateVariable name="U" dimension="none"/>
             <StateVariable name="V" dimension="none"/>
             <StateVariable name="randn" dimension="none" exposure="randn"/>
-            
+
             <DerivedVariable name="iSyn" dimension="current" exposure="iSyn" select="synapses[*]/i" reduce="add" />
             <DerivedVariable name="x" dimension="none" value="(iSyn)/NAMP_SCALE"/>
 
             <ConditionalDerivedVariable name="phi" dimension="none" exposure="phi">
             	<Case condition="x .eq. 0" value="1"/>
             	<Case condition="x .neq. 0" value="x / (1 - exp(-1*x))"/>
-            </ConditionalDerivedVariable> 
+            </ConditionalDerivedVariable>
 
             <!-- Set v to r for now...
             <DerivedVariable name="v" dimension="voltage" exposure="v" value="0*MVOLT_SCALE"/>-->
+           <DerivedVariable name="tstep2" dimension="none" exposure="tstep2" value="((sig * sig * MS_SCALE)/ tau) ^ .5"/>
+           <!-- <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE)/tau)"/> -->
+           <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE)/tau) + tstep2*randn*HZ_SCALE/MS_SCALE"/>
 
-            <TimeDerivative variable="r" value="(-1*r + (stdev*randn + phi)*HZ_SCALE)/tau"/>
 
             <OnStart>
                 <StateAssignment variable="r" value="r0"/>
@@ -72,7 +77,7 @@
             <OnCondition test="r .lt. 0">
                 <EventOut port="spike"/>
             </OnCondition>
-            
+
             <OnCondition test="t .geq. 0">
                 <StateAssignment variable="U" value="random(1)"/>
                 <StateAssignment variable="V" value="random(1)"/>
