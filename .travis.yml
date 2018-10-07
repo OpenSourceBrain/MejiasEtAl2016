@@ -3,14 +3,7 @@ sudo: false
 addons:
    apt:
      packages:
-        - python-numpy
-        - python-scipy
-        - python-matplotlib
-        - python-sympy
-        - python-tk
         - python-tables
-        - python-tornado
-
 
 language: python
 python: 2.7
@@ -24,7 +17,7 @@ env:
     - OMV_ENGINE=Brian     # Python script runs with Brian; should be just Python, but Brian engine is quick to set up...
 
 before install:
-    wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.s -O miniconda.sh
+    - wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH="$HOME/miniconda/bin:$PATH"
     - hash -r
@@ -34,9 +27,8 @@ before install:
     - conda info -a
 
     # Install python packagesReplace dep1 dep2 ... with your dependencies
-    - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numba
+    - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numba numpy scipy matplotlib sympy tk tornado
     - source activate test-environment
-    -  python setup.py install
 
 install:
     - pip install git+https://github.com/OpenSourceBrain/osb-model-validation
