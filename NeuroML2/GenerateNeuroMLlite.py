@@ -65,14 +65,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
                                 lems_source_file='Prototypes.xml'))
 
 
-    W = [['wee',   'wei'],
-        ['wie',   'wii']]
-
     def internal_connections(pops):
         for pre in pops:
             for post in pops:
 
-                weight = W[pops.index(post)][pops.index(pre)]
+                weight = W[pops.index(pre)][pops.index(post)]
                 print('Connection %s -> %s weight %s'%(pre.id, post.id, weight))
                 if weight!=0:
 
@@ -85,10 +82,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
                                                       weight=weight,
                                                       random_connectivity=RandomConnectivity(probability=1)))
 
-    pops = [pl23e,pl23i]
-    internal_connections(pops)
-
-    pops = [pl56e,pl56i]
+    l2e_l2e = wee; l2e_l2i = wei; l2i_l2e = wie; l2i_l2i = wii;
+    l5e_l5e = wee; l5e_l5i = wei; l5i_l5e = wie; l5i_l5i = wii;
+    l2e_l5i = 0; l2i_l5e = 0; l2i_l5i = 0;
+    l5e_l2e = 0; l5i_l2e = 0; l5i_l2i = 0;
+    W = [[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
+         [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
+         [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
+         [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]]
+    pops = [pl23e,pl23i, pl56e, pl56i]
     internal_connections(pops)
 
     '''
@@ -294,7 +296,24 @@ if __name__ == "__main__":
             import matplotlib.pyplot as plt
 
         plt.show()
-        
+
+    if '-intralaminar' in sys.argv:
+
+        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = 0; l2e_l5e = 0
+        sim, net = generate()
+        ################################################################################
+        ###   Run in some simulators
+
+        check_to_generate_or_run(sys.argv, sim)
+
+    if '-interlaminar' in sys.argv:
+
+        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = .75; l2e_l5e = 1
+        sim, net = generate()
+        ################################################################################
+        ###   Run in some simulators
+
+        check_to_generate_or_run(sys.argv, sim)
 
     else:
         
