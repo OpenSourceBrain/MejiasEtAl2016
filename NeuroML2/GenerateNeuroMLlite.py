@@ -125,34 +125,49 @@ if __name__ == "__main__":
     from pyneuroml import pynml
 
     import sys
+    
+    pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
+                  'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
 
     if '-sweep' in sys.argv:
         pass
 
-    if '-test' in sys.argv:
+    if '-test' in sys.argv or '-dt' in sys.argv:
+        
+        if '-test' in sys.argv:
 
-        pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
-                      'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
-
-
-        arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
-                                                    'duration':1000, 'dt':0.2, 'noise':False},
-                                                    'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns.txt'],
-                       'With connections; no noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
-                                                      'duration':1000, 'dt':0.2, 'noise':False},
-                                                      'simulation_Iext0_nrun0_noise0.0_dur1.0.txt'],
-                        'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
-                                                    'duration':50000, 'dt':0.2, 'noise':True},
-                                                    'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns.txt'],
-                       'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
-                                                      'duration':50000, 'dt':0.2, 'noise':True},
-                                                      'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
+            arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':1000, 'dt':0.2, 'noise':False},
+                                                        'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns.txt'],
+                           'With connections; no noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                          'duration':1000, 'dt':0.2, 'noise':False},
+                                                          'simulation_Iext0_nrun0_noise0.0_dur1.0.txt'],
+                            'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':50000, 'dt':0.2, 'noise':True},
+                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns.txt'],
+                           'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                          'duration':50000, 'dt':0.2, 'noise':True},
+                                                          'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
+                                                          
+            hist_bins = 150
+           
+        elif '-dt' in sys.argv:
+            print('Running dt tests...')
+            
+            arg_options = {'dt normal':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':50000, 'dt':0.2, 'noise':True},
+                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt0.0002.txt'],
+                           'dt small':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':50000, 'dt':0.02, 'noise':True},
+                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt2e-05.txt']}
+                                                        
+            hist_bins = 50
 
         #sim, net = generate(wee = 0, wei = 0, wie = 0, wii = 0, duration=50000, dt=0.2)
         #sim, net = generate(duration=50000, dt=0.2)
 
         for a in arg_options:
-            print("Running: %s"%arg_options[a])
+            print("Running sim: %s"%arg_options[a])
 
             sim, net = generate(**arg_options[a][0])
 
@@ -174,7 +189,6 @@ if __name__ == "__main__":
             histys = []
             histlabels = []
             histcolors = []
-            bins = 150
 
             for tr in traces:
                 if tr!='t':
@@ -185,7 +199,7 @@ if __name__ == "__main__":
                         labels.append(pop)
                         colors.append(pop_colors[pop])
 
-                        hist1, edges1 = numpy.histogram(traces[tr],bins=bins)
+                        hist1, edges1 = numpy.histogram(traces[tr],bins=hist_bins)
                         mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                         histxs.append(mid1)
                         histys.append(hist1)
@@ -219,7 +233,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l23e,bins=bins)
+                    hist1, edges1 = numpy.histogram(l23e,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -233,7 +247,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l23i,bins=bins)
+                    hist1, edges1 = numpy.histogram(l23i,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -247,7 +261,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l56e,bins=bins)
+                    hist1, edges1 = numpy.histogram(l56e,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -260,7 +274,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l56i,bins=bins)
+                    hist1, edges1 = numpy.histogram(l56i,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
