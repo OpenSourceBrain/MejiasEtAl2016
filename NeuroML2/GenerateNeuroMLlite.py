@@ -4,8 +4,8 @@ import sys
 import numpy
 
 
-def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, l5e_l2i=0,
-             l2e_l5e=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.025):
+def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
+             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.025):
 
     ################################################################################
     ###   Build new network
@@ -17,6 +17,8 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, l5e_l2i=0,
                        'wei': wei,
                        'wie': wie,
                        'wii': wii,
+                       'interlaminar1': interlaminar1,
+                       'interlaminar2': interlaminar2,
                        'sigma23': sigma23,
                        'sigma56': sigma56 }
 
@@ -83,10 +85,10 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, l5e_l2i=0,
                                                       weight=weight,
                                                       random_connectivity=RandomConnectivity(probability=1)))
 
-    l2e_l2e = wee; l2e_l2i = wei; l2i_l2e = wie; l2i_l2i = wii;
-    l5e_l5e = wee; l5e_l5i = wei; l5i_l5e = wie; l5i_l5i = wii;
-    l2e_l5i = 0; l2i_l5e = 0; l2i_l5i = 0;
-    l5e_l2e = 0; l5i_l2e = 0; l5i_l2i = 0;
+    l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
+    l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
+    l2e_l5i = 0; l2e_l5e = 'interlaminar2'; l2i_l5e = 0; l2i_l5i = 0;
+    l5e_l2e = 0; l5e_l2i= 'interlaminar1'; l5i_l2e = 0; l5i_l2i = 0;
     W = [[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
          [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
          [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
@@ -125,7 +127,7 @@ if __name__ == "__main__":
     from pyneuroml import pynml
 
     import sys
-    
+
     pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
                   'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
 
@@ -133,7 +135,7 @@ if __name__ == "__main__":
         pass
 
     if '-test' in sys.argv or '-dt' in sys.argv:
-        
+
         if '-test' in sys.argv:
 
             arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
@@ -148,19 +150,19 @@ if __name__ == "__main__":
                            'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
                                                           'duration':50000, 'dt':0.2, 'noise':True},
                                                           'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
-                                                          
+
             hist_bins = 150
-           
+
         elif '-dt' in sys.argv:
             print('Running dt tests...')
-            
+
             arg_options = {'dt normal':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.2, 'noise':True},
                                                         'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt0.0002.txt'],
                            'dt small':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.02, 'noise':True},
                                                         'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt2e-05.txt']}
-                                                        
+
             hist_bins = 50
 
         #sim, net = generate(wee = 0, wei = 0, wie = 0, wii = 0, duration=50000, dt=0.2)
@@ -315,7 +317,7 @@ if __name__ == "__main__":
     if '-intralaminar' in sys.argv:
 
         wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = 0; l2e_l5e = 0
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, l5e_l2i=l5e_l2i, l2e_l5e=l2e_l5e)
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e)
         ################################################################################
         ###   Run in some simulators
 
@@ -323,8 +325,8 @@ if __name__ == "__main__":
 
     if '-interlaminar' in sys.argv:
 
-        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = .75; l2e_l5e = 1
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, l5e_l2i=l5e_l2i, l2e_l5e=l2e_l5e)
+        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = 75; l2e_l5e = 1
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e)
         ################################################################################
         ###   Run in some simulators
 
