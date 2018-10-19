@@ -3,8 +3,9 @@ from neuromllite import Projection, RandomConnectivity, Input, Simulation
 import sys
 import numpy
 
-     
-def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.025):
+
+def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, l5e_l2i=0,
+             l2e_l5e=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.025):
 
     ################################################################################
     ###   Build new network
@@ -21,8 +22,8 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
 
     suffix = '' if noise else '_flat'
     l23ecell = Cell(id='L23_E'+suffix, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I'+suffix, lems_source_file='RateBased.xml') #  hack to include this file too.  
-    l56ecell = Cell(id='L56_E'+suffix, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.  
+    l23icell = Cell(id='L23_I'+suffix, lems_source_file='RateBased.xml') #  hack to include this file too.
+    l56ecell = Cell(id='L56_E'+suffix, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
     l56icell = Cell(id='L56_I'+suffix, lems_source_file='Prototypes.xml')
 
 
@@ -32,8 +33,8 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
     net.cells.append(l56icell)
 
 
-    input_source0 = InputSource(id='iclamp0', 
-                               pynn_input='DCSource', 
+    input_source0 = InputSource(id='iclamp0',
+                               pynn_input='DCSource',
                                parameters={'amplitude':2, 'start':50., 'stop':150.})
 
     net.input_sources.append(input_source0)
@@ -61,23 +62,20 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
 
 
 
-    net.synapses.append(Synapse(id='rs', 
+    net.synapses.append(Synapse(id='rs',
                                 lems_source_file='Prototypes.xml'))
 
-
-    W = [['wee',   'wei'],
-        ['wie',   'wii']]
 
     def internal_connections(pops):
         for pre in pops:
             for post in pops:
 
-                weight = W[pops.index(post)][pops.index(pre)]
+                weight = W[pops.index(pre)][pops.index(post)]
                 print('Connection %s -> %s weight %s'%(pre.id, post.id, weight))
                 if weight!=0:
 
                     net.projections.append(Projection(id='proj_%s_%s'%(pre.id,post.id),
-                                                      presynaptic=pre.id, 
+                                                      presynaptic=pre.id,
                                                       postsynaptic=post.id,
                                                       synapse='rs',
                                                       type='continuousProjection',
@@ -85,10 +83,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
                                                       weight=weight,
                                                       random_connectivity=RandomConnectivity(probability=1)))
 
-    pops = [pl23e,pl23i]
-    internal_connections(pops)
-
-    pops = [pl56e,pl56i]
+    l2e_l2e = wee; l2e_l2i = wei; l2i_l2e = wie; l2i_l2i = wii;
+    l5e_l5e = wee; l5e_l5i = wei; l5i_l5e = wie; l5i_l5i = wii;
+    l2e_l5i = 0; l2i_l5e = 0; l2i_l5i = 0;
+    l5e_l2e = 0; l5i_l2e = 0; l5i_l2i = 0;
+    W = [[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
+         [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
+         [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
+         [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]]
+    pops = [pl23e,pl23i, pl56e, pl56i]
     internal_connections(pops)
 
     '''
@@ -114,43 +117,58 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, sigma23=.3, sigma56=
     sim.to_json_file()
 
     return sim, net
-                                        
+
 if __name__ == "__main__":
-    
+
     from neuromllite.NetworkGenerator import check_to_generate_or_run
     from neuromllite.sweep.ParameterSweep import *
     from pyneuroml import pynml
-    
+
     import sys
     
+    pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
+                  'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
+
     if '-sweep' in sys.argv:
         pass
-    
-    if '-test' in sys.argv:
+
+    if '-test' in sys.argv or '-dt' in sys.argv:
         
-        pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
-                      'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
-                      
-                      
-        arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0, 
-                                                    'duration':1000, 'dt':0.2, 'noise':False}, 
-                                                    'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns.txt'], 
-                       'With connections; no noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5, 
-                                                      'duration':1000, 'dt':0.2, 'noise':False},
-                                                      'simulation_Iext0_nrun0_noise0.0_dur1.0.txt'],
-                        'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0, 
-                                                    'duration':50000, 'dt':0.2, 'noise':True}, 
-                                                    'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns.txt'], 
-                       'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5, 
-                                                      'duration':50000, 'dt':0.2, 'noise':True},
-                                                      'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
-                                                      
+        if '-test' in sys.argv:
+
+            arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':1000, 'dt':0.2, 'noise':False},
+                                                        'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns.txt'],
+                           'With connections; no noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                          'duration':1000, 'dt':0.2, 'noise':False},
+                                                          'simulation_Iext0_nrun0_noise0.0_dur1.0.txt'],
+                            'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':50000, 'dt':0.2, 'noise':True},
+                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns.txt'],
+                           'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                          'duration':50000, 'dt':0.2, 'noise':True},
+                                                          'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
+                                                          
+            hist_bins = 150
+           
+        elif '-dt' in sys.argv:
+            print('Running dt tests...')
+            
+            arg_options = {'dt normal':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':50000, 'dt':0.2, 'noise':True},
+                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt0.0002.txt'],
+                           'dt small':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
+                                                        'duration':50000, 'dt':0.02, 'noise':True},
+                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt2e-05.txt']}
+                                                        
+            hist_bins = 50
+
         #sim, net = generate(wee = 0, wei = 0, wie = 0, wii = 0, duration=50000, dt=0.2)
         #sim, net = generate(duration=50000, dt=0.2)
-        
+
         for a in arg_options:
-            print("Running: %s"%arg_options[a])
-       
+            print("Running sim: %s"%arg_options[a])
+
             sim, net = generate(**arg_options[a][0])
 
             simulator = 'jNeuroML'
@@ -158,8 +176,8 @@ if __name__ == "__main__":
             nmllr = NeuroMLliteRunner('%s.json'%sim.id,
                                       simulator=simulator)
 
-            incl_23 = False               
-            incl_23 = True    
+            incl_23 = False
+            incl_23 = True
             incl_56 = False
             incl_56 = True
             traces, events = nmllr.run_once('/tmp')
@@ -171,7 +189,6 @@ if __name__ == "__main__":
             histys = []
             histlabels = []
             histcolors = []
-            bins = 150
 
             for tr in traces:
                 if tr!='t':
@@ -182,7 +199,7 @@ if __name__ == "__main__":
                         labels.append(pop)
                         colors.append(pop_colors[pop])
 
-                        hist1, edges1 = numpy.histogram(traces[tr],bins=bins)
+                        hist1, edges1 = numpy.histogram(traces[tr],bins=hist_bins)
                         mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                         histxs.append(mid1)
                         histys.append(hist1)
@@ -216,7 +233,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l23e,bins=bins)
+                    hist1, edges1 = numpy.histogram(l23e,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -230,7 +247,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l23i,bins=bins)
+                    hist1, edges1 = numpy.histogram(l23i,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -244,7 +261,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l56e,bins=bins)
+                    hist1, edges1 = numpy.histogram(l56e,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -257,7 +274,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l56i,bins=bins)
+                    hist1, edges1 = numpy.histogram(l56i,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -268,9 +285,9 @@ if __name__ == "__main__":
             pynml.generate_plot(xs,
                                 ys,
                                 a,
-                                labels=labels, 
+                                labels=labels,
                                 linewidths=[(1 if 'Py' in l else 2) for l in labels],
-                                colors=colors, 
+                                colors=colors,
                                 show_plot_already=False,
                                 yaxis='Rate (Hz)',
                                 xaxis='Time (s)',
@@ -281,12 +298,12 @@ if __name__ == "__main__":
                 pynml.generate_plot(histxs,
                                     histys,
                                     'Histograms: %s'%a,
-                                    labels=histlabels, 
-                                    colors=histcolors, 
-                                    show_plot_already=False, 
+                                    labels=histlabels,
+                                    colors=histcolors,
+                                    show_plot_already=False,
                                     xaxis='Rate bins (Hz)',
                                     yaxis='Num timesteps rate in bins',
-                                    markers=['o' for x in histxs], 
+                                    markers=['o' for x in histxs],
                                     markersizes=[2 for x in histxs],
                                     legend_position='right',
                                     title_above_plot=True)
@@ -294,12 +311,29 @@ if __name__ == "__main__":
             import matplotlib.pyplot as plt
 
         plt.show()
-        
+
+    if '-intralaminar' in sys.argv:
+
+        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = 0; l2e_l5e = 0
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, l5e_l2i=l5e_l2i, l2e_l5e=l2e_l5e)
+        ################################################################################
+        ###   Run in some simulators
+
+        check_to_generate_or_run(sys.argv, sim)
+
+    if '-interlaminar' in sys.argv:
+
+        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = .75; l2e_l5e = 1
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, l5e_l2i=l5e_l2i, l2e_l5e=l2e_l5e)
+        ################################################################################
+        ###   Run in some simulators
+
+        check_to_generate_or_run(sys.argv, sim)
 
     else:
-        
+
         sim, net = generate()
-        
+
         ################################################################################
         ###   Run in some simulators
 

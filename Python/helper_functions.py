@@ -16,7 +16,7 @@ def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, n
         for nrun in range(nruns):
             rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, initialrate=initialrate)
             filename = os.path.join(analysis, \
-                       'simulation_Iext%s_nrun%s_noise%s_dur%s%s'%(i,nrun,noise,t[-1],('_noconns' if noconns else '')))
+                       'simulation_Iext%s_nrun%s_noise%s_dur%s%s_dt%s'%(i,nrun,noise,t[-1],('_noconns' if noconns else ''),dt))
 
             # select the excitatory and inhibitory layers for L2/3
             uu_p_l2_3 = np.expand_dims(rate[0, :, 0], axis=1)
@@ -49,7 +49,7 @@ def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, n
             np.savetxt(filename + '.txt', activity)
             plt.close('all')
 
-        print('Saved debug info to %s!'%filename)
+        print('Saved debug info to %s.txt!'%filename )
 
 
 def calculate_periodogram(re, transient, dt):
@@ -111,7 +111,8 @@ def firing_rate_analysis(tau,
                          noconns=False, 
                          testduration=1000, # ms
                          noise = 1,
-                         initialrate=5): 
+                         initialrate=5,
+                         dt = 2e-4): 
                          
     ########################################################################################################################
     #                                                      Intralaminar
@@ -125,7 +126,6 @@ def firing_rate_analysis(tau,
         wie = 0.0; wii = 0.0
 
 
-    dt = 2e-4 # sec
     tstop = testduration/1000. # sec
     t = np.linspace(0, tstop, tstop/dt)
     # speciy number of areas that communicate with each other
@@ -164,8 +164,6 @@ def firing_rate_analysis(tau,
     #                                                      Interlaminar
     ########################################################################################################################
 
-    # Define dt and the trial length
-    dt = 2e-4
     tstop = testduration/1000. # sec
     t = np.linspace(0, tstop, tstop/dt)
     transient = 5

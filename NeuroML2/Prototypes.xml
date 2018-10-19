@@ -1,31 +1,31 @@
 <Lems>
 
-    
-    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="1Hz" stdev="1.65"/>
-    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="1Hz" stdev="2.6"/>    
-    
+
+    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="1Hz" sig=".3"/>
+    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="1Hz" sig=".3"/>
+
     <!-- Two cells with zero noisy input -->
-    <mejiasEtAl2016Cell id="L23_E_flat" tau="6ms" r0="5Hz" stdev="0"/>
-    <mejiasEtAl2016Cell id="L23_I_flat" tau="15ms" r0="5Hz" stdev="0"/>
-    
-    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="1Hz" stdev="5.5"/>
-    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="1Hz" stdev="8.5"/>
-    
+    <mejiasEtAl2016Cell id="L23_E_flat" tau="6ms" r0="5Hz" sig="0"/>
+    <mejiasEtAl2016Cell id="L23_I_flat" tau="15ms" r0="5Hz" sig="0"/>
+
+    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="1Hz" sig=".45"/>
+    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="1Hz" sig=".45"/>
+
     <!-- Two cells with zero noisy input -->
-    <mejiasEtAl2016Cell id="L56_E_flat" tau="30ms" r0="5Hz" stdev="0"/>
-    <mejiasEtAl2016Cell id="L56_I_flat" tau="75ms" r0="5Hz" stdev="0"/>
-    
+    <mejiasEtAl2016Cell id="L56_E_flat" tau="30ms" r0="5Hz"  sig="0"/>
+    <mejiasEtAl2016Cell id="L56_I_flat" tau="75ms" r0="5Hz" sig="0"/>
+
     <pulseGenerator id="baselineE" delay="10ms" duration="30ms" amplitude="-0.5nA" />
-    
+
     <!--
     <noisyCurrentSource id="noiseL23_E" delay="50ms" duration="40ms" mean="0 nA" stdev="3 nA" noiseDt="0.01ms"/>
     <noisyCurrentSource id="noiseL23_I" delay="100ms" duration="40ms" mean="0 nA" stdev="4 nA" noiseDt="0.01ms"/>
-    
+
     <noisyCurrentSource id="noiseL56_E" delay="150ms" duration="40ms" mean="0 nA" stdev="3 nA" noiseDt="0.01ms"/>
     <noisyCurrentSource id="noiseL56_I" delay="200ms" duration="40ms" mean="0 nA" stdev="4 nA" noiseDt="0.01ms"/>
-    
+
     Dummy synapse which emits no current. Used as presynaptic endpoint for analog synaptic connection.-->
     <silentSynapse id="silent1"/>
     <rateSynapse id="rs" />
-    
+
 </Lems>

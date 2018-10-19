@@ -47,6 +47,11 @@ def getArguments():
                         dest='testduration',
                         default=1000.,
                         help='Duration of test simulation (DEBUG MODE ONLY!)')
+    parser.add_argument('-dt',
+                        type=float,
+                        dest='dt',
+                        default=2e-4,
+                        help='Timestep (dt) of simulation')
     parser.add_argument('-initialrate',
                         type=float,
                         dest='initialrate',
@@ -86,14 +91,15 @@ if __name__ == "__main__":
         print('-----------------------')
         # Call a function that plots and saves of the firing rate for the intra- and interlaminar simulation
         print('Running debug simulation/analysis with %s'%args)
-        firing_rate_analysis(tau, sig, args.noconns, args.testduration, args.noise, args.initialrate)
+        dt = args.dt
+        firing_rate_analysis(tau, sig, args.noconns, args.testduration, args.noise, args.initialrate, dt)
 
     if args.analysis == 'intralaminar':
         print('-----------------------')
         print('Intralaminar Analysis')
         print('-----------------------')
         # Define dt and the trial length
-        dt = 2e-4
+        dt = args.dt
         tstop = 25 # ms
         t = np.linspace(0, tstop, tstop/dt)
         transient = 5
@@ -138,7 +144,7 @@ if __name__ == "__main__":
         print('Interlaminar Analysis')
         print('-----------------------')
         # Calculates the power spectrum for the coupled and uncoupled case for L2/3 and L5/6
-        dt = 2e-4
+        dt = args.dt
         tstop = 600
         transient = 10
 
@@ -191,7 +197,7 @@ if __name__ == "__main__":
         print('-----------------------')
         # Calculates the spectogram and 30 traces of actvity in layer 5/6
         # Define dt and the trial length
-        dt = 2e-4
+        dt = args.dt
         tstop = 6000
         transient = 10
         # specify number of areas that communicate with each other
@@ -236,7 +242,7 @@ if __name__ == "__main__":
 
 
     if args.analysis == 'interareal':
-        dt = 2e-04
+        dt = args.dt
         tstop = 40
         transient = 5
         # speciy number of areas that communicate with each other
