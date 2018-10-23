@@ -23,10 +23,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
                        'sigma56': sigma56 }
 
     suffix = '' if noise else '_flat'
-    l23ecell = Cell(id='L23_E'+suffix, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I'+suffix, lems_source_file='RateBased.xml') #  hack to include this file too.
-    l56ecell = Cell(id='L56_E'+suffix, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
-    l56icell = Cell(id='L56_I'+suffix, lems_source_file='Prototypes.xml')
+    suffix2 = '' if dt == 0.2 else '_smalldt'
+    l23ecell = Cell(id='L23_E'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23icell = Cell(id='L23_I'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
+    l56ecell = Cell(id='L56_E'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
+    l56icell = Cell(id='L56_I'+suffix+suffix2, lems_source_file='Prototypes.xml')
 
 
     net.cells.append(l23ecell)
@@ -158,10 +159,10 @@ if __name__ == "__main__":
 
             arg_options = {'dt normal':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.2, 'noise':True},
-                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt0.0002.txt'],
+                                                        'simulation_Iext0_nrun0_noiseNone_dur50.0_noconns_dt0.0002.txt'],
                            'dt small':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.02, 'noise':True},
-                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt2e-05.txt']}
+                                                        'simulation_Iext0_nrun0_noiseNone_dur50.0_noconns_dt2e-05.txt']}
 
             hist_bins = 50
 

@@ -31,7 +31,7 @@ def dt_calculate_rate(J, rate, Ibgk, Iext, dt, tau, tstep2, xi):
 
 
 
-def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw=1, initialrate=-1):
+def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, sigmaoverride, Nareas, W=1, Gw=1, initialrate=-1):
     """
     Calculates the region rate over time
 
@@ -43,7 +43,7 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
     :param sig:
     :param Iext: Additional current
     :param Ibgk: Background current of the system
-    :param noise:
+    :param sigmaoverride: Override sigma of the Gaussian noise for ALL populations
     :param Nareas: Number of Areas to take into account
     :param W: Intraareal connectivity matrix
     :param Gw:
@@ -55,10 +55,10 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
     #print('Calculating rates for %i area(s), duration: %s, dt: %s, Iext: %s, Ibgk: %s, J: %s, tau: %s, W: %s, Gw: %s, initialrate: %s'%(Nareas, tstop, dt, Iext, Ibgk, J, tau, W, Gw, initialrate))
     rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
-    sig_to_use = np.array([noise, noise, noise, noise]) if noise else sig
+    sig_to_use = np.array([sigmaoverride, sigmaoverride, sigmaoverride, sigmaoverride]) if sigmaoverride else sig
     tstep2 = ((dt * sig_to_use * sig_to_use) / tau) ** .5
     mean_xi = 0
-    std_xi = sig_to_use[0]
+    std_xi = 1
     xi = np.random.normal(mean_xi, std_xi, (4, int(round(tstop/dt)) + 1, Nareas))
     
     # Initial rate values

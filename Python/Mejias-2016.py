@@ -24,11 +24,11 @@ calls the necessary functions depending on the passed parameters.
 
 def getArguments():
     parser = argparse.ArgumentParser(description='Parameters for the simulation')
-    parser.add_argument('-noise',
+    parser.add_argument('-sigmaoverride',
                         type=float,
-                        dest='noise',
+                        dest='sigmaoverride',
                         default=None,
-                        help='Override sigma of the Gaussian noise for all populations (if None leave as is)')
+                        help='Override sigma of the Gaussian noise for ALL populations (if None leave them as is)')
     parser.add_argument('-analysis',
                         type=str,
                         dest='analysis',
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         # Call a function that plots and saves of the firing rate for the intra- and interlaminar simulation
         print('Running debug simulation/analysis with %s'%args)
         dt = args.dt
-        firing_rate_analysis(tau, sig, args.noconns, args.testduration, args.noise, args.initialrate, dt)
+        firing_rate_analysis(tau, sig, args.noconns, args.testduration, args.sigmaoverride, args.initialrate, dt)
 
     if args.analysis == 'intralaminar':
         print('-----------------------')
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         if not os.path.isfile(simulation_file):
             print('    Re-calculating the simulation')
             intralaminar_simulation(args.analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
-                            J, tau, sig, args.noise, Nareas)
+                            J, tau, sig, args.sigmaoverride, Nareas)
         else:
             print('    Loading the pre-saved simulation file: %s' %simulation_file)
         intralaminar_analysis(Iexts, nruns, layer, dt, transient)
@@ -168,7 +168,7 @@ if __name__ == "__main__":
         pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
                             calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
                                                                   tstop, J, tau, sig, Iext, Ibgk,
-                                                                  args.noise, Nareas, Nbin)
+                                                                  args.sigmaoverride, Nareas, Nbin)
 
         # Run simulation when the two layers are uncoupled
         # define interlaminar synaptic coupling strengths
@@ -182,7 +182,7 @@ if __name__ == "__main__":
         pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin, pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = \
             calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
                                                tstop, J, tau, sig, Iext, Ibgk,
-                                               args.noise, Nareas, Nbin)
+                                               args.sigmaoverride, Nareas, Nbin)
         # Plot spectrogram
         plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
                                       pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
@@ -225,7 +225,7 @@ if __name__ == "__main__":
         simulation_file = os.path.join(args.analysis, 'simulation.pckl')
         if not os.path.isfile(simulation_file):
             print('    Re-calculating the simulation')
-            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
+            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.sigmaoverride, Nareas)
         else:
             print('    Loading the pre-saved simulation file: %s' %simulation_file)
             with open(simulation_file, 'rb') as filename:
@@ -280,7 +280,7 @@ if __name__ == "__main__":
         Iext = 15 * np.array([[1, 0], [0, 0], [1, 0], [0, 0]])
 
         # at rest
-        interareal_simulation(t, dt, tstop, J, W, tau, Iext, Ibkg, sig, args.noise)
+        interareal_simulation(t, dt, tstop, J, W, tau, Iext, Ibkg, sig, args.sigmaoverride)
         # microstimulation
 
 

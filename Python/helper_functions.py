@@ -7,16 +7,16 @@ import math
 from calculate_rate import calculate_rate
 
 
-def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate):
+def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, sigmaoverride, Nareas, noconns, initialrate):
     # calculate the firing rate
     for i in Iexts:
         # inject current only on excitatory layer
         Iext = np.array([i, 0, i, 0])
 
         for nrun in range(nruns):
-            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, initialrate=initialrate)
+            rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, sigmaoverride, Nareas, initialrate=initialrate)
             filename = os.path.join(analysis, \
-                       'simulation_Iext%s_nrun%s_noise%s_dur%s%s_dt%s'%(i,nrun,noise,t[-1],('_noconns' if noconns else ''),dt))
+                       'simulation_Iext%s_nrun%s_noise%s_dur%s%s_dt%s'%(i,nrun,sigmaoverride,t[-1],('_noconns' if noconns else ''),dt))
 
             # select the excitatory and inhibitory layers for L2/3
             uu_p_l2_3 = np.expand_dims(rate[0, :, 0], axis=1)
@@ -32,7 +32,7 @@ def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, n
             # plt.ylim([-.5, 2])
             plt.ylim(-.5, 5.5)
             plt.legend()
-            plt.title('Layer 2/3; noise=%s; conns=%s'%(noise,not noconns))
+            plt.title('Layer 2/3; noise=%s; conns=%s'%(sigmaoverride,not noconns))
             plt.savefig(filename + '_L2_3.png')
 
             # Plot the layers time course for layer L5/6
@@ -41,7 +41,7 @@ def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, n
             plt.plot(vv_p_l5_6, label='inhibitory', color='b')
             plt.ylim(-.5, 5.5)
             plt.legend()
-            plt.title('Layer 5/6; noise=%s; conns=%s'%(noise,not noconns))
+            plt.title('Layer 5/6; noise=%s; conns=%s'%(sigmaoverride,not noconns))
             plt.savefig(filename + '_L5_6.png')
 
             # save the simulation as a txt file and figure
@@ -110,7 +110,7 @@ def firing_rate_analysis(tau,
                          sig,
                          noconns=False, 
                          testduration=1000, # ms
-                         noise = None,
+                         sigmaoverride = None,
                          initialrate=5,
                          dt = 2e-4): 
                          
@@ -156,10 +156,9 @@ def firing_rate_analysis(tau,
 
     # Calculate firing rate, save the results as a txt file and plot the firing rate over time for layer L2_3
     debug_firing_rate(analysis, t, dt, tstop, J,
-                      tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate)
+                      tau, sig, Iexts, Ibgk, nruns, sigmaoverride, Nareas, noconns, initialrate)
                       
     print("Finished debug simulation Intralaminar of duration %s ms; conns removed: %s"%(testduration, noconns))
-    quit()
 
     ########################################################################################################################
     #                                                      Interlaminar
@@ -198,6 +197,6 @@ def firing_rate_analysis(tau,
         os.mkdir(analysis)
 
     debug_firing_rate(analysis, t, dt, tstop, J,
-                      tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate)
+                      tau, sig, Iexts, Ibgk, nruns, sigmaoverride, Nareas, noconns, initialrate)
 
     print("Finished debug simulation Interlaminar of duration %s ms; conns removed: %s"%(testduration, noconns))
