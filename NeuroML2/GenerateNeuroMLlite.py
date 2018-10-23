@@ -5,13 +5,16 @@ import numpy
 
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
-             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.025):
+             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.2):
 
     ################################################################################
     ###   Build new network
 
     net = Network(id='MejiasFig2')
     net.notes = 'Testing...'
+    if dt!=0.2 and dt!=0.02:
+        print('Using a value for dt which is not supported!!')
+        quit()
 
     net.parameters = { 'wee': wee,
                        'wei': wei,
@@ -128,6 +131,10 @@ if __name__ == "__main__":
     from pyneuroml import pynml
 
     import sys
+    JEE = 1.5
+    JIE = 3.5
+    JEI = -3.25
+    JII = -2.5
 
     pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
                   'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
@@ -141,16 +148,17 @@ if __name__ == "__main__":
 
             arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':1000, 'dt':0.2, 'noise':False},
-                                                        'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns.txt'],
-                           'With connections; no noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                        'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns_dt0.0002.txt'],
+                           'With connections; no noise':[{'wee':JEE, 'wei':JIE, 'wie':JEI, 'wii':JII,
                                                           'duration':1000, 'dt':0.2, 'noise':False},
-                                                          'simulation_Iext0_nrun0_noise0.0_dur1.0.txt'],
+                                                          'simulation_Iext0_nrun0_noise0.0_dur1.0_dt0.0002.txt'],
                             'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.2, 'noise':True},
-                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns.txt'],
-                           'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt0.0002.txt'],
+                           'With connections; with noise':[{'wee':JEE, 'wei':JIE, 'wie':JEI, 'wii':JII,
                                                           'duration':50000, 'dt':0.2, 'noise':True},
-                                                          'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
+                                                          'simulation_Iext0_nrun0_noise1.0_dur50.0_dt0.0002.txt']} 
+                                                          
 
             hist_bins = 150
 
@@ -315,18 +323,18 @@ if __name__ == "__main__":
 
         plt.show()
 
-    if '-intralaminar' in sys.argv:
+    elif '-intralaminar' in sys.argv:
 
-        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = 0; l2e_l5e = 0
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e)
+        wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e,duration=1000)
         ################################################################################
         ###   Run in some simulators
 
         check_to_generate_or_run(sys.argv, sim)
 
-    if '-interlaminar' in sys.argv:
+    elif '-interlaminar' in sys.argv:
 
-        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = 75; l2e_l5e = 1
+        wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e)
         ################################################################################
         ###   Run in some simulators

@@ -55,7 +55,7 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, sigmaoverride, Nareas,
     #print('Calculating rates for %i area(s), duration: %s, dt: %s, Iext: %s, Ibgk: %s, J: %s, tau: %s, W: %s, Gw: %s, initialrate: %s'%(Nareas, tstop, dt, Iext, Ibgk, J, tau, W, Gw, initialrate))
     rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
-    sig_to_use = np.array([sigmaoverride, sigmaoverride, sigmaoverride, sigmaoverride]) if sigmaoverride else sig
+    sig_to_use = np.array([sigmaoverride, sigmaoverride, sigmaoverride, sigmaoverride]) if sigmaoverride!=None else sig
     tstep2 = ((dt * sig_to_use * sig_to_use) / tau) ** .5
     mean_xi = 0
     std_xi = 1
