@@ -40,7 +40,6 @@
         
         
         <Display id="d1" title="Inputs" timeScale="1s" xmin="-20" xmax="1020" ymin="-1" ymax="11">
-            <Line id="randn l23 e" quantity="l23ePop[0]/randn" scale="1" color="#33ff66" timeScale="1ms" />
             <Line id="isyn l23 e" quantity="l23ePop[0]/iSyn" scale="1nA" color="#0000ff" timeScale="1ms" />
             <Line id="x l23 e" quantity="l23ePop[0]/x" scale="1" color="#aaa0ff" timeScale="1ms" />
             <Line id="phi l23 e" quantity="l23ePop[0]/phi" scale="1" color="#33ffff" timeScale="1ms" />
