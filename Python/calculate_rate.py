@@ -55,9 +55,10 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
     #print('Calculating rates for %i area(s), duration: %s, dt: %s, Iext: %s, Ibgk: %s, J: %s, tau: %s, W: %s, Gw: %s, initialrate: %s'%(Nareas, tstop, dt, Iext, Ibgk, J, tau, W, Gw, initialrate))
     rate = np.zeros((4, int(round(tstop/dt) + 1), Nareas))
     # Apply additional input current only on excitatory layers
-    tstep2 = ((dt * sig * sig) / tau) ** .5
+    sig_to_use = np.array([noise, noise, noise, noise]) if noise else sig
+    tstep2 = ((dt * sig_to_use * sig_to_use) / tau) ** .5
     mean_xi = 0
-    std_xi = noise
+    std_xi = sig_to_use[0]
     xi = np.random.normal(mean_xi, std_xi, (4, int(round(tstop/dt)) + 1, Nareas))
     
     # Initial rate values
@@ -69,7 +70,10 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas, W=1, Gw
     for dt_idx in range(len(t)):
         # iterate over different areas. Only true for the interareal simulation
         for area in range(Nareas):
+            #print('Calc diff for %i at t: %s'%(area, dt_idx*dt))
             delta_rate = dt_calculate_rate(J, rate[:, dt_idx, area], Ibgk, Iext, dt, tau, tstep2, xi[:, dt_idx, area])
+            
+            #print('  rate: %s, tau: %s, tstep2: %s, xi: %s, sig_to_use: %s'%(rate[:, dt_idx, area], tau,tstep2, xi[:, dt_idx, area], sig_to_use))
             rate[:, dt_idx + 1, area] = np.add(rate[:, dt_idx, area], delta_rate)
 
     # exclude the initial point that corresponds to the initial conditions

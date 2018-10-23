@@ -28,6 +28,7 @@
 
         <Parameter name="tau" dimension="time"/>
         <Parameter name="r0" dimension="per_time"/>
+        <Parameter name="noiseDt" dimension="time"/>
 
         <Parameter name="sig" dimension="none" description="Standard deviation of noise"/>
 
@@ -35,7 +36,7 @@
 
         <Exposure name="phi" dimension="none"/>
         <Exposure name="iSyn" dimension="current"/>
-        <Exposure name="tstep2" dimension="none"/>
+        <Exposure name="xi" dimension="none"/>
 
         <Exposure name="randn" dimension="none"/>
 
@@ -64,9 +65,11 @@
 
             <!-- Set v to r for now...
             <DerivedVariable name="v" dimension="voltage" exposure="v" value="0*MVOLT_SCALE"/>-->
-           <DerivedVariable name="tstep2" dimension="none" exposure="tstep2" value="((sig * sig * MS_SCALE)/ tau) ^ .5"/>
-           <!-- <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE)/tau)"/> -->
-           <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE)/tau) + tstep2*randn*HZ_SCALE/MS_SCALE"/>
+            
+           <DerivedVariable name="xi" dimension="none"  value="randn * sig"/>
+           <DerivedVariable name="txi" dimension="per_time"  value="(tau/ noiseDt) ^ .5 * xi * HZ_SCALE"/>
+           
+           <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE + txi)/tau) "/>
 
 
             <OnStart>

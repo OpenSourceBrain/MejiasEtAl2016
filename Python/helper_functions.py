@@ -110,7 +110,7 @@ def firing_rate_analysis(tau,
                          sig,
                          noconns=False, 
                          testduration=1000, # ms
-                         noise = 1,
+                         noise = None,
                          initialrate=5,
                          dt = 2e-4): 
                          
@@ -159,6 +159,7 @@ def firing_rate_analysis(tau,
                       tau, sig, Iexts, Ibgk, nruns, noise, Nareas, noconns, initialrate)
                       
     print("Finished debug simulation Intralaminar of duration %s ms; conns removed: %s"%(testduration, noconns))
+    quit()
 
     ########################################################################################################################
     #                                                      Interlaminar

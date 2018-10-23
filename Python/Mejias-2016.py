@@ -27,8 +27,8 @@ def getArguments():
     parser.add_argument('-noise',
                         type=float,
                         dest='noise',
-                        default=1.0,
-                        help='Specify sigma of the Gaussian noise')
+                        default=None,
+                        help='Override sigma of the Gaussian noise for all populations (if None leave as is)')
     parser.add_argument('-analysis',
                         type=str,
                         dest='analysis',
