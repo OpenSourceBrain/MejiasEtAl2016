@@ -154,13 +154,13 @@ if __name__ == "__main__":
                                                           'simulation_Iext0_nrun0_noise0.0_dur1.0_dt0.0002.txt'],
                             'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.2, 'noise':True},
-                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt0.0002.txt'],
+                                                        'simulation_Iext0_nrun0_noiseNone_dur50.0_noconns_dt0.0002.txt'],
                            'With connections; with noise':[{'wee':JEE, 'wei':JIE, 'wie':JEI, 'wii':JII,
                                                           'duration':50000, 'dt':0.2, 'noise':True},
-                                                          'simulation_Iext0_nrun0_noise1.0_dur50.0_dt0.0002.txt']} 
+                                                          'simulation_Iext0_nrun0_noiseNone_dur50.0_dt0.0002.txt']}
                                                           
 
-            hist_bins = 150
+            hist_bins = 50
 
         elif '-dt' in sys.argv:
             print('Running dt tests...')
