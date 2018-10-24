@@ -70,9 +70,13 @@ if __name__ == "__main__":
     if not os.path.isdir(args.analysis):
         os.mkdir(args.analysis)
 
+    # Paper defined connectivity
+    JEE = 1.5; JEI = -3.25;
+    JIE = 3.5; JII = -2.5
+
     # Connection between layers
-    wee = 1.5; wei = -3.25
-    wie = 3.5; wii = -2.5
+    wee = JEE; wei = JIE
+    wie = JEI; wii = JII
 
 
     # Specify membrane time constants
@@ -110,10 +114,10 @@ if __name__ == "__main__":
         J_2e = 0; J_2i = 0
         J_5e = 0; J_5i = 0
 
-        J = np.array([[wee, wei, J_5e,   0],
-                      [wie, wii, J_5i,   0],
-                      [J_2e, 0,   wee, wei],
-                      [J_2i, 0,   wie, wii]])
+        J = np.array([[wee, wie, J_5e,   0],
+                      [wei, wii, J_5i,   0],
+                      [J_2e, 0,   wee, wie],
+                      [J_2i, 0,   wei, wii]])
 
         # Iterate over different input strength
         Imin = 0
@@ -157,10 +161,10 @@ if __name__ == "__main__":
         J_2e = 1; J_2i = 0
         J_5e = 0; J_5i = 0.75
 
-        J = np.array([[wee, wei, J_5e, 0],
-                      [wie, wii, J_5i, 0],
-                      [J_2e, 0, wee, wei],
-                      [J_2i, 0, wie, wii]])
+        J = np.array([[wee, wie, J_5e, 0],
+                      [wei, wii, J_5i, 0],
+                      [J_2e, 0, wee, wie],
+                      [J_2i, 0, wei, wii]])
         Iext = np.array([8, 0, 8, 0])
         Ibgk = np.zeros((J.shape[0]))
 
@@ -174,10 +178,10 @@ if __name__ == "__main__":
         # define interlaminar synaptic coupling strengths
         J_2e = 0; J_2i = 0
         J_5e = 0; J_5i = 0
-        J = np.array([[wee, wei, J_5e, 0],
-                      [wie, wii, J_5i, 0],
-                      [J_2e, 0, wee, wei],
-                      [J_2i, 0, wie, wii]])
+        J = np.array([[wee, wie, J_5e, 0],
+                      [wei, wii, J_5i, 0],
+                      [J_2e, 0, wee, wie],
+                      [J_2i, 0, wei, wii]])
 
         pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin, pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = \
             calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
@@ -209,10 +213,10 @@ if __name__ == "__main__":
         J_2e = 1; J_2i = 0
         J_5e = 0; J_5i = 0.75
 
-        J = np.array([[wee, wei, J_5e,   0],
-                      [wie, wii, J_5i,   0],
-                      [J_2e, 0,   wee, wei],
-                      [J_2i, 0,   wie, wii]])
+        J = np.array([[wee, wie, J_5e,   0],
+                      [wei, wii, J_5i,   0],
+                      [J_2e, 0,   wee, wie],
+                      [J_2i, 0,   wei, wii]])
 
         Iext = np.array([6, 0, 8, 0])
         Ibgk = np.zeros((J.shape[0]))
@@ -253,10 +257,10 @@ if __name__ == "__main__":
         J_2e = 1; J_2i = 0
         J_5e = 0; J_5i = 0.75
 
-        J = np.array([[wee, wei, J_5e,   0],
-                      [wie, wii, J_5i,   0],
-                      [J_2e, 0,   wee, wei],
-                      [J_2i, 0,   wie, wii]])
+        J = np.array([[wee, wie, J_5e,   0],
+                      [wei, wii, J_5i,   0],
+                      [J_2e, 0,   wee, wie],
+                      [J_2i, 0,   wei, wii]])
 
 
         # Interareal connectivity
