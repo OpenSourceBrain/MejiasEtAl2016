@@ -110,9 +110,9 @@ def firing_rate_analysis(tau,
                          sig,
                          noconns=False, 
                          testduration=1000, # ms
-                         sigmaoverride = None,
+                         sigmaoverride=None,
                          initialrate=5,
-                         dt = 2e-4): 
+                         dt=2e-4):
                          
     ########################################################################################################################
     #                                                      Intralaminar
