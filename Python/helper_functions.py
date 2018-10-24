@@ -51,6 +51,83 @@ def debug_firing_rate(analysis, t, dt, tstop, J, tau, sig, Iexts, Ibgk, nruns, s
 
         print('Saved debug info to %s.txt!'%filename )
 
+def get_network_configuration(analysis_type, noconns=False):
+
+    # Paper defined connectivity
+    JEE = 1.5; JEI = -3.25;
+    JIE = 3.5; JII = -2.5
+
+    # Connection between layers
+    if noconns:
+        wee = 0.0; wei = 0.0
+        wie = 0.0; wii = 0.0
+
+    else:
+        wee = JEE; wei = JIE
+        wie = JEI; wii = JII
+
+    # Specify membrane time constants
+    tau_2e = 0.006; tau_2i = 0.015
+    tau_5e = 0.030; tau_5i = 0.075
+    tau = np.array([tau_2e, tau_2i, tau_5e, tau_5i])
+
+    # sigma
+    sig_2e = .3; sig_2i = .3
+    sig_5e = .45; sig_5i = .45
+    sig = np.array([sig_2e, sig_2i, sig_5e, sig_5i])
+
+    if analysis_type == 'intralaminar':
+        # define intralaminar synaptic coupling strenghts
+        J_2e = 0; J_2i = 0
+        J_5e = 0; J_5i = 0
+
+        Imin = 0; Istep = 2; Imax = 6
+        # Note: the range function does not include the end
+        Iexts = range(Imin, Imax + Istep, Istep)
+
+
+    elif analysis_type == 'interlaminar_a':
+        # define interlaminar synaptic coupling strengths
+        J_2e = 1; J_2i = 0
+        J_5e = 0; J_5i = 0.75
+
+        Iexts = np.array([8, 0, 8, 0])
+
+    elif analysis_type == 'interlaminar_u':
+        # Specifiy model where there is no interlaminar connection
+        J_2e = 0; J_2i = 0
+        J_5e = 0; J_5i = 0
+
+        Iexts = np.array([8, 0, 8, 0])
+
+    elif analysis_type == 'interlaminar_b':
+        # define interlaminar synaptic coupling strengths
+        J_2e = 1; J_2i = 0
+        J_5e = 0; J_5i = 0.75
+
+        Iexts = np.array([6, 0, 8, 0])
+
+    elif analysis_type == 'debug_intralaminar':
+        Iexts = [0]
+        J_2e = 0; J_2i = 0
+        J_5e = 0; J_5i = 0
+
+    elif analysis_type == 'debug_interlaminar':
+        Iexts = [0]
+        J_2e = 0; J_2i = 0
+        J_5e = 0; J_5i = 0
+
+    else:
+        raise Exception('This type of analysis is not implemented')
+    J = np.array([[wee, wie, J_5e,   0],
+                  [wei, wii, J_5i,   0],
+                  [J_2e, 0,   wee, wie],
+                  [J_2i, 0,   wei, wii]])
+
+
+    Ibgk = np.zeros((J.shape[0]))
+    return tau, sig, J, Iexts, Ibgk
+
 
 def calculate_periodogram(re, transient, dt):
     """
@@ -106,9 +183,7 @@ def compress_data(pxx, fxx, bin):
     fxx_bin = np.asarray([np.mean(fxx2[i:i + bin]) for i in range(0, len(fxx2), bin)])
     return pxx_bin, fxx_bin
 
-def firing_rate_analysis(tau, 
-                         sig,
-                         noconns=False, 
+def firing_rate_analysis(noconns=False,
                          testduration=1000, # ms
                          sigmaoverride=None,
                          initialrate=5,
@@ -117,31 +192,11 @@ def firing_rate_analysis(tau,
     ########################################################################################################################
     #                                                      Intralaminar
     ########################################################################################################################
-    # Connection between layers
-    wee = 1.5; wei = -3.25
-    wie = 3.5; wii = -2.5
-    
-    if noconns:
-        wee = 0.0; wei = 0.0
-        wie = 0.0; wii = 0.0
-
-
     tstop = testduration/1000. # sec
     t = np.linspace(0, tstop, tstop/dt)
     # speciy number of areas that communicate with each other
     Nareas = 1
 
-    # define intralaminar synaptic coupling strenghts
-    J_2e = 0; J_2i = 0
-    J_5e = 0; J_5i = 0
-
-    J = np.array([[wee, wei, J_5e,   0],
-                  [wie, wii, J_5i,   0],
-                  [J_2e, 0,   wee, wei],
-                  [J_2i, 0,   wie, wii]])
-
-    Iexts = [0]
-    Ibgk = np.zeros((J.shape[0]))
     # For Fig2 the simulation is run 10 and the averate is taken as a signal. Just as a test,
     # here we just run the simulation once
     nruns = 1
@@ -155,6 +210,7 @@ def firing_rate_analysis(tau,
         os.mkdir(analysis)
 
     # Calculate firing rate, save the results as a txt file and plot the firing rate over time for layer L2_3
+    tau, sig, J, Iexts, Ibgk = get_network_configuration('debug_intralaminar', noconns=noconns)
     debug_firing_rate(analysis, t, dt, tstop, J,
                       tau, sig, Iexts, Ibgk, nruns, sigmaoverride, Nareas, noconns, initialrate)
                       
@@ -170,22 +226,6 @@ def firing_rate_analysis(tau,
     # speciy number of areas that communicate with each other
     Nareas = 1
 
-    # define interlaminar synaptic coupling strenghts
-    J_2e = 0; J_2i = 0
-    J_5e = 0; J_5i = 0
-
-    J = np.array([[wee, wei, J_5e,   0],
-                  [wie, wii, J_5i,   0],
-                  [J_2e, 0,   wee, wei],
-                  [J_2i, 0,   wie, wii]])
-
-    # Iterate over different input strength
-    Imin = 0
-    Istep = 2
-    Imax = 6
-    # Note: the range function does not include the end
-    Iexts = range(Imin, Imax + Istep, Istep)
-    Ibgk = np.zeros((J.shape[0]))
     nruns = 1
 
     analysis = 'debug'
@@ -196,6 +236,7 @@ def firing_rate_analysis(tau,
     if not os.path.isdir(analysis):
         os.mkdir(analysis)
 
+    tau, sig, J, Iexts, Ibgk = get_network_configuration('debug_interlaminar', noconns=noconns)
     debug_firing_rate(analysis, t, dt, tstop, J,
                       tau, sig, Iexts, Ibgk, nruns, sigmaoverride, Nareas, noconns, initialrate)
 
