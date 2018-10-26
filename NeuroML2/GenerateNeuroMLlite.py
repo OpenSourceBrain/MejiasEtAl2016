@@ -4,27 +4,33 @@ import sys
 import numpy
 
 
-def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, l5e_l2i=0,
-             l2e_l5e=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.025):
+def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
+             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.2):
 
     ################################################################################
     ###   Build new network
 
     net = Network(id='MejiasFig2')
     net.notes = 'Testing...'
+    if dt!=0.2 and dt!=0.02:
+        print('Using a value for dt which is not supported!!')
+        quit()
 
     net.parameters = { 'wee': wee,
                        'wei': wei,
                        'wie': wie,
                        'wii': wii,
+                       'interlaminar1': interlaminar1,
+                       'interlaminar2': interlaminar2,
                        'sigma23': sigma23,
                        'sigma56': sigma56 }
 
     suffix = '' if noise else '_flat'
-    l23ecell = Cell(id='L23_E'+suffix, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I'+suffix, lems_source_file='RateBased.xml') #  hack to include this file too.
-    l56ecell = Cell(id='L56_E'+suffix, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
-    l56icell = Cell(id='L56_I'+suffix, lems_source_file='Prototypes.xml')
+    suffix2 = '' if dt == 0.2 else '_smalldt'
+    l23ecell = Cell(id='L23_E'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23icell = Cell(id='L23_I'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
+    l56ecell = Cell(id='L56_E'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
+    l56icell = Cell(id='L56_I'+suffix+suffix2, lems_source_file='Prototypes.xml')
 
 
     net.cells.append(l23ecell)
@@ -83,10 +89,10 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, l5e_l2i=0,
                                                       weight=weight,
                                                       random_connectivity=RandomConnectivity(probability=1)))
 
-    l2e_l2e = wee; l2e_l2i = wei; l2i_l2e = wie; l2i_l2i = wii;
-    l5e_l5e = wee; l5e_l5i = wei; l5i_l5e = wie; l5i_l5i = wii;
-    l2e_l5i = 0; l2i_l5e = 0; l2i_l5i = 0;
-    l5e_l2e = 0; l5i_l2e = 0; l5i_l2i = 0;
+    l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
+    l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
+    l2e_l5i = 0; l2e_l5e = 'interlaminar2'; l2i_l5e = 0; l2i_l5i = 0;
+    l5e_l2e = 0; l5e_l2i= 'interlaminar1'; l5i_l2e = 0; l5i_l2i = 0;
     W = [[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
          [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
          [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
@@ -125,7 +131,11 @@ if __name__ == "__main__":
     from pyneuroml import pynml
 
     import sys
-    
+    JEE = 1.5
+    JIE = 3.5
+    JEI = -3.25
+    JII = -2.5
+
     pop_colors = {'L23_E':'#dd7777','L23_I':'#7777dd','L23_E Py':'#990000','L23_I Py':'#000099',
                   'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
 
@@ -133,34 +143,35 @@ if __name__ == "__main__":
         pass
 
     if '-test' in sys.argv or '-dt' in sys.argv:
-        
+
         if '-test' in sys.argv:
 
             arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':1000, 'dt':0.2, 'noise':False},
-                                                        'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns.txt'],
-                           'With connections; no noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                        'simulation_Iext0_nrun0_noise0.0_dur1.0_noconns_dt0.0002.txt'],
+                           'With connections; no noise':[{'wee':JEE, 'wei':JIE, 'wie':JEI, 'wii':JII,
                                                           'duration':1000, 'dt':0.2, 'noise':False},
-                                                          'simulation_Iext0_nrun0_noise0.0_dur1.0.txt'],
+                                                          'simulation_Iext0_nrun0_noise0.0_dur1.0_dt0.0002.txt'],
                             'No connections; with noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.2, 'noise':True},
-                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns.txt'],
-                           'With connections; with noise':[{'wee':1.5, 'wei':-3.25, 'wie':3.5, 'wii':-2.5,
+                                                        'simulation_Iext0_nrun0_noiseNone_dur50.0_noconns_dt0.0002.txt'],
+                           'With connections; with noise':[{'wee':JEE, 'wei':JIE, 'wie':JEI, 'wii':JII,
                                                           'duration':50000, 'dt':0.2, 'noise':True},
-                                                          'simulation_Iext0_nrun0_noise1.0_dur50.0.txt']}
+                                                          'simulation_Iext0_nrun0_noiseNone_dur50.0_dt0.0002.txt']}
                                                           
-            hist_bins = 150
-           
+
+            hist_bins = 50
+
         elif '-dt' in sys.argv:
             print('Running dt tests...')
-            
+
             arg_options = {'dt normal':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.2, 'noise':True},
-                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt0.0002.txt'],
+                                                        'simulation_Iext0_nrun0_noiseNone_dur50.0_noconns_dt0.0002.txt'],
                            'dt small':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
                                                         'duration':50000, 'dt':0.02, 'noise':True},
-                                                        'simulation_Iext0_nrun0_noise1.0_dur50.0_noconns_dt2e-05.txt']}
-                                                        
+                                                        'simulation_Iext0_nrun0_noiseNone_dur50.0_noconns_dt2e-05.txt']}
+
             hist_bins = 50
 
         #sim, net = generate(wee = 0, wei = 0, wie = 0, wii = 0, duration=50000, dt=0.2)
@@ -312,19 +323,19 @@ if __name__ == "__main__":
 
         plt.show()
 
-    if '-intralaminar' in sys.argv:
+    elif '-intralaminar' in sys.argv:
 
-        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = 0; l2e_l5e = 0
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, l5e_l2i=l5e_l2i, l2e_l5e=l2e_l5e)
+        wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e,duration=1000)
         ################################################################################
         ###   Run in some simulators
 
         check_to_generate_or_run(sys.argv, sim)
 
-    if '-interlaminar' in sys.argv:
+    elif '-interlaminar' in sys.argv:
 
-        wee = 1.5; wei = -3.25; wie = 3.5; wii = -2.5; l5e_l2i = .75; l2e_l5e = 1
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, l5e_l2i=l5e_l2i, l2e_l5e=l2e_l5e)
+        wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e)
         ################################################################################
         ###   Run in some simulators
 

@@ -1,19 +1,26 @@
 <Lems>
 
 
-    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="1Hz" sig=".3"/>
-    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="1Hz" sig=".3"/>
+    <mejiasEtAl2016Cell id="L23_E" tau="6ms" r0="1Hz" sig=".3" noiseDt="0.2ms"/> <!-- This must match dt in LEMS*.xml!!! -->
+    <mejiasEtAl2016Cell id="L23_I" tau="15ms" r0="1Hz" sig=".3" noiseDt="0.2ms"/>
 
     <!-- Two cells with zero noisy input -->
-    <mejiasEtAl2016Cell id="L23_E_flat" tau="6ms" r0="5Hz" sig="0"/>
-    <mejiasEtAl2016Cell id="L23_I_flat" tau="15ms" r0="5Hz" sig="0"/>
+    <mejiasEtAl2016Cell id="L23_E_flat" tau="6ms" r0="5Hz" sig="0" noiseDt="0.2ms"/>
+    <mejiasEtAl2016Cell id="L23_I_flat" tau="15ms" r0="5Hz" sig="0" noiseDt="0.2ms"/>
+    
 
-    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="1Hz" sig=".45"/>
-    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="1Hz" sig=".45"/>
+    <mejiasEtAl2016Cell id="L23_E_smalldt" tau="6ms" r0="1Hz" sig=".3" noiseDt="0.02ms"/> 
+    <mejiasEtAl2016Cell id="L23_I_smalldt" tau="15ms" r0="1Hz" sig=".3" noiseDt="0.02ms"/>
+
+    <mejiasEtAl2016Cell id="L56_E" tau="30ms" r0="1Hz" sig=".45" noiseDt="0.2ms"/>
+    <mejiasEtAl2016Cell id="L56_I" tau="75ms" r0="1Hz" sig=".45" noiseDt="0.2ms"/>
 
     <!-- Two cells with zero noisy input -->
-    <mejiasEtAl2016Cell id="L56_E_flat" tau="30ms" r0="5Hz"  sig="0"/>
-    <mejiasEtAl2016Cell id="L56_I_flat" tau="75ms" r0="5Hz" sig="0"/>
+    <mejiasEtAl2016Cell id="L56_E_flat" tau="30ms" r0="5Hz"  sig="0" noiseDt="0.2ms"/>
+    <mejiasEtAl2016Cell id="L56_I_flat" tau="75ms" r0="5Hz" sig="0" noiseDt="0.2ms"/>
+
+    <mejiasEtAl2016Cell id="L56_E_smalldt" tau="30ms" r0="1Hz" sig=".45" noiseDt="0.02ms"/>
+    <mejiasEtAl2016Cell id="L56_I_smalldt" tau="75ms" r0="1Hz" sig=".45" noiseDt="0.02ms"/>
 
     <pulseGenerator id="baselineE" delay="10ms" duration="30ms" amplitude="-0.5nA" />
 

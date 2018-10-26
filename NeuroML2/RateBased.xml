@@ -28,6 +28,7 @@
 
         <Parameter name="tau" dimension="time"/>
         <Parameter name="r0" dimension="per_time"/>
+        <Parameter name="noiseDt" dimension="time"/>
 
         <Parameter name="sig" dimension="none" description="Standard deviation of noise"/>
 
@@ -35,9 +36,7 @@
 
         <Exposure name="phi" dimension="none"/>
         <Exposure name="iSyn" dimension="current"/>
-        <Exposure name="tstep2" dimension="none"/>
-
-        <Exposure name="randn" dimension="none"/>
+        <Exposure name="xi" dimension="none"/>
 
         <Constant name="NAMP_SCALE" dimension="current" value="1 nA"/>
         <Constant name="MS_SCALE" dimension="time" value=".001 s"/>
@@ -52,7 +51,7 @@
 
             <StateVariable name="U" dimension="none"/>
             <StateVariable name="V" dimension="none"/>
-            <StateVariable name="randn" dimension="none" exposure="randn"/>
+            <StateVariable name="xi" dimension="none" exposure="xi"/>
 
             <DerivedVariable name="iSyn" dimension="current" exposure="iSyn" select="synapses[*]/i" reduce="add" />
             <DerivedVariable name="x" dimension="none" value="(iSyn)/NAMP_SCALE"/>
@@ -64,9 +63,10 @@
 
             <!-- Set v to r for now...
             <DerivedVariable name="v" dimension="voltage" exposure="v" value="0*MVOLT_SCALE"/>-->
-           <DerivedVariable name="tstep2" dimension="none" exposure="tstep2" value="((sig * sig * MS_SCALE)/ tau) ^ .5"/>
-           <!-- <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE)/tau)"/> -->
-           <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE)/tau) + tstep2*randn*HZ_SCALE/MS_SCALE"/>
+            
+           <DerivedVariable name="internalNoise" dimension="per_time"  value="sig * xi * (tau/ noiseDt) ^ .5 * HZ_SCALE"/>
+           
+           <TimeDerivative variable="r" value="((-1*r + phi*HZ_SCALE + internalNoise)/tau) "/>
 
 
             <OnStart>
@@ -81,7 +81,7 @@
             <OnCondition test="t .geq. 0">
                 <StateAssignment variable="U" value="random(1)"/>
                 <StateAssignment variable="V" value="random(1)"/>
-                <StateAssignment variable="randn" value="sqrt(-2*log(U))*cos(2*3.14159265359*V)"/>
+                <StateAssignment variable="xi" value="sqrt(-2*log(U))*cos(2*3.14159265359*V)"/>
             </OnCondition>
 
         </Dynamics>

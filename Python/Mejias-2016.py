@@ -13,7 +13,7 @@ from intralaminar import intralaminar_simulation, intralaminar_analysis, intrala
 from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
                          calculate_interlaminar_power_spectrum, \
                          plot_interlaminar_power_spectrum
-from helper_functions import firing_rate_analysis
+from helper_functions import firing_rate_analysis, get_network_configuration
 
 
 """
@@ -24,11 +24,11 @@ calls the necessary functions depending on the passed parameters.
 
 def getArguments():
     parser = argparse.ArgumentParser(description='Parameters for the simulation')
-    parser.add_argument('-noise',
+    parser.add_argument('-sigmaoverride',
                         type=float,
-                        dest='noise',
-                        default=1.0,
-                        help='Specify sigma of the Gaussian noise')
+                        dest='sigmaoverride',
+                        default=None,
+                        help='Override sigma of the Gaussian noise for ALL populations (if None leave them as is)')
     parser.add_argument('-analysis',
                         type=str,
                         dest='analysis',
@@ -70,21 +70,6 @@ if __name__ == "__main__":
     if not os.path.isdir(args.analysis):
         os.mkdir(args.analysis)
 
-    # Connection between layers
-    wee = 1.5; wei = -3.25
-    wie = 3.5; wii = -2.5
-
-
-    # Specify membrane time constants
-    tau_2e = 0.006; tau_2i = 0.015
-    tau_5e = 0.030; tau_5i = 0.075
-    tau = np.array([tau_2e, tau_2i, tau_5e, tau_5i])
-
-    # sigma
-    sig_2e = .3; sig_2i = .3
-    sig_5e = .45; sig_5i = .45
-    sig = np.array([sig_2e, sig_2i, sig_5e, sig_5i])
-
     if args.analysis == 'debug':
         print('-----------------------')
         print('Debugging')
@@ -92,7 +77,7 @@ if __name__ == "__main__":
         # Call a function that plots and saves of the firing rate for the intra- and interlaminar simulation
         print('Running debug simulation/analysis with %s'%args)
         dt = args.dt
-        firing_rate_analysis(tau, sig, args.noconns, args.testduration, args.noise, args.initialrate, dt)
+        firing_rate_analysis(args.noconns, args.testduration, args.sigmaoverride, args.initialrate, dt)
 
     if args.analysis == 'intralaminar':
         print('-----------------------')
@@ -106,22 +91,7 @@ if __name__ == "__main__":
         # speciy number of areas that communicate with each other
         Nareas = 1
 
-        # define interlaminar synaptic coupling strenghts
-        J_2e = 0; J_2i = 0
-        J_5e = 0; J_5i = 0
-
-        J = np.array([[wee, wei, J_5e,   0],
-                      [wie, wii, J_5i,   0],
-                      [J_2e, 0,   wee, wei],
-                      [J_2i, 0,   wie, wii]])
-
-        # Iterate over different input strength
-        Imin = 0
-        Istep = 2
-        Imax = 6
-        # Note: the range function does not include the end
-        Iexts = range(Imin, Imax + Istep, Istep)
-        Ibgk = np.zeros((J.shape[0]))
+        tau, sig, J, Iext, Ibgk = get_network_configuration('intralaminar', noconns=False)
         nruns = 10
 
         # Note: Because of the way the way intralaminar_simulation is defined only the results for L2/3
@@ -132,11 +102,11 @@ if __name__ == "__main__":
         simulation_file = 'intralaminar/L2_3_simulation.pckl'
         if not os.path.isfile(simulation_file):
             print('    Re-calculating the simulation')
-            intralaminar_simulation(args.analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
-                            J, tau, sig, args.noise, Nareas)
+            intralaminar_simulation(args.analysis, layer, Iext, Ibgk, nruns, t, dt, tstop,
+                            J, tau, sig, args.sigmaoverride, Nareas)
         else:
             print('    Loading the pre-saved simulation file: %s' %simulation_file)
-        intralaminar_analysis(Iexts, nruns, layer, dt, transient)
+        intralaminar_analysis(Iext, nruns, layer, dt, transient)
         intralaminar_plt(layer)
 
     if args.analysis == 'interlaminar_a':
@@ -153,36 +123,20 @@ if __name__ == "__main__":
         # Note: np.arange excludes the stop so we add dt to include the last value
         t = np.arange(0, tstop, dt)
 
-        # define interlaminar synaptic coupling strengths
-        J_2e = 1; J_2i = 0
-        J_5e = 0; J_5i = 0.75
-
-        J = np.array([[wee, wei, J_5e, 0],
-                      [wie, wii, J_5i, 0],
-                      [J_2e, 0, wee, wei],
-                      [J_2i, 0, wie, wii]])
-        Iext = np.array([8, 0, 8, 0])
-        Ibgk = np.zeros((J.shape[0]))
-
+        tau, sig, J_conn, Iext_conn, Ibgk_conn = get_network_configuration('interlaminar_a', noconns=False)
         Nbin = 100 # pick on e very 'bin' points
         pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
                             calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
-                                                                  tstop, J, tau, sig, Iext, Ibgk,
-                                                                  args.noise, Nareas, Nbin)
+                                                                  tstop, J_conn, tau, sig, Iext_conn, Ibgk_conn,
+                                                                  args.sigmaoverride, Nareas, Nbin)
 
         # Run simulation when the two layers are uncoupled
-        # define interlaminar synaptic coupling strengths
-        J_2e = 0; J_2i = 0
-        J_5e = 0; J_5i = 0
-        J = np.array([[wee, wei, J_5e, 0],
-                      [wie, wii, J_5i, 0],
-                      [J_2e, 0, wee, wei],
-                      [J_2i, 0, wie, wii]])
+        tau, sig, J_noconn, Iext_noconn, Ibgk_noconn = get_network_configuration('interlaminar_u', noconns=False)
 
         pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin, pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = \
             calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
-                                               tstop, J, tau, sig, Iext, Ibgk,
-                                               args.noise, Nareas, Nbin)
+                                               tstop, J_noconn, tau, sig, Iext_noconn, Ibgk_noconn,
+                                               args.sigmaoverride, Nareas, Nbin)
         # Plot spectrogram
         plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
                                       pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
@@ -205,18 +159,7 @@ if __name__ == "__main__":
         # Note: np.arange excludes the stop so we add dt to include the last value
         t = np.arange(dt+transient, tstop + dt, dt)
 
-        # define interlaminar synaptic coupling strengths
-        J_2e = 1; J_2i = 0
-        J_5e = 0; J_5i = 0.75
-
-        J = np.array([[wee, wei, J_5e,   0],
-                      [wie, wii, J_5i,   0],
-                      [J_2e, 0,   wee, wei],
-                      [J_2i, 0,   wie, wii]])
-
-        Iext = np.array([6, 0, 8, 0])
-        Ibgk = np.zeros((J.shape[0]))
-
+        tau, sig, J, Iext, Ibgk = get_network_configuration('interlaminar_b', noconns=False)
         # frequencies of interest
         min_freq5 = 4 # alpha range
         min_freq2 = 30 # gama range
@@ -225,7 +168,7 @@ if __name__ == "__main__":
         simulation_file = os.path.join(args.analysis, 'simulation.pckl')
         if not os.path.isfile(simulation_file):
             print('    Re-calculating the simulation')
-            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.noise, Nareas)
+            rate = interlaminar_simulation(args.analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, args.sigmaoverride, Nareas)
         else:
             print('    Loading the pre-saved simulation file: %s' %simulation_file)
             with open(simulation_file, 'rb') as filename:
@@ -253,10 +196,10 @@ if __name__ == "__main__":
         J_2e = 1; J_2i = 0
         J_5e = 0; J_5i = 0.75
 
-        J = np.array([[wee, wei, J_5e,   0],
-                      [wie, wii, J_5i,   0],
-                      [J_2e, 0,   wee, wei],
-                      [J_2i, 0,   wie, wii]])
+        J = np.array([[wee, wie, J_5e,   0],
+                      [wei, wii, J_5i,   0],
+                      [J_2e, 0,   wee, wie],
+                      [J_2i, 0,   wei, wii]])
 
 
         # Interareal connectivity
@@ -280,7 +223,7 @@ if __name__ == "__main__":
         Iext = 15 * np.array([[1, 0], [0, 0], [1, 0], [0, 0]])
 
         # at rest
-        interareal_simulation(t, dt, tstop, J, W, tau, Iext, Ibkg, sig, args.noise)
+        interareal_simulation(t, dt, tstop, J, W, tau, Iext, Ibkg, sig, args.sigmaoverride)
         # microstimulation
 
 
