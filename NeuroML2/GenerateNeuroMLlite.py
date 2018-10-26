@@ -5,7 +5,7 @@ import numpy
 
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
-             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.2):
+             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=0):
 
     ################################################################################
     ###   Build new network
@@ -41,7 +41,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
 
     input_source0 = InputSource(id='iclamp0',
                                pynn_input='DCSource',
-                               parameters={'amplitude':2, 'start':50., 'stop':150.})
+                               parameters={'amplitude':Iext, 'start':0, 'stop':duration})
 
     net.input_sources.append(input_source0)
 
@@ -100,11 +100,16 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
     pops = [pl23e,pl23i, pl56e, pl56i]
     internal_connections(pops)
 
-    '''
-    net.inputs.append(Input(id='modulation',
+    # Add modulation
+    net.inputs.append(Input(id='modulation_l23_E',
                             input_source=input_source0.id,
-                            population=pE.id,
-                            percentage=100))'''
+                            population=pl23e.id,
+                            percentage=100))
+    net.inputs.append(Input(id='modulation_l56_E',
+                            input_source=input_source0.id,
+                            population=pl56e.id,
+                            percentage=100))
+
 
     print(net)
     print(net.to_json())
