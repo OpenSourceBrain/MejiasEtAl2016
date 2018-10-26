@@ -329,18 +329,49 @@ if __name__ == "__main__":
         plt.show()
 
     elif '-intralaminar' in sys.argv:
+        import numpy as np
+        sys.path.append("../Python")
+
+        from intralaminar import intralaminar_analysis, intralaminar_plt
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e,duration=1000)
-        ################################################################################
-        ###   Run in some simulators
+        # Input strength of the excitatory population
+        Iexts = [0, 2, 4, 6]
+        simulation = {}
 
-        check_to_generate_or_run(sys.argv, sim)
+        for Iext in Iexts:
+            sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=25000,
+                                Iext=Iext)
+            ################################################################################
+            ###   Run in some simulators
+
+            check_to_generate_or_run(sys.argv, sim)
+            simulator = 'jNeuroML'
+
+            nmllr = NeuroMLliteRunner('%s.json'%sim.id,
+                              simulator=simulator)
+
+            # total number of simulations to run for each input strength
+            nruns = 10
+            simulation[Iext] = {}
+            for run in range(nruns):
+                simulation[Iext][run] = {}
+                traces, events = nmllr.run_once('/tmp')
+                # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
+                simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['L23_E/0/L23_E/r'])
+
+        # analyse the traces using python methods
+
+        # transform the results into a numpy array and analyse them
+        psd_dic = intralaminar_analysis(simulation, Iexts, nruns, layer='L23', dt=2e-04, transient=5)
+        # plot the results
+        intralaminar_plt(psd_dic)
+
 
     elif '-interlaminar' in sys.argv:
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e)
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, Iext=2)
         ################################################################################
         ###   Run in some simulators
 
