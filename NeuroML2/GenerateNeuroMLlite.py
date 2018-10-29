@@ -2,10 +2,11 @@ from neuromllite import Network, Cell, InputSource, Population, Synapse,Rectangu
 from neuromllite import Projection, RandomConnectivity, Input, Simulation
 import sys
 import numpy
+import random
 
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
-             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=0):
+             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=0, count=0):
 
     ################################################################################
     ###   Build new network
@@ -119,10 +120,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
     ################################################################################
     ###   Build Simulation object & save as JSON
 
-    sim = Simulation(id='Sim%s'%net.id,
+    sim = Simulation(id='Sim%s_%d'%(net.id,count),
                      network=new_file,
                      duration=duration,
                      dt=dt,
+                     seed=count,
                      recordRates={'all':'*'})
 
     sim.to_json_file()
@@ -340,21 +342,21 @@ if __name__ == "__main__":
         simulation = {}
 
         for Iext in Iexts:
-            sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=25000,
-                                Iext=Iext)
-            ################################################################################
-            ###   Run in some simulators
-
-            check_to_generate_or_run(sys.argv, sim)
-            simulator = 'jNeuroML'
-
-            nmllr = NeuroMLliteRunner('%s.json'%sim.id,
-                              simulator=simulator)
-
             # total number of simulations to run for each input strength
             nruns = 10
             simulation[Iext] = {}
             for run in range(nruns):
+                sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=25000,
+                                    Iext=Iext, count=run)
+                ################################################################################
+                ###   Run in some simulators
+
+                check_to_generate_or_run(sys.argv, sim)
+                simulator = 'jNeuroML'
+
+                nmllr = NeuroMLliteRunner('%s.json'%sim.id,
+                                          simulator=simulator)
+
                 simulation[Iext][run] = {}
                 traces, events = nmllr.run_once('/tmp')
                 # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
