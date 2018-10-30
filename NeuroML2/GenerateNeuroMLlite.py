@@ -2,10 +2,11 @@ from neuromllite import Network, Cell, InputSource, Population, Synapse,Rectangu
 from neuromllite import Projection, RandomConnectivity, Input, Simulation
 import sys
 import numpy
+import random
 
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
-             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt = 0.2):
+             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=0, count=0):
 
     ################################################################################
     ###   Build new network
@@ -41,7 +42,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
 
     input_source0 = InputSource(id='iclamp0',
                                pynn_input='DCSource',
-                               parameters={'amplitude':2, 'start':50., 'stop':150.})
+                               parameters={'amplitude':Iext, 'start':0, 'stop':duration})
 
     net.input_sources.append(input_source0)
 
@@ -100,11 +101,16 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
     pops = [pl23e,pl23i, pl56e, pl56i]
     internal_connections(pops)
 
-    '''
-    net.inputs.append(Input(id='modulation',
+    # Add modulation
+    net.inputs.append(Input(id='modulation_l23_E',
                             input_source=input_source0.id,
-                            population=pE.id,
-                            percentage=100))'''
+                            population=pl23e.id,
+                            percentage=100))
+    net.inputs.append(Input(id='modulation_l56_E',
+                            input_source=input_source0.id,
+                            population=pl56e.id,
+                            percentage=100))
+
 
     print(net)
     print(net.to_json())
@@ -114,10 +120,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
     ################################################################################
     ###   Build Simulation object & save as JSON
 
-    sim = Simulation(id='Sim%s'%net.id,
+    sim = Simulation(id='Sim%s_%d'%(net.id,count),
                      network=new_file,
                      duration=duration,
                      dt=dt,
+                     seed=count,
                      recordRates={'all':'*'})
 
     sim.to_json_file()
@@ -324,18 +331,49 @@ if __name__ == "__main__":
         plt.show()
 
     elif '-intralaminar' in sys.argv:
+        import numpy as np
+        sys.path.append("../Python")
+
+        from intralaminar import intralaminar_analysis, intralaminar_plt
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e,duration=1000)
-        ################################################################################
-        ###   Run in some simulators
+        # Input strength of the excitatory population
+        Iexts = [0, 2, 4, 6]
+        simulation = {}
 
-        check_to_generate_or_run(sys.argv, sim)
+        for Iext in Iexts:
+            # total number of simulations to run for each input strength
+            nruns = 10
+            simulation[Iext] = {}
+            for run in range(nruns):
+                sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=25000,
+                                    Iext=Iext, count=run)
+                ################################################################################
+                ###   Run in some simulators
+
+                check_to_generate_or_run(sys.argv, sim)
+                simulator = 'jNeuroML'
+
+                nmllr = NeuroMLliteRunner('%s.json'%sim.id,
+                                          simulator=simulator)
+
+                simulation[Iext][run] = {}
+                traces, events = nmllr.run_once('/tmp')
+                # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
+                simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['L23_E/0/L23_E/r'])
+
+        # analyse the traces using python methods
+
+        # transform the results into a numpy array and analyse them
+        psd_dic = intralaminar_analysis(simulation, Iexts, nruns, layer='L23', dt=2e-04, transient=5)
+        # plot the results
+        intralaminar_plt(psd_dic)
+
 
     elif '-interlaminar' in sys.argv:
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e)
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, Iext=2)
         ################################################################################
         ###   Run in some simulators
 

@@ -25,14 +25,19 @@ def matlab_smooth(data, window_size):
     return c
 
 
-def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
-    # load pickle with all the results
-    picklename = os.path.join('intralaminar', layer + '_simulation.pckl')
-    with open(picklename, 'rb') as file1:
-        simulation = pickle.load(file1)
+def intralaminar_analysis(simulation, Iexts, nruns, layer='L23', dt=2e-04, transient=5):
+    """
+    Calculates the main interlaminar analysis and dumps a pickle containing the periodogram of the analysis
+    Inputs
+        simulation: dictionary containing all the simulations to be analysed
+        Iexts: a list of the input strengths applied on the excitatory populations
+        nruns: number of simulations analysed for every Iext
+        layer: Layer under analysis
+        dt: time step of the simulation
+        transient:
 
-    # sampling frequency to calculate the peridogram
-    fs = 1/dt
+    """
+
     psd_dic = {}
 
     for Iext in Iexts:
@@ -41,7 +46,7 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
         for nrun in range(nruns):
 
             psd_dic[Iext][nrun] = {}
-            restate = simulation[Iext][nrun]['uu']
+            restate = simulation[Iext][nrun]['L23_E/0/L23_E/r']
 
             # perform periodogram on restate.
             pxx2, fxx2 = calculate_periodogram(restate, transient, dt)
@@ -64,12 +69,8 @@ def intralaminar_analysis(Iexts, nruns, layer, dt, transient):
     # add fxx_bin to dictionary
     psd_dic['fxx_bin'] = fxx_bin
 
-    # save the results into a pickle file
-    picklename = os.path.join('intralaminar', layer + '_analysis.pckl')
-    with open(picklename, 'wb') as file1:
-        pickle.dump(psd_dic, file1)
-
     print('    Done Analysis!')
+    return psd_dic
 
 
 def plt_filled_std(ax, fxx_plt, data_mean, data_std, color, label):
@@ -82,12 +83,7 @@ def plt_filled_std(ax, fxx_plt, data_mean, data_std, color, label):
     ax.margins(x=0)
 
 
-def intralaminar_plt(layer):
-    # load simulation results and plot
-    analysis_pickle = os.path.join('intralaminar', layer + '_analysis.pckl')
-    with open(analysis_pickle, 'rb') as filename:
-        psd_dic = pickle.load(filename)
-
+def intralaminar_plt(psd_dic):
     # select only the first time points until fxx < 100
     fxx_plt_idx = np.where(psd_dic['fxx_bin'] < 100)
     fxx_plt = psd_dic['fxx_bin'][fxx_plt_idx]
@@ -102,7 +98,6 @@ def intralaminar_plt(layer):
         psd_dic[Iext]['std_pxx'] = psd_dic[Iext]['std_pxx'][fxx_plt_idx]
 
     # find the difference regarding the no_input
-    psd_mean_0_0 = psd_dic[0]['mean_pxx'] - psd_dic[0]['mean_pxx']
     psd_mean_0_2 = psd_dic[2]['mean_pxx'] - psd_dic[0]['mean_pxx']
     psd_mean_0_4 = psd_dic[4]['mean_pxx'] - psd_dic[0]['mean_pxx']
     psd_mean_0_6 = psd_dic[6]['mean_pxx'] - psd_dic[0]['mean_pxx']
@@ -122,6 +117,8 @@ def intralaminar_plt(layer):
     plt.xlabel('Frequency(Hz)')
     plt.ylabel('Power (resp. rest)')
     plt.legend()
+    if not os.path.exists('intralaminar'):
+        os.makedirs('intralaminar')
     plt.savefig('intralaminar/intralaminar.png')
 
 
@@ -137,11 +134,13 @@ def intralaminar_simulation(analysis, layer, Iexts, Ibgk, nruns, t, dt, tstop,
             simulation[Iext][nrun] = {}
             rate = calculate_rate(t, dt, tstop, J, tau, sig, Iext_a, Ibgk, noise, Nareas)
 
-            # Note: Save only the excitatory and inhibitory signal from L2/3
-            simulation[Iext][nrun]['uu'] = np.expand_dims(rate[0, :], axis=1)
-            simulation[Iext][nrun]['vv'] = np.expand_dims(rate[1, :], axis=1)
+            # Note: Save only the excitatory and inhibitory signal from L2/3.
+            # For compatibility with NeuroML/LEMS transform the results into a row matrix
+            simulation[Iext][nrun]['L23_E/0/L23_E/r'] = rate[0, :].reshape(-1)
+            simulation[Iext][nrun]['L23_I/0/L23_I/r'] = rate[1, :].reshape(-1)
 
     picklename = os.path.join(analysis, layer + '_simulation.pckl')
     with open(picklename, 'wb') as file1:
         pickle.dump(simulation, file1)
     print('    Done Simulation!')
+    return simulation

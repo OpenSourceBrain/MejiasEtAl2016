@@ -85,7 +85,7 @@ if __name__ == "__main__":
         print('-----------------------')
         # Define dt and the trial length
         dt = args.dt
-        tstop = 25 # ms
+        tstop = 25 # s
         t = np.linspace(0, tstop, tstop/dt)
         transient = 5
         # speciy number of areas that communicate with each other
@@ -96,18 +96,22 @@ if __name__ == "__main__":
 
         # Note: Because of the way the way intralaminar_simulation is defined only the results for L2/3
         # will be save and used for further analysis
-        layer = 'L2_3'
+        layer = 'L23'
         print('    Analysing layer %s' %layer)
         # check if simulation file already exists, if not run the simulation
-        simulation_file = 'intralaminar/L2_3_simulation.pckl'
+        simulation_file = 'intralaminar/L23_simulation.pckl'
         if not os.path.isfile(simulation_file):
             print('    Re-calculating the simulation')
-            intralaminar_simulation(args.analysis, layer, Iext, Ibgk, nruns, t, dt, tstop,
+            simulation = intralaminar_simulation(args.analysis, layer, Iext, Ibgk, nruns, t, dt, tstop,
                             J, tau, sig, args.sigmaoverride, Nareas)
         else:
             print('    Loading the pre-saved simulation file: %s' %simulation_file)
-        intralaminar_analysis(Iext, nruns, layer, dt, transient)
-        intralaminar_plt(layer)
+            picklename = os.path.join('intralaminar', layer + '_simulation.pckl')
+            with open(picklename, 'rb') as file1:
+                simulation = pickle.load(file1)
+
+        psd_analysis = intralaminar_analysis(simulation, Iext, nruns, layer, dt, transient)
+        intralaminar_plt(psd_analysis)
 
     if args.analysis == 'interlaminar_a':
         print('-----------------------')

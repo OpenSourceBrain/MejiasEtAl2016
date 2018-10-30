@@ -154,8 +154,7 @@ def calculate_periodogram(re, transient, dt):
     restate = re[int(round((transient + dt)/dt)) - 1:]
 
     # perform periodogram on restate
-    sq_data = np.squeeze(restate)
-    fxx, pxx = signal.periodogram(sq_data, fs=fs, window=win[int(round((transient + dt)/dt)) - 1:],
+    fxx, pxx = signal.periodogram(restate, fs=fs, window=win[int(round((transient + dt)/dt)) - 1:],
                                     nfft=fft, detrend=False, return_onesided=True,
                                     scaling='density')
     # print('Done calculating Periodogram!')
