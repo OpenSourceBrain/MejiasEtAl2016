@@ -271,13 +271,11 @@ def plot_spectrogram(ff, tt, Sxx):
     plt.show()
 
 
-def calculate_interlaminar_power_spectrum(analysis, t, dt, transient, tstop, J, tau, sig, Iext, Ibgk,
-                                       noise, Nareas, Nbin):
+def calculate_interlaminar_power_spectrum(rate, dt, transient, Nbin):
 
     # Calculate the rate for the passed connectivity
-    rate = interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
-    pxx_l23, fxx_l23 = calculate_periodogram(rate[0, :], transient, dt)
-    pxx_l56, fxx_l56 = calculate_periodogram(rate[2, :], transient, dt)
+    pxx_l23, fxx_l23 = calculate_periodogram(rate[0, :, 0], transient, dt)
+    pxx_l56, fxx_l56 = calculate_periodogram(rate[2, :, 0], transient, dt)
     # Compress data by selecting one data point every "bin"
     pxx_l23_bin, fxx_l23_bin = compress_data(pxx_l23, fxx_l23, Nbin)
     pxx_l56_bin, fxx_l56_bin = compress_data(pxx_l56, fxx_l56, Nbin)
@@ -296,6 +294,8 @@ def plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
     plt.legend()
     plt.xlim([1, 100])
     plt.ylim([10**-4, 10**-2])
+    if not os.path.exists('interlaminar'):
+        os.makedirs('interlaminar')
     plt.savefig(os.path.join(analysis, 'spectrogram_l23.png'))
 
     plt.figure()

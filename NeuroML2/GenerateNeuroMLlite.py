@@ -1,9 +1,11 @@
 from neuromllite import Network, Cell, InputSource, Population, Synapse,RectangularRegion,RandomLayout
 from neuromllite import Projection, RandomConnectivity, Input, Simulation
-import sys
-import numpy
-import random
+import numpy as np
+import pickle
 
+# Add the Python folder to the Python path
+import sys
+sys.path.append("../Python")
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
              interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=0, count=0):
@@ -137,7 +139,6 @@ if __name__ == "__main__":
     from neuromllite.sweep.ParameterSweep import *
     from pyneuroml import pynml
 
-    import sys
     JEE = 1.5
     JIE = 3.5
     JEI = -3.25
@@ -217,7 +218,7 @@ if __name__ == "__main__":
                         labels.append(pop)
                         colors.append(pop_colors[pop])
 
-                        hist1, edges1 = numpy.histogram(traces[tr],bins=hist_bins)
+                        hist1, edges1 = np.histogram(traces[tr],bins=hist_bins)
                         mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                         histxs.append(mid1)
                         histys.append(hist1)
@@ -251,7 +252,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l23e,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l23e,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -265,7 +266,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l23i,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l23i,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -279,7 +280,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l56e,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l56e,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -292,7 +293,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = numpy.histogram(l56i,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l56i,bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -331,8 +332,6 @@ if __name__ == "__main__":
         plt.show()
 
     elif '-intralaminar' in sys.argv:
-        import numpy as np
-        sys.path.append("../Python")
 
         from intralaminar import intralaminar_analysis, intralaminar_plt
 
@@ -363,21 +362,236 @@ if __name__ == "__main__":
                 simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['L23_E/0/L23_E/r'])
 
         # analyse the traces using python methods
-
-        # transform the results into a numpy array and analyse them
         psd_dic = intralaminar_analysis(simulation, Iexts, nruns, layer='L23', dt=2e-04, transient=5)
         # plot the results
         intralaminar_plt(psd_dic)
 
 
     elif '-interlaminar' in sys.argv:
+        from interlaminar import calculate_interlaminar_power_spectrum, plot_interlaminar_power_spectrum
+
+        # Load the python results (this script assumes that the python script Mejias-2016.py -interlaminar_a has already
+        #  generated the pickle file with the results).
+        simulation_file = '../Python/debug/interlaminar_a/simulation.pckl'
+        with open(simulation_file, 'rb') as filename:
+            pyrate = pickle.load(filename)
+
+
+        dt = .2
+        transient = 10
+        Nbin = 100
+        duration = 600000
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, Iext=2)
-        ################################################################################
-        ###   Run in some simulators
-
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=duration,
+                            Iext=8, count=0)
+        # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
+        simulator = 'jNeuroML'
+
+        nmllr = NeuroMLliteRunner('%s.json' % sim.id,
+                                  simulator=simulator)
+        traces, events = nmllr.run_once('/tmp')
+        rate_conn = np.stack((np.array(traces['L23_E/0/L23_E/r']),
+                              np.array(traces['L23_I/0/L23_I/r']),
+                              np.array(traces['L56_E/0/L56_E/r']),
+                              np.array(traces['L56_I/0/L56_I/r']),
+                              ))
+        # for compatibility with the Python code, expand the third dimension
+        rate_conn = np.expand_dims(rate_conn, axis=2)
+        pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
+                calculate_interlaminar_power_spectrum(rate_conn, dt, transient, Nbin)
+
+        xs1 = []
+        ys1 = []
+        labels1 = []
+        xs2 = []
+        ys2 = []
+        labels2 = []
+        histxs = []
+        histys = []
+        histlabels = []
+        colors = []
+        histcolors = []
+        hist_bins = 50
+        pop_colors = {'L23_E': '#dd7777', 'L23_I': '#7777dd', 'L23_E_Py':'#990000','L23_I_Py':'#000099',
+                      'L56_E': '#77dd77', 'L56_I': '#dd77dd', 'L56_E_Py':'#009900','L56_I_Py':'#990099'}
+
+        # Append traces generated with NeuroML
+        for tr in traces:
+            if tr != 't':
+                xs1.append(traces['t'])
+                ys1.append(traces[tr])
+                pop = tr.split('/')[0]
+                labels1.append(pop)
+                colors.append(pop_colors[pop])
+
+                hist1, edges1 = np.histogram(traces[tr], bins=hist_bins)
+                mid1 = [e + (edges1[1] - edges1[0]) / 2 for e in edges1[:-1]]
+                histxs.append(mid1)
+                histys.append(hist1)
+                histcolors.append(pop_colors[pop])
+                histlabels.append(pop)
+
+        # Append Python traces
+        for key in pyrate:
+            if key.endswith('/conn'):
+                xs2.append(pyrate['ts'])
+                ys2.append(pyrate[key])
+                pop = key.split('/')[0]
+                labels2.append(pop)
+                colors.append(pop_colors[pop])
+
+                hist1, edges1 = np.histogram(pyrate[key], bins=hist_bins)
+                mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
+                histxs.append(mid1)
+                histys.append(hist1)
+                histlabels.append(pop)
+                histcolors.append(pop_colors[pop])
+
+        pynml.generate_plot(xs1,
+                            ys1,
+                            'With connections Rates',
+                            show_plot_already=False,
+                            labels=labels1,
+                            linewidths=[(1 if 'Py' in l else 2) for l in labels1],
+                            yaxis='Rate (Hz)',
+                            xaxis='Time (s)',
+                            legend_position='right',
+                            title_above_plot=True)
+        pynml.generate_plot(xs2,
+                            ys2,
+                            'With connections Rates',
+                            show_plot_already=False,
+                            labels=labels2,
+                            linewidths=[(1 if 'Py' in l else 2) for l in labels2],
+                            yaxis='Rate (Hz)',
+                            xaxis='Time (s)',
+                            legend_position='right',
+                            title_above_plot=True)
+
+        pynml.generate_plot(histxs,
+                            histys,
+                            'Histograms: With Connection',
+                            labels=histlabels,
+                            colors=histcolors,
+                            show_plot_already=False,
+                            xaxis='Rate bins (Hz)',
+                            yaxis='Num timesteps rate in bins',
+                            markers=['o' for x in histxs],
+                            markersizes=[2 for x in histxs],
+                            legend_position='right',
+                            title_above_plot=True)
+
+
+        # Repeat the calculations for the case where there is no connection between layers
+        wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=duration,
+                            Iext=8, count=0)
+        # Run in some simulators
+        check_to_generate_or_run(sys.argv, sim)
+        simulator = 'jNeuroML'
+
+        nmllr = NeuroMLliteRunner('%s.json' % sim.id,
+                                  simulator=simulator)
+        traces, events = nmllr.run_once('/tmp')
+        rate_noconn = np.stack((np.array(traces['L23_E/0/L23_E/r']),
+                              np.array(traces['L23_I/0/L23_I/r']),
+                              np.array(traces['L56_E/0/L56_E/r']),
+                              np.array(traces['L56_I/0/L56_I/r']),
+                              ))
+        # for compatibility with the Python code, expand the third dimension
+        rate_noconn = np.expand_dims(rate_noconn, axis=2)
+
+        xs1 = []
+        ys1 = []
+        labels1 = []
+        xs2 = []
+        ys2 = []
+        labels2 = []
+        histxs = []
+        histys = []
+        histlabels = []
+        colors = []
+        histcolors = []
+
+        for tr in traces:
+            if tr != 't':
+                xs1.append(traces['t'])
+                ys1.append(traces[tr])
+                pop = tr.split('/')[0]
+                labels1.append(pop)
+                colors.append(pop_colors[pop])
+
+                hist1, edges1 = np.histogram(traces[tr], bins=hist_bins)
+                mid1 = [e + (edges1[1] - edges1[0]) / 2 for e in edges1[:-1]]
+                histxs.append(mid1)
+                histys.append(hist1)
+                histcolors.append(pop_colors[pop])
+                histlabels.append(pop)
+
+        # Append Python traces
+        for key in pyrate:
+            if key.endswith('/unconn'):
+                xs2.append(pyrate['ts'])
+                ys2.append(pyrate[key])
+                pop = key.split('/')[0]
+                labels2.append(pop)
+                colors.append(pop_colors[pop])
+
+                hist1, edges1 = np.histogram(pyrate[key], bins=hist_bins)
+                mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
+                histxs.append(mid1)
+                histys.append(hist1)
+                histlabels.append(pop)
+                histcolors.append(pop_colors[pop])
+
+
+        pynml.generate_plot(xs1,
+                            ys1,
+                            'No connections Rates',
+                            show_plot_already=False,
+                            labels=labels1,
+                            linewidths=[(1 if 'Py' in l else 2) for l in labels1],
+                            yaxis='Rate (Hz)',
+                            xaxis='Time (s)',
+                            legend_position='right',
+                            title_above_plot=True)
+        pynml.generate_plot(xs2,
+                            ys2,
+                            'No connections Rates',
+                            show_plot_already=False,
+                            labels=labels2,
+                            linewidths=[(1 if 'Py' in l else 2) for l in labels2],
+                            yaxis='Rate (Hz)',
+                            xaxis='Time (s)',
+                            legend_position='right',
+                            title_above_plot=True)
+
+        pynml.generate_plot(histxs,
+                            histys,
+                            'Histograms: No Connection',
+                            labels=histlabels,
+                            colors=histcolors,
+                            show_plot_already=False,
+                            xaxis='Rate bins (Hz)',
+                            yaxis='Num timesteps rate in bins',
+                            markers=['o' for x in histxs],
+                            markersizes=[2 for x in histxs],
+                            legend_position='right',
+                            title_above_plot=True)
+
+        pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin, pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = \
+            calculate_interlaminar_power_spectrum(rate_noconn, dt, transient, Nbin)
+        # Plot spectrogram
+        plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
+                                         pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
+                                         fxx_uncoupled_l56_bin, fxx_coupled_l56_bin,
+                                         pxx_uncoupled_l56_bin, pxx_coupled_l56_bin,
+                                         'interlaminar')
+
+        plt.show()
+        print('Hie')
 
     else:
 
