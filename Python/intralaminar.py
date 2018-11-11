@@ -27,7 +27,7 @@ def matlab_smooth(data, window_size):
 
 def intralaminar_analysis(simulation, Iexts, nruns, layer='L23', dt=2e-04, transient=5):
     """
-    Calculates the main interlaminar analysis and dumps a pickle containing the periodogram of the analysis
+    Calculates the main intralaminar analysis and dumps a pickle containing the periodogram of the analysis
     Inputs
         simulation: dictionary containing all the simulations to be analysed
         Iexts: a list of the input strengths applied on the excitatory populations

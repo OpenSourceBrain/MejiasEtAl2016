@@ -184,7 +184,8 @@ if __name__ == "__main__":
 
         # Analyse and Plot spectrogram of layer L2/3
         # For now, ignore this function as I cannot generate the correct output
-        # ff, tt, Sxx = interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones)
+        from interlaminar import interlaminar_analysis_periodeogram
+        ff, tt, Sxx = interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones)
         # plot_spectrogram(ff, tt, Sxx)
 
 

@@ -125,25 +125,30 @@ def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
 def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones):
     # TODO: still in construction
     # calculate the spectogram for L2/3 and average the results over the segments
-    pxx2, fxx2 = calculate_periodogram(rate[0, :], transient, dt)
+    pxx2, fxx2 = calculate_periodogram(rate[0, :, 0], transient, dt)
     f_peakgamma = find_peak_frequency(fxx2, pxx2, min_freq2)
-    print('Average peak frequency on the gamma range: %.02f Hz' %f_peakgamma)
+    print('    Average peak frequency on the gamma range: %.02f Hz' %f_peakgamma)
     timewindow = 7/f_peakgamma
     window_len = int(round(timewindow/dt))
     window = signal.get_window('hamming', window_len)
     noverlap = int(round(0.95 * window_len))
+    lowest_frequency = 25; highest_frequency = 45; step_frequency = .25
+    freq_displayed = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
+    fs = int(1/dt)
 
+    dic = {'segment2': segment2,
+           'window_len': window_len,
+           'noverlap': noverlap,
+           'freq_displayed': freq_displayed,
+           'fs': fs}
+    with open('periodogram.pckl', 'wb') as filename:
+        pickle.dump(dic, filename)
 
     # try loading mat file with the correct input to the spectogram
     from scipy.io import loadmat
     matfile = '../Matlab/fig3/segment2.mat'
     mat = loadmat(matfile)
     segment2 = mat['segment2']
-
-    # calculate nfft
-    lowest_frequency = 25; highest_frequency = 45; step_frequency = .25
-    freq_displayed = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
-    fs = int(1/dt)
 
     Sxx = np.zeros((freq_displayed.shape[0], 83, numberofzones), dtype=complex)
     for n in range(numberofzones):
