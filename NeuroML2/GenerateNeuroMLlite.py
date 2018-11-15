@@ -8,7 +8,7 @@ import sys
 sys.path.append("../Python")
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
-             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=0, count=0):
+             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[0, 0], count=0):
 
     ################################################################################
     ###   Build new network
@@ -42,11 +42,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
     net.cells.append(l56icell)
 
 
-    input_source0 = InputSource(id='iclamp0',
-                               pynn_input='DCSource',
-                               parameters={'amplitude':Iext, 'start':0, 'stop':duration})
+    input_source_l23 = InputSource(id='iclamp_23',
+                                   neuroml2_input='PulseGenerator',
+                                   parameters={'amplitude':'%snA'%Iext[0], 'delay':'0ms', 'duration':'%sms'%duration})
+    net.input_sources.append(input_source_l23)
+    input_source_l56 = InputSource(id='iclamp_56',
+                                   neuroml2_input='PulseGenerator',
+                                   parameters={'amplitude':'%snA'%Iext[1], 'delay':'0ms', 'duration':'%sms'%duration})
 
-    net.input_sources.append(input_source0)
+    net.input_sources.append(input_source_l56)
 
     l23 = RectangularRegion(id='L23', x=0,y=100,z=0,width=100,height=100,depth=10)
     net.regions.append(l23)
@@ -105,11 +109,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
 
     # Add modulation
     net.inputs.append(Input(id='modulation_l23_E',
-                            input_source=input_source0.id,
+                            input_source=input_source_l23.id,
                             population=pl23e.id,
                             percentage=100))
     net.inputs.append(Input(id='modulation_l56_E',
-                            input_source=input_source0.id,
+                            input_source=input_source_l56.id,
                             population=pl56e.id,
                             percentage=100))
 
@@ -166,7 +170,7 @@ if __name__ == "__main__":
                            'With connections; with noise':[{'wee':JEE, 'wei':JIE, 'wie':JEI, 'wii':JII,
                                                           'duration':50000, 'dt':0.2, 'noise':True},
                                                           'simulation_Iext0_nrun0_noiseNone_dur50.0_dt0.0002.txt']}
-                                                          
+
 
             hist_bins = 50
 
@@ -346,7 +350,7 @@ if __name__ == "__main__":
             simulation[Iext] = {}
             for run in range(nruns):
                 sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=25000,
-                                    Iext=Iext, count=run)
+                                    Iext=[Iext, Iext], count=run)
                 ################################################################################
                 ###   Run in some simulators
 
@@ -386,7 +390,7 @@ if __name__ == "__main__":
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, dt=dt,
-                            duration=duration, Iext=8, count=0)
+                            duration=duration, Iext=[8, 8], count=0)
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
         simulator = 'jNeuroML'
@@ -492,7 +496,7 @@ if __name__ == "__main__":
         # Repeat the calculations for the case where there is no connection between layers
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=duration,
-                            Iext=8, count=0)
+                            Iext=[8, 8], count=0)
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
         simulator = 'jNeuroML'
