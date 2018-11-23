@@ -368,7 +368,10 @@ if __name__ == "__main__":
 
 
     elif '-interlaminar' in sys.argv:
-        from interlaminar import calculate_interlaminar_power_spectrum, plot_interlaminar_power_spectrum
+        import matplotlib.pylab as plt
+
+        from interlaminar import calculate_interlaminar_power_spectrum, plot_interlaminar_power_spectrum, \
+                                 plot_power_spectrum_neurodsp
 
         # Load the python results (this script assumes that the python script Mejias-2016.py -interlaminar_a has already
         #  generated the pickle file with the results).
@@ -376,15 +379,14 @@ if __name__ == "__main__":
         with open(simulation_file, 'rb') as filename:
             pyrate = pickle.load(filename)
 
-
-        dt = .2
+        dt = 2e-01
         transient = 10
         Nbin = 100
-        duration = 600000
+        duration = 6e05
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=duration,
-                            Iext=8, count=0)
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, dt=dt,
+                            duration=duration, Iext=8, count=0)
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
         simulator = 'jNeuroML'
@@ -397,10 +399,13 @@ if __name__ == "__main__":
                               np.array(traces['L56_E/0/L56_E/r']),
                               np.array(traces['L56_I/0/L56_I/r']),
                               ))
+
         # for compatibility with the Python code, expand the third dimension
         rate_conn = np.expand_dims(rate_conn, axis=2)
+        # transform the dt from ms to s, for the rest of the analysis
+        s_dt = dt / 1000
         pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
-                calculate_interlaminar_power_spectrum(rate_conn, dt, transient, Nbin)
+                calculate_interlaminar_power_spectrum(rate_conn, s_dt, transient, Nbin)
 
         xs1 = []
         ys1 = []
@@ -582,7 +587,11 @@ if __name__ == "__main__":
                             title_above_plot=True)
 
         pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin, pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = \
-            calculate_interlaminar_power_spectrum(rate_noconn, dt, transient, Nbin)
+            calculate_interlaminar_power_spectrum(rate_noconn, s_dt, transient, Nbin)
+
+        # Plot the Power Spectrum Analysis
+        plot_power_spectrum_neurodsp(s_dt, rate_conn, rate_noconn, 'interlaminar')
+
         # Plot spectrogram
         plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
                                          pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
@@ -591,7 +600,6 @@ if __name__ == "__main__":
                                          'interlaminar')
 
         plt.show()
-        print('Hie')
 
     else:
 

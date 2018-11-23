@@ -12,7 +12,8 @@ np.random.RandomState(seed=42)
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
 from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
                          calculate_interlaminar_power_spectrum, \
-                         plot_interlaminar_power_spectrum
+                         plot_interlaminar_power_spectrum, plot_power_spectrum_neurodsp
+
 from helper_functions import firing_rate_analysis, get_network_configuration
 
 
@@ -51,7 +52,7 @@ def getArguments():
                         type=float,
                         dest='dt',
                         default=2e-4,
-                        help='Timestep (dt) of simulation')
+                        help='Timestep (dt) of simulation in seconds')
     parser.add_argument('-initialrate',
                         type=float,
                         dest='initialrate',
@@ -147,6 +148,9 @@ if __name__ == "__main__":
                                       fxx_uncoupled_l56_bin, fxx_coupled_l56_bin,
                                       pxx_uncoupled_l56_bin, pxx_coupled_l56_bin,
                                       args.analysis)
+
+        # Plot spectrogram using neurodsp
+        plot_power_spectrum_neurodsp(dt,rate_conn, rate_noconn, 'interlaminar')
 
         # Pickle the results rate over time
         # Transform the results so that they are saved in a dic (similar to NeuroML output)

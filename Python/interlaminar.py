@@ -4,6 +4,7 @@ import pickle
 from scipy import signal, fftpack
 import math
 import matplotlib.pylab as plt
+from neurodsp import spectral
 
 from calculate_rate import calculate_rate
 from helper_functions import calculate_periodogram, compress_data
@@ -280,6 +281,35 @@ def calculate_interlaminar_power_spectrum(rate, dt, transient, Nbin):
     pxx_l23_bin, fxx_l23_bin = compress_data(pxx_l23, fxx_l23, Nbin)
     pxx_l56_bin, fxx_l56_bin = compress_data(pxx_l56, fxx_l56, Nbin)
     return pxx_l23_bin, fxx_l23_bin, pxx_l56_bin, fxx_l56_bin
+
+def plot_power_spectrum_neurodsp(dt, rate_conn, rate_noconn, analysis):
+    fs = 1/dt
+
+    # Plot the results for L23
+    freq_mean_L23_conn, P_mean_L23_conn = spectral.compute_spectrum(rate_conn[0, :, 0], fs, method='mean')
+    freq_mean_L23_noconn, P_mean_L23_noconn = spectral.compute_spectrum(rate_noconn[0, :, 0], fs, method='mean')
+
+    plt.figure()
+    plt.loglog(freq_mean_L23_conn, P_mean_L23_conn, label='Coupled', linewidth=2, color='g')
+    plt.loglog(freq_mean_L23_noconn, P_mean_L23_noconn, label='Uncoupled', linewidth=2, color='k')
+    plt.xlim([1, 100])
+    plt.ylim([10 ** -4, 10 ** -2])
+    plt.ylabel('Power')
+    plt.xlabel('Frequency (Hz)')
+    plt.legend()
+
+    # Plot the results for L56
+    freq_mean_L56_conn, P_mean_L56_conn = spectral.compute_spectrum(rate_conn[2, :, 0], fs, method='mean')
+    freq_mean_L56_noconn, P_mean_L56_noconn = spectral.compute_spectrum(rate_noconn[2, :, 0], fs, method='mean')
+
+    plt.figure()
+    plt.loglog(freq_mean_L56_conn, P_mean_L56_conn, label='Coupled', linewidth=2, color='#FF7F50')
+    plt.loglog(freq_mean_L56_noconn, P_mean_L56_noconn, label='Uncoupled', linewidth=2, color='k')
+    plt.xlim([1, 100])
+    plt.ylim([10**-5, 10**-0])
+    plt.ylabel('Power')
+    plt.xlabel('Frequency (Hz)')
+    plt.legend()
 
 def plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
                                   pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
