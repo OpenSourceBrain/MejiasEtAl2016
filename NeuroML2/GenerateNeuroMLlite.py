@@ -7,8 +7,10 @@ import pickle
 import sys
 sys.path.append("../Python")
 
-def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
-             interlaminar2=0, sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[0, 0], count=0):
+def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
+             interlaminar1=0, interlaminar2=0,
+             areas=['V1'], interareal1=0, interareal2=0, interareal3=0, interareal4=0, interareal5=0,
+             sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[0, 0], count=0):
 
     ################################################################################
     ###   Build new network
@@ -25,6 +27,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
                        'wii': wii,
                        'interlaminar1': interlaminar1,
                        'interlaminar2': interlaminar2,
+                       'interareal1': interareal1,
+                       'interareal2': interareal2,
+                       'interareal3': interareal3,
+                       'interareal4': interareal4,
+                       'interareal5': interareal5,
                        'sigma23': sigma23,
                        'sigma56': sigma56 }
 
@@ -52,60 +59,98 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
 
     net.input_sources.append(input_source_l56)
 
-    l23 = RectangularRegion(id='L23', x=0,y=100,z=0,width=100,height=100,depth=10)
-    net.regions.append(l23)
-
-    l56 = RectangularRegion(id='L56', x=0,y=0,z=0,width=100,height=100,depth=10)
-    net.regions.append(l56)
 
     color_str = {'l23e':'.8 0 0','l23i':'0 0 .8',
                  'l56e':'1 .2 0','l56i':'0 .2 1'}
 
-    pl23e = Population(id='L23_E', size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
-    pl23i = Population(id='L23_I', size=1, component=l23icell.id, properties={'color':color_str['l23i']},random_layout = RandomLayout(region=l23.id))
+    def internal_connections(pops, W, pre_pop, post_pop):
+        print('Connection %s -> %s:' %(pre_pop.id[:2], post_pop.id[:2]))
+        weight = str(W[pops.index(pre_pop)][pops.index(post_pop)])
+        print('    Connection %s -> %s weight %s'%(pre_pop.id, post_pop.id, weight))
+        if weight!=0:
+            net.projections.append(Projection(id='proj_%s_%s'%(pre_pop.id, post_pop.id),
+                                              presynaptic=pre_pop.id,
+                                              postsynaptic=post_pop.id,
+                                              synapse='rs',
+                                              type='continuousProjection',
+                                              delay=0,
+                                              weight=weight,
+                                              random_connectivity=RandomConnectivity(probability=1)))
 
-    pl56e = Population(id='L56_E', size=1, component=l56ecell.id, properties={'color':color_str['l56e']},random_layout = RandomLayout(region=l56.id))
-    pl56i = Population(id='L56_I', size=1, component=l56icell.id, properties={'color':color_str['l56i']},random_layout = RandomLayout(region=l56.id))
 
-    net.populations.append(pl23e)
-    net.populations.append(pl23i)
+    n_areas = len(areas)
+    pops = []
+    for area in areas:
+        l23 = RectangularRegion(id='%s_L23' %(area), x=0,y=100,z=0,width=10,height=10,depth=10)
+        net.regions.append(l23)
+        l56 = RectangularRegion(id='%s_L56' %(area), x=0,y=0,z=0,width=10,height=10,depth=10)
+        net.regions.append(l56)
 
-    net.populations.append(pl56e)
-    net.populations.append(pl56i)
+        pl23e = Population(id='%s_L23_E' %(area), size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
+        pops.append(pl23e)
+        pl23i = Population(id='%s_L23_I' %(area), size=1, component=l23icell.id, properties={'color':color_str['l23i']},random_layout = RandomLayout(region=l23.id))
+        pops.append(pl23i)
+
+        pl56e = Population(id='%s_L56_E' %(area), size=1, component=l56ecell.id, properties={'color':color_str['l56e']},random_layout = RandomLayout(region=l56.id))
+        pops.append(pl56e)
+        pl56i = Population(id='%s_L56_I' %(area), size=1, component=l56icell.id, properties={'color':color_str['l56i']},random_layout = RandomLayout(region=l56.id))
+        pops.append(pl56i)
+
+        net.populations.append(pl23e)
+        net.populations.append(pl23i)
+
+        net.populations.append(pl56e)
+        net.populations.append(pl56i)
+
+    if n_areas == 1:
+        l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
+        l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
+        l2e_l5i = 0; l2e_l5e = 'interlaminar2'; l2i_l5e = 0; l2i_l5i = 0;
+        l5e_l2e = 0; l5e_l2i= 'interlaminar1'; l5i_l2e = 0; l5i_l2i = 0;
+        W = np.array([[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
+                       [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
+                       [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
+                       [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]], dtype='U14')
+
+    elif n_areas == 2:
+        v1_v1_l2e_l2e = v4_v4_l2e_l2e = 'wee'; v1_v1_l5e_l5e = v4_v4_l5e_l5e = 'wee'
+        v1_v1_l2e_l2i = v4_v4_l2e_l2i = 'wei'; v1_v1_l5e_l5i = v4_v4_l5e_l5i = 'wei'
+        v1_v1_l2i_l2e = v4_v4_l2i_l2e = 'wie'; v1_v1_l5i_l5e = v4_v4_l5i_l5e = 'wie'
+        v1_v1_l2i_l2i = v4_v4_l2i_l2i = 'wii'; v1_v1_l5i_l5i = v4_v4_l5i_l5i = 'wii'
+
+        v1_v1_l2e_l5e = v4_v4_l2e_l5e = 'interlaminar2'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = 0;
+        v1_v1_l5e_l2i = v4_v4_l5e_l2i = 'interlaminar1'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = 0;
+        v1_v1_l2i_l5e = v4_v4_l2i_l5e = 0; v1_v1_l5i_l2i = v4_v4_l5i_l2i = 0;
+        v1_v1_l5i_l2e = v4_v4_l5i_l2e = 0; v1_v1_l2i_l5i = v4_v4_l2i_l5i = 0;
+
+        # interareal
+        v1_v4_l2e_l2e = 'interareal1'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
+        v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
+        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'interareal5'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'interareal2'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'interareal3'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'interareal4';
+        v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
+
+        W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i],
+                       [v1_v1_l2i_l2e, v1_v1_l2i_l2i, v1_v1_l2i_l5e, v1_v1_l2i_l5i, v1_v4_l2i_l2e, v1_v4_l2i_l2i, v1_v4_l2i_l5e, v1_v4_l2i_l5i],
+                       [v1_v1_l5e_l2e, v1_v1_l5e_l2i, v1_v1_l5e_l5e, v1_v1_l5e_l5i, v1_v4_l5e_l2e, v1_v4_l5e_l2i, v1_v4_l5e_l5e, v1_v4_l5e_l5i],
+                       [v1_v1_l5i_l2e, v1_v1_l5i_l2i, v1_v1_l5i_l5e, v1_v1_l5i_l5i, v1_v4_l5i_l2e, v1_v4_l5i_l2i, v1_v4_l5i_l5e, v1_v4_l5i_l5i],
+                       [v4_v1_l2e_l2e, v4_v1_l2e_l2i, v4_v1_l2e_l5e, v4_v1_l2e_l5i, v4_v4_l2e_l2e, v4_v4_l2e_l2i, v4_v4_l2e_l5e, v4_v4_l2e_l5i],
+                       [v4_v1_l2i_l2e, v4_v1_l2i_l2i, v4_v1_l2i_l5e, v4_v1_l2i_l5i, v4_v4_l2i_l2e, v4_v4_l2i_l2i, v4_v4_l2i_l5e, v4_v4_l2i_l5i],
+                       [v4_v1_l5e_l2e, v4_v1_l5e_l2i, v4_v1_l5e_l5e, v4_v1_l5e_l5i, v4_v4_l5e_l2e, v4_v4_l5e_l2i, v4_v4_l5e_l5e, v4_v4_l5e_l5i],
+                       [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i]],
+                     dtype='U14')
+    else:
+        ValueError('Matrix not implemented for more than 2 regions')
+
+    for pre_pop in pops:
+        for post_pop in pops:
+            internal_connections(pops, W, pre_pop, post_pop)
+
 
 
 
     net.synapses.append(Synapse(id='rs',
                                 lems_source_file='Prototypes.xml'))
 
-
-    def internal_connections(pops):
-        for pre in pops:
-            for post in pops:
-
-                weight = W[pops.index(pre)][pops.index(post)]
-                print('Connection %s -> %s weight %s'%(pre.id, post.id, weight))
-                if weight!=0:
-
-                    net.projections.append(Projection(id='proj_%s_%s'%(pre.id,post.id),
-                                                      presynaptic=pre.id,
-                                                      postsynaptic=post.id,
-                                                      synapse='rs',
-                                                      type='continuousProjection',
-                                                      delay=0,
-                                                      weight=weight,
-                                                      random_connectivity=RandomConnectivity(probability=1)))
-
-    l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
-    l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
-    l2e_l5i = 0; l2e_l5e = 'interlaminar2'; l2i_l5e = 0; l2i_l5i = 0;
-    l5e_l2e = 0; l5e_l2i= 'interlaminar1'; l5i_l2e = 0; l5i_l2i = 0;
-    W = [[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
-         [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
-         [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
-         [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]]
-    pops = [pl23e,pl23i, pl56e, pl56i]
-    internal_connections(pops)
 
     # Add modulation
     net.inputs.append(Input(id='modulation_l23_E',
@@ -350,7 +395,7 @@ if __name__ == "__main__":
             simulation[Iext] = {}
             for run in range(nruns):
                 sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=25000,
-                                    Iext=[Iext, Iext], count=run)
+                                    areas=['V1'], Iext=[Iext, Iext], count=run)
                 ################################################################################
                 ###   Run in some simulators
 
@@ -363,7 +408,7 @@ if __name__ == "__main__":
                 simulation[Iext][run] = {}
                 traces, events = nmllr.run_once('/tmp')
                 # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
-                simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['L23_E/0/L23_E/r'])
+                simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['V1_L23_E/0/L23_E/r'])
 
         # analyse the traces using python methods
         psd_dic = intralaminar_analysis(simulation, Iexts, nruns, layer='L23', dt=2e-04, transient=5)
@@ -390,7 +435,7 @@ if __name__ == "__main__":
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, dt=dt,
-                            duration=duration, Iext=[8, 8], count=0)
+                            areas=['V1'], duration=duration, Iext=[8, 8], count=0)
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
         simulator = 'jNeuroML'
@@ -496,7 +541,7 @@ if __name__ == "__main__":
         # Repeat the calculations for the case where there is no connection between layers
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=duration,
-                            Iext=[8, 8], count=0)
+                            areas=['V1'], Iext=[8, 8], count=0)
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
         simulator = 'jNeuroML'
@@ -604,6 +649,26 @@ if __name__ == "__main__":
                                          'interlaminar')
 
         plt.show()
+    elif '-interareal' in sys.argv:
+        wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
+        dt = .2
+        transient = 5
+        duration = 4e03
+        Iext = 15 # external injected current
+
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii,
+                            interlaminar1=l5e_l2i, interlaminar2=l2e_l5e,
+                            areas=['V1', 'V4'], interareal1=1, interareal2=.5, interareal3=.9, interareal4=.5, interareal5=.1,
+                            dt=dt, duration=duration, Iext=[Iext, Iext])
+        # Run in some simulators
+        check_to_generate_or_run(sys.argv, sim)
+        simulator = 'jNeuroML'
+
+        nmllr = NeuroMLliteRunner('%s.json' %sim.id,
+                                    simulator=simulator)
+        traces, events = nmllr.run_once('/tmp')
+        print('Done')
+
 
     else:
 
