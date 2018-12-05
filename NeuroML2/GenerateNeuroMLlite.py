@@ -139,7 +139,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                        [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i]],
                      dtype='U14')
     else:
-        ValueError('Matrix not implemented for more than 2 regions')
+        ValueError('Connectivity matrix not defined for more than 2 regions')
 
     for pre_pop in pops:
         for post_pop in pops:
@@ -443,10 +443,10 @@ if __name__ == "__main__":
         nmllr = NeuroMLliteRunner('%s.json' % sim.id,
                                   simulator=simulator)
         traces, events = nmllr.run_once('/tmp')
-        rate_conn = np.stack((np.array(traces['L23_E/0/L23_E/r']),
-                              np.array(traces['L23_I/0/L23_I/r']),
-                              np.array(traces['L56_E/0/L56_E/r']),
-                              np.array(traces['L56_I/0/L56_I/r']),
+        rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E/r']),
+                              np.array(traces['V1_L23_I/0/L23_I/r']),
+                              np.array(traces['V1_L56_E/0/L56_E/r']),
+                              np.array(traces['V1_L56_I/0/L56_I/r']),
                               ))
 
         # for compatibility with the Python code, expand the third dimension
@@ -468,8 +468,8 @@ if __name__ == "__main__":
         colors = []
         histcolors = []
         hist_bins = 50
-        pop_colors = {'L23_E': '#dd7777', 'L23_I': '#7777dd', 'L23_E_Py':'#990000','L23_I_Py':'#000099',
-                      'L56_E': '#77dd77', 'L56_I': '#dd77dd', 'L56_E_Py':'#009900','L56_I_Py':'#990099'}
+        pop_colors = {'V1_L23_E': '#dd7777', 'V1_L23_I': '#7777dd', 'L23_E_Py':'#990000','L23_I_Py':'#000099',
+                      'V1_L56_E': '#77dd77', 'V1_L56_I': '#dd77dd', 'L56_E_Py':'#009900','L56_I_Py':'#990099'}
 
         # Append traces generated with NeuroML
         for tr in traces:
@@ -549,10 +549,10 @@ if __name__ == "__main__":
         nmllr = NeuroMLliteRunner('%s.json' % sim.id,
                                   simulator=simulator)
         traces, events = nmllr.run_once('/tmp')
-        rate_noconn = np.stack((np.array(traces['L23_E/0/L23_E/r']),
-                              np.array(traces['L23_I/0/L23_I/r']),
-                              np.array(traces['L56_E/0/L56_E/r']),
-                              np.array(traces['L56_I/0/L56_I/r']),
+        rate_noconn = np.stack((np.array(traces['V1_L23_E/0/L23_E/r']),
+                              np.array(traces['V1_L23_I/0/L23_I/r']),
+                              np.array(traces['V1_L56_E/0/L56_E/r']),
+                              np.array(traces['V1_L56_I/0/L56_I/r']),
                               ))
         # for compatibility with the Python code, expand the third dimension
         rate_noconn = np.expand_dims(rate_noconn, axis=2)
