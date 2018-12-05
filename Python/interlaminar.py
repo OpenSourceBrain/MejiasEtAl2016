@@ -4,6 +4,7 @@ import pickle
 from scipy import signal, fftpack
 import math
 import matplotlib.pylab as plt
+from neurodsp import spectral
 
 from calculate_rate import calculate_rate
 from helper_functions import calculate_periodogram, compress_data
@@ -125,25 +126,30 @@ def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
 def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones):
     # TODO: still in construction
     # calculate the spectogram for L2/3 and average the results over the segments
-    pxx2, fxx2 = calculate_periodogram(rate[0, :], transient, dt)
+    pxx2, fxx2 = calculate_periodogram(rate[0, :, 0], transient, dt)
     f_peakgamma = find_peak_frequency(fxx2, pxx2, min_freq2)
-    print('Average peak frequency on the gamma range: %.02f Hz' %f_peakgamma)
+    print('    Average peak frequency on the gamma range: %.02f Hz' %f_peakgamma)
     timewindow = 7/f_peakgamma
     window_len = int(round(timewindow/dt))
     window = signal.get_window('hamming', window_len)
     noverlap = int(round(0.95 * window_len))
+    lowest_frequency = 25; highest_frequency = 45; step_frequency = .25
+    freq_displayed = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
+    fs = int(1/dt)
 
+    dic = {'segment2': segment2,
+           'window_len': window_len,
+           'noverlap': noverlap,
+           'freq_displayed': freq_displayed,
+           'fs': fs}
+    with open('periodogram.pckl', 'wb') as filename:
+        pickle.dump(dic, filename)
 
     # try loading mat file with the correct input to the spectogram
     from scipy.io import loadmat
     matfile = '../Matlab/fig3/segment2.mat'
     mat = loadmat(matfile)
     segment2 = mat['segment2']
-
-    # calculate nfft
-    lowest_frequency = 25; highest_frequency = 45; step_frequency = .25
-    freq_displayed = np.arange(lowest_frequency, highest_frequency + step_frequency, step_frequency)
-    fs = int(1/dt)
 
     Sxx = np.zeros((freq_displayed.shape[0], 83, numberofzones), dtype=complex)
     for n in range(numberofzones):
@@ -266,17 +272,44 @@ def plot_spectrogram(ff, tt, Sxx):
     plt.show()
 
 
-def calculate_interlaminar_power_spectrum(analysis, t, dt, transient, tstop, J, tau, sig, Iext, Ibgk,
-                                       noise, Nareas, Nbin):
+def calculate_interlaminar_power_spectrum(rate, dt, transient, Nbin):
 
     # Calculate the rate for the passed connectivity
-    rate = interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas)
-    pxx_l23, fxx_l23 = calculate_periodogram(rate[0, :], transient, dt)
-    pxx_l56, fxx_l56 = calculate_periodogram(rate[2, :], transient, dt)
+    pxx_l23, fxx_l23 = calculate_periodogram(rate[0, :, 0], transient, dt)
+    pxx_l56, fxx_l56 = calculate_periodogram(rate[2, :, 0], transient, dt)
     # Compress data by selecting one data point every "bin"
     pxx_l23_bin, fxx_l23_bin = compress_data(pxx_l23, fxx_l23, Nbin)
     pxx_l56_bin, fxx_l56_bin = compress_data(pxx_l56, fxx_l56, Nbin)
     return pxx_l23_bin, fxx_l23_bin, pxx_l56_bin, fxx_l56_bin
+
+def plot_power_spectrum_neurodsp(dt, rate_conn, rate_noconn, analysis):
+    fs = 1/dt
+
+    # Plot the results for L23
+    freq_mean_L23_conn, P_mean_L23_conn = spectral.compute_spectrum(rate_conn[0, :, 0], fs, method='mean')
+    freq_mean_L23_noconn, P_mean_L23_noconn = spectral.compute_spectrum(rate_noconn[0, :, 0], fs, method='mean')
+
+    plt.figure()
+    plt.loglog(freq_mean_L23_conn, P_mean_L23_conn, label='Coupled', linewidth=2, color='g')
+    plt.loglog(freq_mean_L23_noconn, P_mean_L23_noconn, label='Uncoupled', linewidth=2, color='k')
+    plt.xlim([1, 100])
+    plt.ylim([10 ** -4, 10 ** -2])
+    plt.ylabel('Power')
+    plt.xlabel('Frequency (Hz)')
+    plt.legend()
+
+    # Plot the results for L56
+    freq_mean_L56_conn, P_mean_L56_conn = spectral.compute_spectrum(rate_conn[2, :, 0], fs, method='mean')
+    freq_mean_L56_noconn, P_mean_L56_noconn = spectral.compute_spectrum(rate_noconn[2, :, 0], fs, method='mean')
+
+    plt.figure()
+    plt.loglog(freq_mean_L56_conn, P_mean_L56_conn, label='Coupled', linewidth=2, color='#FF7F50')
+    plt.loglog(freq_mean_L56_noconn, P_mean_L56_noconn, label='Uncoupled', linewidth=2, color='k')
+    plt.xlim([1, 100])
+    plt.ylim([10**-5, 10**-0])
+    plt.ylabel('Power')
+    plt.xlabel('Frequency (Hz)')
+    plt.legend()
 
 def plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
                                   pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
@@ -291,6 +324,8 @@ def plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
     plt.legend()
     plt.xlim([1, 100])
     plt.ylim([10**-4, 10**-2])
+    if not os.path.exists('interlaminar'):
+        os.makedirs('interlaminar')
     plt.savefig(os.path.join(analysis, 'spectrogram_l23.png'))
 
     plt.figure()

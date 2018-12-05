@@ -63,7 +63,7 @@ def calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibgk, sigmaoverride, Nareas,
     
     # Initial rate values
     # Note: the 5 ensures that you have between 0 and 10 spikes/s
-    rate[:, 0, :] = 5 * (1 + np.tanh(2 * xi[:, 0, :]))
+    rate[:, 0, :] = 5 #* (1 + np.tanh(2 * xi[:, 0, :]))
     if initialrate>=0:
         rate[:, 0, :] = initialrate
 

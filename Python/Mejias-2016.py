@@ -12,7 +12,8 @@ np.random.RandomState(seed=42)
 from intralaminar import intralaminar_simulation, intralaminar_analysis, intralaminar_plt
 from interlaminar import interlaminar_simulation, interlaminar_activity_analysis, plot_activity_traces, \
                          calculate_interlaminar_power_spectrum, \
-                         plot_interlaminar_power_spectrum
+                         plot_interlaminar_power_spectrum, plot_power_spectrum_neurodsp
+
 from helper_functions import firing_rate_analysis, get_network_configuration
 
 
@@ -51,7 +52,7 @@ def getArguments():
                         type=float,
                         dest='dt',
                         default=2e-4,
-                        help='Timestep (dt) of simulation')
+                        help='Timestep (dt) of simulation in seconds')
     parser.add_argument('-initialrate',
                         type=float,
                         dest='initialrate',
@@ -128,25 +129,49 @@ if __name__ == "__main__":
         t = np.arange(0, tstop, dt)
 
         tau, sig, J_conn, Iext_conn, Ibgk_conn = get_network_configuration('interlaminar_a', noconns=False)
-        Nbin = 100 # pick on e very 'bin' points
+        Nbin = 100 # pick one very 'bin' points
+
+        # Calculate the rate
+        rate_conn = interlaminar_simulation(args.analysis, t, dt, tstop, J_conn, tau, sig, Iext_conn, Ibgk_conn, args.sigmaoverride, Nareas)
         pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
-                            calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
-                                                                  tstop, J_conn, tau, sig, Iext_conn, Ibgk_conn,
-                                                                  args.sigmaoverride, Nareas, Nbin)
+                            calculate_interlaminar_power_spectrum(rate_conn, dt, transient, Nbin)
 
         # Run simulation when the two layers are uncoupled
         tau, sig, J_noconn, Iext_noconn, Ibgk_noconn = get_network_configuration('interlaminar_u', noconns=False)
 
+        rate_noconn = interlaminar_simulation(args.analysis, t, dt, tstop, J_noconn, tau, sig, Iext_noconn, Ibgk_conn, args.sigmaoverride, Nareas)
         pxx_uncoupled_l23_bin, fxx_uncoupled_l23_bin, pxx_uncoupled_l56_bin, fxx_uncoupled_l56_bin = \
-            calculate_interlaminar_power_spectrum(args.analysis, t, dt, transient,
-                                               tstop, J_noconn, tau, sig, Iext_noconn, Ibgk_noconn,
-                                               args.sigmaoverride, Nareas, Nbin)
+                           calculate_interlaminar_power_spectrum(rate_noconn, dt, transient, Nbin)
         # Plot spectrogram
         plot_interlaminar_power_spectrum(fxx_uncoupled_l23_bin, fxx_coupled_l23_bin,
                                       pxx_uncoupled_l23_bin, pxx_coupled_l23_bin,
                                       fxx_uncoupled_l56_bin, fxx_coupled_l56_bin,
                                       pxx_uncoupled_l56_bin, pxx_coupled_l56_bin,
                                       args.analysis)
+
+        # Plot spectrogram using neurodsp
+        plot_power_spectrum_neurodsp(dt,rate_conn, rate_noconn, 'interlaminar')
+
+        # Pickle the results rate over time
+        # Transform the results so that they are saved in a dic (similar to NeuroML output)
+        pyrate = {'L23_E_Py/conn': rate_conn[0, :, 0],
+               'L23_I_Py/conn': rate_conn[1, :, 0],
+               'L56_E_Py/conn': rate_conn[2, :, 0],
+               'L56_I_Py/conn': rate_conn[3, :, 0],
+               'L23_E_Py/unconn': rate_noconn[0, :, 0],
+               'L23_I_Py/unconn': rate_noconn[1, :, 0],
+               'L56_E_Py/unconn': rate_noconn[2, :, 0],
+               'L56_I_Py/unconn': rate_noconn[3, :, 0],
+               'ts': t
+               }
+        picklename = os.path.join('debug', args.analysis, 'simulation.pckl')
+        if not os.path.exists(picklename):
+            os.mkdir(os.path.dirname(picklename))
+        with open(picklename, 'wb') as filename:
+            pickle.dump(pyrate, filename)
+
+
+        print('    Done Analysis!')
 
 
     if args.analysis == 'interlaminar_b':
@@ -184,7 +209,8 @@ if __name__ == "__main__":
 
         # Analyse and Plot spectrogram of layer L2/3
         # For now, ignore this function as I cannot generate the correct output
-        # ff, tt, Sxx = interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones)
+        from interlaminar import interlaminar_analysis_periodeogram
+        ff, tt, Sxx = interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2, numberofzones)
         # plot_spectrogram(ff, tt, Sxx)
 
 

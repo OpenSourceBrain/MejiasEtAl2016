@@ -163,7 +163,7 @@ def calculate_periodogram(re, transient, dt):
 
 def compress_data(pxx, fxx, bin):
     """
-    Compress data
+    Compress data, using a sliding window approach
     Input:
         bin: Pick one point every 'bin' points
         re: Data to be shrunken
