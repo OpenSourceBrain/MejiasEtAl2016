@@ -1,0 +1,259 @@
+<Lems>
+    
+    <!-- 
+
+        This LEMS file has been automatically generated using PyNeuroML v0.3.14 (libNeuroML v0.2.45)
+
+     -->
+    
+    <!-- Specify which component to run -->
+    <Target component="SimMejiasNetwork" reportFile="report.SimMejiasNetwork.txt"/>
+
+    <!-- Include core NeuroML2 ComponentType definitions -->
+    <Include file="Cells.xml"/>
+    <Include file="Networks.xml"/>
+    <Include file="Simulation.xml"/>
+    
+    <Include file="PyNN.xml"/>
+    <Include file="Prototypes.xml"/>
+    <Include file="RateBased.xml"/>
+    <Include file="NoisyCurrentSource.xml"/>
+    <Include file="MejiasNetwork.net.nml"/>
+   
+    <Simulation id="SimMejiasNetwork" length="2000.0ms" step="0.2ms" target="MejiasNetwork" seed="12345">  <!-- Note seed: ensures same random numbers used every run -->
+        
+        <Display id="_5_0_r" title="Plots of _5_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_5_0_L23_E_comp_r" quantity="_5/0/L23_E_comp/r" scale="1" color="#6aa799" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_9_46v_0_r" title="Plots of _9_46v_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_9_46v_0_L23_E_comp_r" quantity="_9_46v/0/L23_E_comp/r" scale="1" color="#029a72" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="F7_0_r" title="Plots of F7_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="F7_0_L23_E_comp_r" quantity="F7/0/L23_E_comp/r" scale="1" color="#d340bb" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="F1_0_r" title="Plots of F1_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="F1_0_L23_E_comp_r" quantity="F1/0/L23_E_comp/r" scale="1" color="#4c73a9" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_8B_0_r" title="Plots of _8B_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_8B_0_L23_E_comp_r" quantity="_8B/0/L23_E_comp/r" scale="1" color="#5e503a" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_7B_0_r" title="Plots of _7B_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_7B_0_L23_E_comp_r" quantity="_7B/0/L23_E_comp/r" scale="1" color="#3193ca" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_2_0_r" title="Plots of _2_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_2_0_L23_E_comp_r" quantity="_2/0/L23_E_comp/r" scale="1" color="#90e5e9" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="STPc_0_r" title="Plots of STPc_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="STPc_0_L23_E_comp_r" quantity="STPc/0/L23_E_comp/r" scale="1" color="#29645f" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="TEpd_0_r" title="Plots of TEpd_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="TEpd_0_L23_E_comp_r" quantity="TEpd/0/L23_E_comp/r" scale="1" color="#1fcff4" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="TEO_0_r" title="Plots of TEO_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="TEO_0_L23_E_comp_r" quantity="TEO/0/L23_E_comp/r" scale="1" color="#6ed4e9" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="V1_0_r" title="Plots of V1_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="V1_0_L23_E_comp_r" quantity="V1/0/L23_E_comp/r" scale="1" color="#8fe460" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_10_0_r" title="Plots of _10_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_10_0_L23_E_comp_r" quantity="_10/0/L23_E_comp/r" scale="1" color="#2ca1c7" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_24c_0_r" title="Plots of _24c_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_24c_0_L23_E_comp_r" quantity="_24c/0/L23_E_comp/r" scale="1" color="#8d9fe5" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="F5_0_r" title="Plots of F5_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="F5_0_L23_E_comp_r" quantity="F5/0/L23_E_comp/r" scale="1" color="#5adad1" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="V2_0_r" title="Plots of V2_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="V2_0_L23_E_comp_r" quantity="V2/0/L23_E_comp/r" scale="1" color="#f543bb" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_8l_0_r" title="Plots of _8l_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_8l_0_L23_E_comp_r" quantity="_8l/0/L23_E_comp/r" scale="1" color="#175f0c" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="DP_0_r" title="Plots of DP_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="DP_0_L23_E_comp_r" quantity="DP/0/L23_E_comp/r" scale="1" color="#fa8826" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="STPr_0_r" title="Plots of STPr_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="STPr_0_L23_E_comp_r" quantity="STPr/0/L23_E_comp/r" scale="1" color="#6980a8" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_7m_0_r" title="Plots of _7m_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_7m_0_L23_E_comp_r" quantity="_7m/0/L23_E_comp/r" scale="1" color="#8101e8" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_8m_0_r" title="Plots of _8m_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_8m_0_L23_E_comp_r" quantity="_8m/0/L23_E_comp/r" scale="1" color="#25ece8" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="STPi_0_r" title="Plots of STPi_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="STPi_0_L23_E_comp_r" quantity="STPi/0/L23_E_comp/r" scale="1" color="#b80e3b" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="PBr_0_r" title="Plots of PBr_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="PBr_0_L23_E_comp_r" quantity="PBr/0/L23_E_comp/r" scale="1" color="#30a1f6" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="F2_0_r" title="Plots of F2_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="F2_0_L23_E_comp_r" quantity="F2/0/L23_E_comp/r" scale="1" color="#577081" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="MT_0_r" title="Plots of MT_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="MT_0_L23_E_comp_r" quantity="MT/0/L23_E_comp/r" scale="1" color="#06057c" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_46d_0_r" title="Plots of _46d_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_46d_0_L23_E_comp_r" quantity="_46d/0/L23_E_comp/r" scale="1" color="#56eaa3" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_7A_0_r" title="Plots of _7A_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_7A_0_L23_E_comp_r" quantity="_7A/0/L23_E_comp/r" scale="1" color="#f7acee" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="ProM_0_r" title="Plots of ProM_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="ProM_0_L23_E_comp_r" quantity="ProM/0/L23_E_comp/r" scale="1" color="#fa9289" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="V4_0_r" title="Plots of V4_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="V4_0_L23_E_comp_r" quantity="V4/0/L23_E_comp/r" scale="1" color="#be9985" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="_9_46d_0_r" title="Plots of _9_46d_0_r" timeScale="1ms" xmin="-200.0" xmax="2200.0" ymin="-1" ymax="1">
+            <Line id="_9_46d_0_L23_E_comp_r" quantity="_9_46d/0/L23_E_comp/r" scale="1" color="#00e266" timeScale="1ms"/>
+        </Display>
+        
+        <OutputFile id="V1_0_r_dat" fileName="V1_0_r.dat">
+            <OutputColumn id="V1_0_L23_E_comp_r" quantity="V1/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="F5_0_r_dat" fileName="F5_0_r.dat">
+            <OutputColumn id="F5_0_L23_E_comp_r" quantity="F5/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="F1_0_r_dat" fileName="F1_0_r.dat">
+            <OutputColumn id="F1_0_L23_E_comp_r" quantity="F1/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_2_0_r_dat" fileName="_2_0_r.dat">
+            <OutputColumn id="_2_0_L23_E_comp_r" quantity="_2/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_8B_0_r_dat" fileName="_8B_0_r.dat">
+            <OutputColumn id="_8B_0_L23_E_comp_r" quantity="_8B/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_5_0_r_dat" fileName="_5_0_r.dat">
+            <OutputColumn id="_5_0_L23_E_comp_r" quantity="_5/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="PBr_0_r_dat" fileName="PBr_0_r.dat">
+            <OutputColumn id="PBr_0_L23_E_comp_r" quantity="PBr/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="V2_0_r_dat" fileName="V2_0_r.dat">
+            <OutputColumn id="V2_0_L23_E_comp_r" quantity="V2/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_8l_0_r_dat" fileName="_8l_0_r.dat">
+            <OutputColumn id="_8l_0_L23_E_comp_r" quantity="_8l/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_8m_0_r_dat" fileName="_8m_0_r.dat">
+            <OutputColumn id="_8m_0_L23_E_comp_r" quantity="_8m/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="TEpd_0_r_dat" fileName="TEpd_0_r.dat">
+            <OutputColumn id="TEpd_0_L23_E_comp_r" quantity="TEpd/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_7B_0_r_dat" fileName="_7B_0_r.dat">
+            <OutputColumn id="_7B_0_L23_E_comp_r" quantity="_7B/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_9_46d_0_r_dat" fileName="_9_46d_0_r.dat">
+            <OutputColumn id="_9_46d_0_L23_E_comp_r" quantity="_9_46d/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_7A_0_r_dat" fileName="_7A_0_r.dat">
+            <OutputColumn id="_7A_0_L23_E_comp_r" quantity="_7A/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="STPc_0_r_dat" fileName="STPc_0_r.dat">
+            <OutputColumn id="STPc_0_L23_E_comp_r" quantity="STPc/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_24c_0_r_dat" fileName="_24c_0_r.dat">
+            <OutputColumn id="_24c_0_L23_E_comp_r" quantity="_24c/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_9_46v_0_r_dat" fileName="_9_46v_0_r.dat">
+            <OutputColumn id="_9_46v_0_L23_E_comp_r" quantity="_9_46v/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="STPi_0_r_dat" fileName="STPi_0_r.dat">
+            <OutputColumn id="STPi_0_L23_E_comp_r" quantity="STPi/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="F7_0_r_dat" fileName="F7_0_r.dat">
+            <OutputColumn id="F7_0_L23_E_comp_r" quantity="F7/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_10_0_r_dat" fileName="_10_0_r.dat">
+            <OutputColumn id="_10_0_L23_E_comp_r" quantity="_10/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="DP_0_r_dat" fileName="DP_0_r.dat">
+            <OutputColumn id="DP_0_L23_E_comp_r" quantity="DP/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_7m_0_r_dat" fileName="_7m_0_r.dat">
+            <OutputColumn id="_7m_0_L23_E_comp_r" quantity="_7m/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="TEO_0_r_dat" fileName="TEO_0_r.dat">
+            <OutputColumn id="TEO_0_L23_E_comp_r" quantity="TEO/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="_46d_0_r_dat" fileName="_46d_0_r.dat">
+            <OutputColumn id="_46d_0_L23_E_comp_r" quantity="_46d/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="V4_0_r_dat" fileName="V4_0_r.dat">
+            <OutputColumn id="V4_0_L23_E_comp_r" quantity="V4/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="ProM_0_r_dat" fileName="ProM_0_r.dat">
+            <OutputColumn id="ProM_0_L23_E_comp_r" quantity="ProM/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="F2_0_r_dat" fileName="F2_0_r.dat">
+            <OutputColumn id="F2_0_L23_E_comp_r" quantity="F2/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="STPr_0_r_dat" fileName="STPr_0_r.dat">
+            <OutputColumn id="STPr_0_L23_E_comp_r" quantity="STPr/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="MT_0_r_dat" fileName="MT_0_r.dat">
+            <OutputColumn id="MT_0_L23_E_comp_r" quantity="MT/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+    </Simulation>
+
+</Lems>
