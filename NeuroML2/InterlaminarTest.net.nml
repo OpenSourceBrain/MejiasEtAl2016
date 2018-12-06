@@ -1,0 +1,92 @@
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta5.xsd" id="MejiasFig2">
+    <notes>Generated network: MejiasFig2
+    Generation seed: 1234
+    NeuroMLlite parameters: 
+        interlaminar1 = 0.75
+        wie = -3.25
+        interlaminar2 = 1
+        wee = 1.5
+        wei = 3.5
+        sigma56 = 0.45
+        wii = -2.5
+        sigma23 = 0.3</notes>
+    <silentSynapse id="silentSyn_proj_L23_E_L23_E"/>
+    <silentSynapse id="silentSyn_proj_L23_E_L23_I"/>
+    <silentSynapse id="silentSyn_proj_L23_E_L56_E"/>
+    <silentSynapse id="silentSyn_proj_L23_I_L23_E"/>
+    <silentSynapse id="silentSyn_proj_L23_I_L23_I"/>
+    <silentSynapse id="silentSyn_proj_L56_E_L23_I"/>
+    <silentSynapse id="silentSyn_proj_L56_E_L56_E"/>
+    <silentSynapse id="silentSyn_proj_L56_E_L56_I"/>
+    <silentSynapse id="silentSyn_proj_L56_I_L56_E"/>
+    <silentSynapse id="silentSyn_proj_L56_I_L56_I"/>
+    <pulseGenerator id="iclamp_23" delay="0ms" duration="600000.0ms" amplitude="8nA"/>
+    <pulseGenerator id="iclamp_56" delay="0ms" duration="600000.0ms" amplitude="8nA"/>
+    <network id="MejiasFig2">
+        <notes>Testing...</notes>
+        <population id="L23_E" component="L23_E_comp" size="1" type="populationList">
+            <property tag="color" value=".8 0 0"/>
+            <property tag="region" value="L23"/>
+            <instance id="0">
+                <location x="96.645353569213881" y="144.073259917535268" z="0.074914700585872"/>
+            </instance>
+        </population>
+        <population id="L23_I" component="L23_I_comp" size="1" type="populationList">
+            <property tag="color" value="0 0 .8"/>
+            <property tag="region" value="L23"/>
+            <instance id="0">
+                <location x="91.09759624491241" y="193.926899736376413" z="5.822275730589491"/>
+            </instance>
+        </population>
+        <population id="L56_E" component="L56_E_comp" size="1" type="populationList">
+            <property tag="color" value="1 .2 0"/>
+            <property tag="region" value="L56"/>
+            <instance id="0">
+                <location x="67.1563481487985" y="8.393822683708397" z="7.664809327917963"/>
+            </instance>
+        </population>
+        <population id="L56_I" component="L56_I_comp" size="1" type="populationList">
+            <property tag="color" value="0 .2 1"/>
+            <property tag="region" value="L56"/>
+            <instance id="0">
+                <location x="23.680977536311776" y="3.081402172660996" z="7.887727172362835"/>
+            </instance>
+        </population>
+        <continuousProjection id="proj_L23_E_L23_E" presynapticPopulation="L23_E" postsynapticPopulation="L23_E">
+            <continuousConnectionInstanceW id="0" preCell="../L23_E/0/L23_E_comp" postCell="../L23_E/0/L23_E_comp" preComponent="silentSyn_proj_L23_E_L23_E" postComponent="rs" weight="1.5"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L23_E_L23_I" presynapticPopulation="L23_E" postsynapticPopulation="L23_I">
+            <continuousConnectionInstanceW id="0" preCell="../L23_E/0/L23_E_comp" postCell="../L23_I/0/L23_I_comp" preComponent="silentSyn_proj_L23_E_L23_I" postComponent="rs" weight="3.5"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L23_E_L56_E" presynapticPopulation="L23_E" postsynapticPopulation="L56_E">
+            <continuousConnectionInstance id="0" preCell="../L23_E/0/L23_E_comp" postCell="../L56_E/0/L56_E_comp" preComponent="silentSyn_proj_L23_E_L56_E" postComponent="rs"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L23_I_L23_E" presynapticPopulation="L23_I" postsynapticPopulation="L23_E">
+            <continuousConnectionInstanceW id="0" preCell="../L23_I/0/L23_I_comp" postCell="../L23_E/0/L23_E_comp" preComponent="silentSyn_proj_L23_I_L23_E" postComponent="rs" weight="-3.25"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L23_I_L23_I" presynapticPopulation="L23_I" postsynapticPopulation="L23_I">
+            <continuousConnectionInstanceW id="0" preCell="../L23_I/0/L23_I_comp" postCell="../L23_I/0/L23_I_comp" preComponent="silentSyn_proj_L23_I_L23_I" postComponent="rs" weight="-2.5"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L56_E_L23_I" presynapticPopulation="L56_E" postsynapticPopulation="L23_I">
+            <continuousConnectionInstanceW id="0" preCell="../L56_E/0/L56_E_comp" postCell="../L23_I/0/L23_I_comp" preComponent="silentSyn_proj_L56_E_L23_I" postComponent="rs" weight="0.75"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L56_E_L56_E" presynapticPopulation="L56_E" postsynapticPopulation="L56_E">
+            <continuousConnectionInstanceW id="0" preCell="../L56_E/0/L56_E_comp" postCell="../L56_E/0/L56_E_comp" preComponent="silentSyn_proj_L56_E_L56_E" postComponent="rs" weight="1.5"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L56_E_L56_I" presynapticPopulation="L56_E" postsynapticPopulation="L56_I">
+            <continuousConnectionInstanceW id="0" preCell="../L56_E/0/L56_E_comp" postCell="../L56_I/0/L56_I_comp" preComponent="silentSyn_proj_L56_E_L56_I" postComponent="rs" weight="3.5"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L56_I_L56_E" presynapticPopulation="L56_I" postsynapticPopulation="L56_E">
+            <continuousConnectionInstanceW id="0" preCell="../L56_I/0/L56_I_comp" postCell="../L56_E/0/L56_E_comp" preComponent="silentSyn_proj_L56_I_L56_E" postComponent="rs" weight="-3.25"/>
+        </continuousProjection>
+        <continuousProjection id="proj_L56_I_L56_I" presynapticPopulation="L56_I" postsynapticPopulation="L56_I">
+            <continuousConnectionInstanceW id="0" preCell="../L56_I/0/L56_I_comp" postCell="../L56_I/0/L56_I_comp" preComponent="silentSyn_proj_L56_I_L56_I" postComponent="rs" weight="-2.5"/>
+        </continuousProjection>
+        <inputList id="modulation_l23_E" population="L23_E" component="iclamp_23">
+            <input id="0" target="../L23_E/0/L23_E_comp" destination="synapses"/>
+        </inputList>
+        <inputList id="modulation_l56_E" population="L56_E" component="iclamp_56">
+            <input id="0" target="../L56_E/0/L56_E_comp" destination="synapses"/>
+        </inputList>
+    </network>
+</neuroml>

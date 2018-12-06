@@ -1,0 +1,59 @@
+<Lems>
+    
+    <!-- 
+
+        This LEMS file has been automatically generated using PyNeuroML v0.3.14 (libNeuroML v0.2.45)
+
+     -->
+    
+    <!-- Specify which component to run -->
+    <Target component="SimMejiasFig2_0" reportFile="report.SimMejiasFig2_0.txt"/>
+
+    <!-- Include core NeuroML2 ComponentType definitions -->
+    <Include file="Cells.xml"/>
+    <Include file="Networks.xml"/>
+    <Include file="Simulation.xml"/>
+    
+    <Include file="PyNN.xml"/>
+    <Include file="Prototypes.xml"/>
+    <Include file="RateBased.xml"/>
+    <Include file="NoisyCurrentSource.xml"/>
+    <Include file="InterlaminarTest.net.nml"/>
+   
+    <Simulation id="SimMejiasFig2_0" length="1000.0ms" step="0.2ms" target="MejiasFig2" seed="12345">  <!-- Note seed: ensures same random numbers used every run -->
+        
+        <Display id="L56_I_0_r" title="Plots of L56_I_0_r" timeScale="1ms" xmin="-60000.0" xmax="660000.0" ymin="-1" ymax="1">
+            <Line id="L56_I_0_L56_I_comp_r" quantity="L56_I/0/L56_I_comp/r" scale="1" color="#6aa799" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="L23_E_0_r" title="Plots of L23_E_0_r" timeScale="1ms" xmin="-60000.0" xmax="660000.0" ymin="-1" ymax="1">
+            <Line id="L23_E_0_L23_E_comp_r" quantity="L23_E/0/L23_E_comp/r" scale="1" color="#029a72" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="L56_E_0_r" title="Plots of L56_E_0_r" timeScale="1ms" xmin="-60000.0" xmax="660000.0" ymin="-1" ymax="1">
+            <Line id="L56_E_0_L56_E_comp_r" quantity="L56_E/0/L56_E_comp/r" scale="1" color="#d340bb" timeScale="1ms"/>
+        </Display>
+        
+        <Display id="L23_I_0_r" title="Plots of L23_I_0_r" timeScale="1ms" xmin="-60000.0" xmax="660000.0" ymin="-1" ymax="1">
+            <Line id="L23_I_0_L23_I_comp_r" quantity="L23_I/0/L23_I_comp/r" scale="1" color="#4c73a9" timeScale="1ms"/>
+        </Display>
+        
+        <OutputFile id="L56_E_0_r_dat" fileName="L56_E_0_r.dat">
+            <OutputColumn id="L56_E_0_L56_E_comp_r" quantity="L56_E/0/L56_E_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="L23_I_0_r_dat" fileName="L23_I_0_r.dat">
+            <OutputColumn id="L23_I_0_L23_I_comp_r" quantity="L23_I/0/L23_I_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="L56_I_0_r_dat" fileName="L56_I_0_r.dat">
+            <OutputColumn id="L56_I_0_L56_I_comp_r" quantity="L56_I/0/L56_I_comp/r"/> 
+        </OutputFile>
+        
+        <OutputFile id="L23_E_0_r_dat" fileName="L23_E_0_r.dat">
+            <OutputColumn id="L23_E_0_L23_E_comp_r" quantity="L23_E/0/L23_E_comp/r"/> 
+        </OutputFile>
+        
+    </Simulation>
+
+</Lems>
