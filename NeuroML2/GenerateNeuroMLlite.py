@@ -8,8 +8,8 @@ import sys
 sys.path.append("../Python")
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
-             interlaminar1=0, interlaminar2=0,
-             areas=['V1'], interareal1=0, interareal2=0, interareal3=0, interareal4=0, interareal5=0,
+             i_l5e_l2i=0., i_l2e_l5e=0.,
+             areas=['V1'], FF_l2e_l2e=0., FB_l5e_l2i=0., FB_l5e_l5e=0., FB_l5e_l5i=0., FB_l5e_l2e=0.,
              sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[0, 0], count=0):
 
     ################################################################################
@@ -25,13 +25,13 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                        'wei': wei,
                        'wie': wie,
                        'wii': wii,
-                       'interlaminar1': interlaminar1,
-                       'interlaminar2': interlaminar2,
-                       'interareal1': interareal1,
-                       'interareal2': interareal2,
-                       'interareal3': interareal3,
-                       'interareal4': interareal4,
-                       'interareal5': interareal5,
+                       'l5e_l2i': i_l5e_l2i,
+                       'l2e_l5e': i_l2e_l5e,
+                       'FF_l2e_l2e': FF_l2e_l2e,
+                       'FB_l5e_l2i': FB_l5e_l2i,
+                       'FB_l5e_l5e': FB_l5e_l5e,
+                       'FB_l5e_l5i': FB_l5e_l5i,
+                       'FB_l5e_l2e': FB_l5e_l2e,
                        'sigma23': sigma23,
                        'sigma56': sigma56 }
 
@@ -105,8 +105,8 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     if n_areas == 1:
         l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
         l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
-        l2e_l5i = 0; l2e_l5e = 'interlaminar2'; l2i_l5e = 0; l2i_l5i = 0;
-        l5e_l2e = 0; l5e_l2i= 'interlaminar1'; l5i_l2e = 0; l5i_l2i = 0;
+        l2e_l5i = 0; l2e_l5e = 'l2e_l5e'; l2i_l5e = 0; l2i_l5i = 0;
+        l5e_l2e = 0; l5e_l2i= 'l5e_l2i'; l5i_l2e = 0; l5i_l2i = 0;
         W = np.array([[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
                        [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
                        [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
@@ -118,15 +118,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         v1_v1_l2i_l2e = v4_v4_l2i_l2e = 'wie'; v1_v1_l5i_l5e = v4_v4_l5i_l5e = 'wie'
         v1_v1_l2i_l2i = v4_v4_l2i_l2i = 'wii'; v1_v1_l5i_l5i = v4_v4_l5i_l5i = 'wii'
 
-        v1_v1_l2e_l5e = v4_v4_l2e_l5e = 'interlaminar2'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = 0;
-        v1_v1_l5e_l2i = v4_v4_l5e_l2i = 'interlaminar1'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = 0;
+        v1_v1_l2e_l5e = v4_v4_l2e_l5e = 'l2e_l5e'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = 0;
+        v1_v1_l5e_l2i = v4_v4_l5e_l2i = 'l5e_l2i'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = 0;
         v1_v1_l2i_l5e = v4_v4_l2i_l5e = 0; v1_v1_l5i_l2i = v4_v4_l5i_l2i = 0;
         v1_v1_l5i_l2e = v4_v4_l5i_l2e = 0; v1_v1_l2i_l5i = v4_v4_l2i_l5i = 0;
 
         # interareal
-        v1_v4_l2e_l2e = 'interareal1'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
+        v1_v4_l2e_l2e = 'FF_l2e_l2e'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
         v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
-        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'interareal5'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'interareal2'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'interareal3'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'interareal4';
+        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'FB_l5e_l2i'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'FB_l5e_l2i';
         v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
 
         W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i],
@@ -394,7 +394,7 @@ if __name__ == "__main__":
             nruns = 10
             simulation[Iext] = {}
             for run in range(nruns):
-                sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=25000,
+                sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, duration=25000,
                                     areas=['V1'], Iext=[Iext, Iext], count=run)
                 ################################################################################
                 ###   Run in some simulators
@@ -434,7 +434,7 @@ if __name__ == "__main__":
         duration = 6e05
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, dt=dt,
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, dt=dt,
                             areas=['V1'], duration=duration, Iext=[8, 8], count=0)
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
@@ -540,7 +540,7 @@ if __name__ == "__main__":
 
         # Repeat the calculations for the case where there is no connection between layers
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, interlaminar1=l5e_l2i, interlaminar2=l2e_l5e, duration=duration,
+        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, duration=duration,
                             areas=['V1'], Iext=[8, 8], count=0)
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
@@ -651,14 +651,16 @@ if __name__ == "__main__":
         plt.show()
     elif '-interareal' in sys.argv:
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
+        FF_l2e_l2e = 1; FB_l5e_l2i = .5; FB_l5e_l5e=.9; FB_l5e_l5i = .5; FB_l5e_l2e = .1
         dt = .2
         transient = 5
         duration = 4e03
         Iext = 15 # external injected current
 
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii,
-                            interlaminar1=l5e_l2i, interlaminar2=l2e_l5e,
-                            areas=['V1', 'V4'], interareal1=1, interareal2=.5, interareal3=.9, interareal4=.5, interareal5=.1,
+                            i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
+                            areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
+                            FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
                             dt=dt, duration=duration, Iext=[Iext, Iext])
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
