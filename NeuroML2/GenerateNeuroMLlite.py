@@ -37,10 +37,10 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
     suffix = '' if noise else '_flat'
     suffix2 = '' if dt == 0.2 else '_smalldt'
-    l23ecell = Cell(id='L23_E'+suffix+suffix2, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
-    l56ecell = Cell(id='L56_E'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
-    l56icell = Cell(id='L56_I'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
+    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
+    l56icell = Cell(id='L56_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
 
 
     net.cells.append(l23ecell)
@@ -416,7 +416,7 @@ if __name__ == "__main__":
 
                 simulation[Iext][run] = {}
                 # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
-                simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['V1_L23_E/0/L23_E/r'])
+                simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['V1_L23_E/0/L23_E_comp/r'])
 
 
         if '-analysis' in sys.argv:
@@ -460,10 +460,10 @@ if __name__ == "__main__":
 
 
         if '-analysis' in sys.argv:
-            rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E/r']),
-                                  np.array(traces['V1_L23_I/0/L23_I/r']),
-                                  np.array(traces['V1_L56_E/0/L56_E/r']),
-                                  np.array(traces['V1_L56_I/0/L56_I/r']),
+            rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
+                                  np.array(traces['V1_L23_I/0/L23_I_comp/r']),
+                                  np.array(traces['V1_L56_E/0/L56_E_comp/r']),
+                                  np.array(traces['V1_L56_I/0/L56_I_comp/r']),
                                   ))
 
             # for compatibility with the Python code, expand the third dimension
@@ -566,10 +566,10 @@ if __name__ == "__main__":
             nmllr = NeuroMLliteRunner('%s.json' % sim.id,
                                       simulator=simulator)
             traces, events = nmllr.run_once('/tmp')
-            rate_noconn = np.stack((np.array(traces['V1_L23_E/0/L23_E/r']),
-                                  np.array(traces['V1_L23_I/0/L23_I/r']),
-                                  np.array(traces['V1_L56_E/0/L56_E/r']),
-                                  np.array(traces['V1_L56_I/0/L56_I/r']),
+            rate_noconn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
+                                  np.array(traces['V1_L23_I/0/L23_I_comp/r']),
+                                  np.array(traces['V1_L56_E/0/L56_E_comp/r']),
+                                  np.array(traces['V1_L56_I/0/L56_I_comp/r']),
                                   ))
             # for compatibility with the Python code, expand the third dimension
             rate_noconn = np.expand_dims(rate_noconn, axis=2)
