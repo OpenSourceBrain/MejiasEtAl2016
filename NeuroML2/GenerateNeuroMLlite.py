@@ -265,13 +265,15 @@ if __name__ == "__main__":
                         ys.append(traces[tr])
                         pop = tr.split('/')[0]
                         labels.append(pop)
-                        colors.append(pop_colors[pop])
+                        pop_type = pop[pop.index('_')+1:]
+                        pop_color = pop_colors[pop_type]
+                        colors.append(pop_color)
 
                         hist1, edges1 = np.histogram(traces[tr],bins=hist_bins)
                         mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                         histxs.append(mid1)
                         histys.append(hist1)
-                        histcolors.append(pop_colors[pop])
+                        histcolors.append(pop_color)
                         histlabels.append(pop)
 
 
@@ -355,6 +357,7 @@ if __name__ == "__main__":
                                 a,
                                 labels=labels,
                                 linewidths=[(1 if 'Py' in l else 2) for l in labels],
+                                linestyles=[('-' if 'Py' in l else '--') for l in labels],
                                 colors=colors,
                                 show_plot_already=False,
                                 yaxis='Rate (Hz)',
