@@ -684,6 +684,7 @@ if __name__ == "__main__":
                                              'interlaminar')
 
             plt.show()
+            
     elif '-interareal' in sys.argv:
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         FF_l2e_l2e = 1; FB_l5e_l2i = .5; FB_l5e_l5e=.9; FB_l5e_l5i = .5; FB_l5e_l2e = .1
