@@ -117,6 +117,11 @@ def get_network_configuration(analysis_type, noconns=False):
         J_2e = 0; J_2i = 0
         J_5e = 0; J_5i = 0
 
+    elif analysis_type == 'interareal':
+        # define interlaminar synaptic coupling strenghts
+        J_2e = 1; J_2i = 0
+        J_5e = 0; J_5i = 0.75
+
     else:
         raise Exception('This type of analysis is not implemented')
     J = np.array([[wee, wie, J_5e,   0],
@@ -159,6 +164,34 @@ def calculate_periodogram(re, transient, dt):
                                     scaling='density')
     # print('Done calculating Periodogram!')
     return pxx, fxx
+
+def find_peak_frequency(fxx,pxx, min_freq, restate):
+    # find the frequency of the oscillations
+    z = np.where(fxx > min_freq)
+    pxx_freq = pxx[z]
+    fxx_freq = fxx[z]
+
+    # Locate peaks in the spectrum
+    loc = signal.find_peaks(pxx_freq)[0]
+    pks = pxx_freq[loc]
+    z = len(loc)
+    # if there is at least one peak
+    if z > 1:
+        # find index of the highest peak
+        z3 = np.argmax(pks)
+        # find location in Hz of the higest peak
+        frequency = fxx_freq[loc[z3]]
+        # power of the peak in the spectrum
+        amplitudeA = pxx_freq[loc[z3]]
+    else:
+        frequency = 0
+        amplitudeA = 0
+
+    # calculate excitatory mean firing rate and the amplitute of oscillations
+    mfr = np.mean(restate)
+    amplitudeB = 2 * np.std(restate)
+    amplitudeC = np.max(restate) - np.min(restate)
+    return frequency, amplitudeA, amplitudeB, amplitudeC
 
 
 def compress_data(pxx, fxx, bin):

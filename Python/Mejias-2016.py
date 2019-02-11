@@ -222,15 +222,7 @@ if __name__ == "__main__":
         Nareas = 2
         t = np.arange(dt, tstop + dt - transient, dt)
 
-        # define interlaminar synaptic coupling strenghts
-        J_2e = 1; J_2i = 0
-        J_5e = 0; J_5i = 0.75
-
-        J = np.array([[wee, wie, J_5e,   0],
-                      [wei, wii, J_5i,   0],
-                      [J_2e, 0,   wee, wie],
-                      [J_2i, 0,   wei, wii]])
-
+        tau, sig, J, Iext, Ibgk = get_network_configuration('interareal', noconns=False)
 
         # Interareal connectivity
 

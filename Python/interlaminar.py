@@ -7,7 +7,7 @@ import matplotlib.pylab as plt
 from neurodsp import spectral
 
 from calculate_rate import calculate_rate
-from helper_functions import calculate_periodogram, compress_data
+from helper_functions import calculate_periodogram, compress_data, find_peak_frequency
 
 
 def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noise, Nareas):
@@ -20,28 +20,6 @@ def interlaminar_simulation(analysis, t, dt, tstop, J, tau, sig, Iext, Ibgk, noi
 
 
 
-def find_peak_frequency(fxx,pxx, min_freq):
-    # find the frequency of the oscillations
-    z = np.where(fxx > min_freq)
-    pxx_freq = pxx[z]
-    fxx_freq = fxx[z]
-
-    # Locate peaks in the spectrum
-    loc = signal.find_peaks(pxx_freq)[0]
-    pks = pxx_freq[loc]
-    z = len(loc)
-    # if there is at least one peak
-    if z > 1:
-        # find index of the highest peak
-        z3 = np.argmax(pks)
-        # find location in Hz of the higest peak
-        frequency = fxx_freq[loc[z3]]
-        # power of the peak in the spectrum
-        amplitude = pxx_freq[loc[z3]]
-    else:
-        frequency = 0
-        amplitude = 0
-    return frequency
 
 def my_pretransformations(x, window, noverlap, fs):
 
@@ -65,7 +43,7 @@ def interlaminar_activity_analysis(rate, transient, dt, t, min_freq5):
     x_5 = rate[2, int(round((transient + dt)/dt)) - 1:, 0]
 
     pxx, fxx = calculate_periodogram(x_5, transient, dt)
-    f_peakalpha = find_peak_frequency(fxx, pxx, min_freq5)
+    f_peakalpha, _, _, _ = find_peak_frequency(fxx, pxx, min_freq5)
     print('    Average peak frequency on the alpha range: %.02f Hz' %f_peakalpha)
 
     # band-pass filter L5 activity
@@ -127,7 +105,7 @@ def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2,
     # TODO: still in construction
     # calculate the spectogram for L2/3 and average the results over the segments
     pxx2, fxx2 = calculate_periodogram(rate[0, :, 0], transient, dt)
-    f_peakgamma = find_peak_frequency(fxx2, pxx2, min_freq2)
+    f_peakgamma, _, _, _ = find_peak_frequency(fxx2, pxx2, min_freq2)
     print('    Average peak frequency on the gamma range: %.02f Hz' %f_peakgamma)
     timewindow = 7/f_peakgamma
     window_len = int(round(timewindow/dt))
@@ -273,7 +251,6 @@ def plot_spectrogram(ff, tt, Sxx):
 
 
 def calculate_interlaminar_power_spectrum(rate, dt, transient, Nbin):
-
     # Calculate the rate for the passed connectivity
     pxx_l23, fxx_l23 = calculate_periodogram(rate[0, :, 0], transient, dt)
     pxx_l56, fxx_l56 = calculate_periodogram(rate[2, :, 0], transient, dt)

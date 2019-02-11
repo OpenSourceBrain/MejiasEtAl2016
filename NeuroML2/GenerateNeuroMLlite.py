@@ -54,7 +54,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     net.cells.append(l56ecell)
     net.cells.append(l56icell)
 
-
+    # Background input
     input_source_l23 = InputSource(id='iclamp_23',
                                    neuroml2_input='PulseGenerator',
                                    parameters={'amplitude':'%snA'%Iext[0], 'delay':'0ms', 'duration':'%sms'%duration})
@@ -486,6 +486,7 @@ if __name__ == "__main__":
 
             # for compatibility with the Python code, expand the third dimension
             rate_conn = np.expand_dims(rate_conn, axis=2)
+            # TODO: Make this more obvious
             # transform the dt from ms to s, for the rest of the analysis
             s_dt = dt / 1000
             pxx_coupled_l23_bin, fxx_coupled_l23_bin, pxx_coupled_l56_bin, fxx_coupled_l56_bin = \
@@ -686,18 +687,22 @@ if __name__ == "__main__":
             plt.show()
             
     elif '-interareal' in sys.argv:
+        from interareal import interareal_analysis
+
+        # Background current simulation
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         FF_l2e_l2e = 1; FB_l5e_l2i = .5; FB_l5e_l5e=.9; FB_l5e_l5i = .5; FB_l5e_l2e = .1
-        dt = .2
+        dt = 2e-01
         transient = 5
-        duration = 4e03
-        Iext = 15 # external injected current
+        duration = 4e04
+        minfreq = 30 # Hz
+        Iext0 = 2; Iext1= 4 # external injected current
 
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                             i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                             areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                             FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                            dt=dt, duration=duration, Iext=[Iext, Iext])
+                            dt=dt, duration=duration, Iext=[Iext0, Iext1])
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
         simulator = 'jNeuroML'
@@ -705,6 +710,35 @@ if __name__ == "__main__":
         nmllr = NeuroMLliteRunner('%s.json' %sim.id,
                                     simulator=simulator)
         traces, events = nmllr.run_once('/tmp')
+        rate_conn = np.array([])
+
+        if '-analysis' in sys.argv:
+
+            n_areas = 2
+            stats = 2
+            # TODO: Improve the generalisation of the code
+            # for key in traces.keys():
+            #     if key is not 't':
+            #         curr_array = np.array(traces[key])
+            #         rate_conn = np.stack([rate_conn, curr_array], axis=0)
+            rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
+                                  np.array(traces['V1_L23_I/0/L23_I_comp/r']),
+                                  np.array(traces['V1_L56_E/0/L56_E_comp/r']),
+                                  np.array(traces['V1_L56_I/0/L56_I_comp/r']),
+                                  np.array(traces['V4_L23_E/0/L23_E_comp/r']),
+                                  np.array(traces['V4_L23_I/0/L23_I_comp/r']),
+                                  np.array(traces['V4_L56_E/0/L56_E_comp/r']),
+                                  np.array(traces['V4_L56_I/0/L56_I_comp/r']),
+                                  ))
+
+            # TODO: Make this more obvious
+            # for compatibility with the Python code, expand the third dimension
+            rate_conn = np.expand_dims(rate_conn, axis=2)
+            # transform the dt from ms to s, for the rest of the analysis
+            s_dt = dt / 1000
+            # perform simulation with background current
+            interareal_analysis(rate_conn, transient, s_dt, minfreq, n_areas, stats)
+
         print('Done')
 
 
