@@ -27,3 +27,6 @@ NeuroML2/*.png
 /Python/__pycache__
 /Python/debug
 /Python/*/*.pckl
+
+# Ignore figures inside the Matlab folder
+Matlab/*.png
