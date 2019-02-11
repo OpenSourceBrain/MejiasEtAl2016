@@ -7,20 +7,29 @@ import pandas as pd
 import numpy as np
 from scipy.io import savemat
 
+
+def sort_list(list1, list2):
+    zipped_pairs = zip(list2, list1)
+    z = [x for _, x in sorted(zipped_pairs)]
+    return z
+
 # FLN, SLN and Areas
 m1 = pd.read_csv('Neuron_2015_Table.csv')
-# Get the list of regions
-targets = np.unique(m1['TARGET'])
-# sort the list of targets according to the region's rank
-targets_ranked = np.array(['V1', 'V2', 'V4', 'DP', 'MT', '8m', '5', '8l', '2', 'TEO', 'F1', 'STPc', '7A', '46d', '10', '9/46v',
-                  '9/46d', 'F5', 'TEpd', 'PBr', '7m', 'F2', '7B', 'ProM', 'STPi', 'F7', '8b', 'STPr', '24c'])
-# check if there is any region on the ranked list that is missing
-set(targets_ranked) - set(targets)
-
 # rename the targets and source from '8B' to '8b'
 m1['TARGET'] = m1['TARGET'].replace(['8B'],'8b')
 m1['SOURCE'] = m1['SOURCE'].replace(['8B'],'8b')
-
+# Get the list of regions
+targets = np.unique(m1['TARGET'])
+# sort the list of targets according to the region's rank
+targets_ranked = np.array(['V1', 'V2', 'V4', 'DP', 'MT', '8m', '5', '8l', '2',
+                           'TEO', 'F1', 'STPc', '7A', '46d', '10', '9/46v',
+                           '9/46d', 'F5', 'TEpd', 'PBr', '7m', 'F2', '7B',
+                           'ProM', 'STPi', 'F7', '8b', 'STPr', '24c'])
+# check if there is any region on the ranked list that is missing
+if not len(set(targets_ranked) - set(targets)) == 0:
+    ValueError("Both Sets have a different number of brain regions")
+# find index of the regions assorted
+indx = [np.where(targets_ranked==target)[0][0] for target in targets]
 
 # For all areas present in the target list find the corresponding FLN and SLN
 # and save them in the correct format (areas x areas)
@@ -40,9 +49,14 @@ for i in range(len(m1['TARGET'])):
         slnMat[target_idx, source_idx] = m1['SLN'][i]
 
 matdic = {}
-matdic['flnMat'] = flnMat
-matdic['slnMat'] = slnMat
-matdic['areaList'] = targets
+# sort fln and sln according to indx
+#print(sort_list(indx, targets))
+matdic['flnMat'] = sort_list(flnMat, indx)
+matdic['slnMat'] = sort_list(slnMat, indx)
+matdic['areaList'] = sort_list(targets, indx)
+if not (matdic['areaList'] == targets_ranked).all:
+    ValueError('The two sorted lists are not identical')
+
 # save the results in a mat file
 savemat('../Matlab/fig6/subgraphData30.mat', matdic)
 
@@ -63,7 +77,6 @@ wiring_file.rename(columns={'Tepd': 'TEpd'}, inplace=True)
 # the entry wiring['9/46v']['9/46v'] is empty convert it to NaN
 wiring_file['9/46v']['9/46v'] = np.nan
 
-
 wiring_mat = np.zeros((len(targets), len(targets)))
 for idx1, region1 in enumerate(targets_ranked):
     for idx2, region2 in enumerate(targets_ranked):
@@ -73,3 +86,8 @@ wiring_dic = {}
 wiring_dic['wiring'] = wiring_mat
 
 savemat('../Matlab/fig6/subgraphWiring30.mat', wiring_dic)
+
+# plot the 8 regions of interest
+print('Selected ROIs')
+idx = [0, 1, 2, 3, 5, 6, 8, 12]
+print(targets_ranked[idx])
