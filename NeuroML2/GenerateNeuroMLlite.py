@@ -10,16 +10,14 @@ sys.path.append("../Python")
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
              i_l5e_l2i=0., i_l2e_l5e=0.,
              areas=['V1'], FF_l2e_l2e=0., FB_l5e_l2i=0., FB_l5e_l5e=0., FB_l5e_l5i=0., FB_l5e_l2e=0.,
-             sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[0, 0], count=0):
+             sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[0, 0], count=0,
+             net_id='MejiasFig2'):
 
     ################################################################################
     ###   Build new network
 
-    net = Network(id='MejiasFig2')
+    net = Network(id=net_id)
     net.notes = 'Testing...'
-    if dt!=0.2 and dt!=0.02:
-        print('Using a value for dt which is not supported!!')
-        quit()
 
     net.parameters = { 'wee': wee,
                        'wei': wei,
@@ -36,7 +34,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                        'sigma56': sigma56 }
 
     suffix = '' if noise else '_flat'
-    suffix2 = '' if dt == 0.2 else '_smalldt'
+    
+    if dt==0.2:
+        suffix2 = ''
+    elif dt==0.02:
+        suffix2 = '_smalldt'
+    else:
+        print('Using a value for dt which is not supported!!')
+        quit()
+        
     l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
     l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
     l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
@@ -197,6 +203,7 @@ if __name__ == "__main__":
                   'L56_E':'#77dd77','L56_I':'#dd77dd','L56_E Py':'#009900','L56_I Py':'#990099'}
 
     if '-sweep' in sys.argv:
+        # To do...
         pass
 
     if '-test' in sys.argv or '-dt' in sys.argv:
@@ -265,13 +272,15 @@ if __name__ == "__main__":
                         ys.append(traces[tr])
                         pop = tr.split('/')[0]
                         labels.append(pop)
-                        colors.append(pop_colors[pop])
+                        pop_type = pop[pop.index('_')+1:]
+                        pop_color = pop_colors[pop_type]
+                        colors.append(pop_color)
 
                         hist1, edges1 = np.histogram(traces[tr],bins=hist_bins)
                         mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                         histxs.append(mid1)
                         histys.append(hist1)
-                        histcolors.append(pop_colors[pop])
+                        histcolors.append(pop_color)
                         histlabels.append(pop)
 
 
@@ -355,6 +364,7 @@ if __name__ == "__main__":
                                 a,
                                 labels=labels,
                                 linewidths=[(1 if 'Py' in l else 2) for l in labels],
+                                linestyles=[('-' if 'Py' in l else '--') for l in labels],
                                 colors=colors,
                                 show_plot_already=False,
                                 yaxis='Rate (Hz)',
@@ -402,21 +412,26 @@ if __name__ == "__main__":
             simulation[Iext] = {}
             for run in range(nruns):
                 sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, duration=25000,
-                                    areas=['V1'], Iext=[Iext, Iext], count=run)
+                                    areas=['V1'], Iext=[Iext, Iext], count=run,
+                                    net_id='Intralaminar')
+                                    
                 ################################################################################
                 ###   Run in some simulators
 
-                check_to_generate_or_run(sys.argv, sim)
-                simulator = 'jNeuroML'
+                if not '-analysis' in sys.argv:
+                    check_to_generate_or_run(sys.argv, sim)
+                    
+                else:
+                    simulator = 'jNeuroML'
 
-                nmllr = NeuroMLliteRunner('%s.json'%sim.id,
-                                          simulator=simulator)
+                    nmllr = NeuroMLliteRunner('%s.json'%sim.id,
+                                              simulator=simulator)
 
-                traces, events = nmllr.run_once('/tmp')
+                    traces, events = nmllr.run_once('/tmp')
 
-                simulation[Iext][run] = {}
-                # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
-                simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['V1_L23_E/0/L23_E_comp/r'])
+                    simulation[Iext][run] = {}
+                    # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
+                    simulation[Iext][run]['L23_E/0/L23_E/r'] = np.array(traces['V1_L23_E/0/L23_E_comp/r'])
 
 
         if '-analysis' in sys.argv:
@@ -449,17 +464,20 @@ if __name__ == "__main__":
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, dt=dt,
-                            areas=['V1'], duration=duration, Iext=[8, 8], count=0)
+                            areas=['V1'], duration=duration, Iext=[8, 8], count=0,
+                            net_id='Interlaminar')
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
-        simulator = 'jNeuroML'
-
-        nmllr = NeuroMLliteRunner('%s.json' % sim.id,
-                                  simulator=simulator)
-        traces, events = nmllr.run_once('/tmp')
 
 
         if '-analysis' in sys.argv:
+            
+            simulator = 'jNeuroML'
+
+            nmllr = NeuroMLliteRunner('%s.json' % sim.id,
+                                      simulator=simulator)
+            traces, events = nmllr.run_once('/tmp')
+            
             rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
                                   np.array(traces['V1_L23_I/0/L23_I_comp/r']),
                                   np.array(traces['V1_L56_E/0/L56_E_comp/r']),
@@ -666,6 +684,7 @@ if __name__ == "__main__":
                                              'interlaminar')
 
             plt.show()
+            
     elif '-interareal' in sys.argv:
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         FF_l2e_l2e = 1; FB_l5e_l2i = .5; FB_l5e_l5e=.9; FB_l5e_l5i = .5; FB_l5e_l2e = .1

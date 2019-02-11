@@ -1,17 +1,17 @@
-<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta5.xsd" id="Interlaminar">
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta5.xsd" id="Intralaminar">
     <include href="Prototypes.xml"/>
     <include href="RateBased.xml"/>
-    <include href="NoisyCurrentSource.xml"/>
-    <notes>Generated network: Interlaminar
+    <include href="NoisyCurrentSource.xml"/>    
+<notes>Generated network: Intralaminar
     Generation seed: 1234
     NeuroMLlite parameters: 
         wie = -3.25
         FB_l5e_l2e = 0.0
         FB_l5e_l5e = 0.0
         wee = 1.5
-        l5e_l2i = 0.75
+        l5e_l2i = 0
         FF_l2e_l2e = 0.0
-        l2e_l5e = 1
+        l2e_l5e = 0
         wii = -2.5
         sigma56 = 0.45
         wei = 3.5
@@ -34,9 +34,9 @@
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L23_I"/>
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L56_E"/>
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L56_I"/>
-    <pulseGenerator id="iclamp_23" delay="0ms" duration="1000.0ms" amplitude="8nA"/>
-    <pulseGenerator id="iclamp_56" delay="0ms" duration="1000.0ms" amplitude="8nA"/>
-    <network id="Interlaminar">
+    <pulseGenerator id="iclamp_23" delay="0ms" duration="25000ms" amplitude="2nA"/>
+    <pulseGenerator id="iclamp_56" delay="0ms" duration="25000ms" amplitude="2nA"/>
+    <network id="Intralaminar">
         <notes>Testing...</notes>
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">
             <property tag="color" value=".8 0 0"/>
@@ -73,7 +73,7 @@
             <continuousConnectionInstanceW id="0" preCell="../V1_L23_E/0/L23_E_comp" postCell="../V1_L23_I/0/L23_I_comp" preComponent="silentSyn_proj_V1_L23_E_V1_L23_I" postComponent="rs" weight="3.5"/>
         </continuousProjection>
         <continuousProjection id="proj_V1_L23_E_V1_L56_E" presynapticPopulation="V1_L23_E" postsynapticPopulation="V1_L56_E">
-            <continuousConnectionInstance id="0" preCell="../V1_L23_E/0/L23_E_comp" postCell="../V1_L56_E/0/L56_E_comp" preComponent="silentSyn_proj_V1_L23_E_V1_L56_E" postComponent="rs"/>
+            <continuousConnectionInstanceW id="0" preCell="../V1_L23_E/0/L23_E_comp" postCell="../V1_L56_E/0/L56_E_comp" preComponent="silentSyn_proj_V1_L23_E_V1_L56_E" postComponent="rs" weight="0."/>
         </continuousProjection>
         <continuousProjection id="proj_V1_L23_E_V1_L56_I" presynapticPopulation="V1_L23_E" postsynapticPopulation="V1_L56_I">
             <continuousConnectionInstanceW id="0" preCell="../V1_L23_E/0/L23_E_comp" postCell="../V1_L56_I/0/L56_I_comp" preComponent="silentSyn_proj_V1_L23_E_V1_L56_I" postComponent="rs" weight="0."/>
@@ -94,7 +94,7 @@
             <continuousConnectionInstanceW id="0" preCell="../V1_L56_E/0/L56_E_comp" postCell="../V1_L23_E/0/L23_E_comp" preComponent="silentSyn_proj_V1_L56_E_V1_L23_E" postComponent="rs" weight="0."/>
         </continuousProjection>
         <continuousProjection id="proj_V1_L56_E_V1_L23_I" presynapticPopulation="V1_L56_E" postsynapticPopulation="V1_L23_I">
-            <continuousConnectionInstanceW id="0" preCell="../V1_L56_E/0/L56_E_comp" postCell="../V1_L23_I/0/L23_I_comp" preComponent="silentSyn_proj_V1_L56_E_V1_L23_I" postComponent="rs" weight="0.75"/>
+            <continuousConnectionInstanceW id="0" preCell="../V1_L56_E/0/L56_E_comp" postCell="../V1_L23_I/0/L23_I_comp" preComponent="silentSyn_proj_V1_L56_E_V1_L23_I" postComponent="rs" weight="0."/>
         </continuousProjection>
         <continuousProjection id="proj_V1_L56_E_V1_L56_E" presynapticPopulation="V1_L56_E" postsynapticPopulation="V1_L56_E">
             <continuousConnectionInstanceW id="0" preCell="../V1_L56_E/0/L56_E_comp" postCell="../V1_L56_E/0/L56_E_comp" preComponent="silentSyn_proj_V1_L56_E_V1_L56_E" postComponent="rs" weight="1.5"/>

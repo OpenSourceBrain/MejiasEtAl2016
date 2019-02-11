@@ -16,6 +16,7 @@ if [ -f interlaminar_a/simulation.pckl ]; then
 fi
 python Mejias-2016.py -analysis interlaminar_a -nogui
 
+
 cd ../NeuroML2
 
 python GenerateNeuroMLlite.py -interlaminar
