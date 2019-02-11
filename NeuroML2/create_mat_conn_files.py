@@ -8,7 +8,7 @@ import numpy as np
 from scipy.io import savemat
 
 # FLN, SLN and Areas
-m1 = pd.read_csv('../../NeuroMl2/Neuron_2015_Table.csv')
+m1 = pd.read_csv('Neuron_2015_Table.csv')
 # Get the list of regions
 targets = np.unique(m1['TARGET'])
 # sort the list of targets according to the region's rank
@@ -16,6 +16,11 @@ targets_ranked = np.array(['V1', 'V2', 'V4', 'DP', 'MT', '8m', '5', '8l', '2', '
                   '9/46d', 'F5', 'TEpd', 'PBr', '7m', 'F2', '7B', 'ProM', 'STPi', 'F7', '8b', 'STPr', '24c'])
 # check if there is any region on the ranked list that is missing
 set(targets_ranked) - set(targets)
+
+# rename the targets and source from '8B' to '8b'
+m1['TARGET'] = m1['TARGET'].replace(['8B'],'8b')
+m1['SOURCE'] = m1['SOURCE'].replace(['8B'],'8b')
+
 
 # For all areas present in the target list find the corresponding FLN and SLN
 # and save them in the correct format (areas x areas)
@@ -39,10 +44,10 @@ matdic['flnMat'] = flnMat
 matdic['slnMat'] = slnMat
 matdic['areaList'] = targets
 # save the results in a mat file
-savemat('subgraphData30.mat', matdic)
+savemat('../Matlab/fig6/subgraphData30.mat', matdic)
 
 #### Wiring
-wiring_file = pd.read_excel('../../NeuroML2/PNAS_2013_Distance_Matrix.xlsx')
+wiring_file = pd.read_excel('PNAS_2013_Distance_Matrix.xlsx')
 # select only the regions in the target list (which corresponds to the columns
 # wiring variable)
 
@@ -67,4 +72,4 @@ for idx1, region1 in enumerate(targets_ranked):
 wiring_dic = {}
 wiring_dic['wiring'] = wiring_mat
 
-savemat('subgraphWiring30.mat', wiring_dic)
+savemat('../Matlab/fig6/subgraphWiring30.mat', wiring_dic)

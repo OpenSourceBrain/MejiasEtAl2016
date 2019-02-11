@@ -1,6 +1,6 @@
 ## Mejias et al. 2016
 
-Implementation in Python and in NeuroML2/LEMS of Jorge F. Mejias, John D. Murray, Henry Kennedy, and Xiao-Jing Wang, “Feedforward and Feedback Frequency-Dependent Interactions in a Large-Scale Laminar Network of the Primate Cortex.” [Science Advances](http://advances.sciencemag.org/content/2/11/e1601335), 2016 ([bioRxiv](https://doi.org/10.1101/065854)).
+Implementation in in Matlab, Python and in NeuroML2/LEMS of Jorge F. Mejias, John D. Murray, Henry Kennedy, and Xiao-Jing Wang, “Feedforward and Feedback Frequency-Dependent Interactions in a Large-Scale Laminar Network of the Primate Cortex.” [Science Advances](http://advances.sciencemag.org/content/2/11/e1601335), 2016 ([bioRxiv](https://doi.org/10.1101/065854)).
 
 ### The model
 The model simulates the dynamics of a cortical laminar structure across multiple scales: (I) intralaminar, (II) interlaminar, (III) interareal, (IV) whole cortex. Interestingly, the authors show that while feedforward pathways are associated with gamma oscillations (30 - 70 Hz), feedback pathways are modulated by alpha/low beta oscillations (8 - 15 Hz).
@@ -14,6 +14,9 @@ The model simulates the dynamics of a cortical laminar structure across multiple
 > Note: This repo is a work in progress. So far this repository contains the implementation for the model dynamics at the intralaminar and the interlaminar level. At the moment we are working on the implementation of the interareal level.
 
 ### Simulation of the model
+
+#### Matlab
+This folder contains the original model developed by Jorge Mejias and available on [ModelDb](https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=249589&file=/Mejias2016/readme.html#tabs-2).
 
 #### Python
 So far, we have reproduced the main findings described by Mejias et al., 2016 at the [intralaminar](https://github.com/OpenSourceBrain/MejiasEtAl2016/blob/master/Python/intralaminar.py) and [interlaminar](https://github.com/OpenSourceBrain/MejiasEtAl2016/blob/master/Python/interlaminar.py) level. The main results are described [here](Python/README.md).
