@@ -27,3 +27,11 @@ NeuroML2/*.png
 /Python/__pycache__
 /Python/debug
 /Python/*/*.pckl
+
+/NeuroML2/LEMS_SimInterlaminar_0.xml
+/NeuroML2/LEMS_SimIntralaminar_0.xml
+
+
+# Ignore figures inside the Matlab folder
+Matlab/*.png
+

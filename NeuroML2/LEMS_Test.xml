@@ -8,19 +8,17 @@
     <Include file="Simulation.xml" />
     
     <Include file="RateBased.xml" />
-    
     <Include file="Prototypes.xml" />
-    <Include file="NoisyCurrentSource.xml" />
     
     <network id="net1">
         
-        <population id="l23ePop" component="L23_E" size="1" />
-        <population id="l23ePopFlat" component="L23_E_flat" size="1" /> <!-- zero noisy input -->
-        <population id="l23iPop" component="L23_I" size="1" />
-        <population id="l23iPopFlat" component="L23_I_flat" size="1" /> <!-- zero noisy input -->
+        <population id="l23ePop" component="L23_E_comp" size="1" />
+        <population id="l23ePopFlat" component="L23_E_comp_flat" size="1" /> <!-- zero noisy input -->
+        <population id="l23iPop" component="L23_I_comp" size="1" />
+        <population id="l23iPopFlat" component="L23_I_comp_flat" size="1" /> <!-- zero noisy input -->
         
-        <population id="l56ePop" component="L56_E" size="1" />
-        <population id="l56iPop" component="L56_I" size="1" />
+        <population id="l56ePop" component="L56_E_comp" size="1" />
+        <population id="l56iPop" component="L56_I_comp" size="1" />
         
     </network>
 
@@ -45,7 +43,7 @@
             <Line id="phi l23 e" quantity="l23ePop[0]/phi" scale="1" color="#33ffff" timeScale="1ms" />
             <!--<Line id="isyn l23 e flat" quantity="l23ePopFlat[0]/iSyn" scale="1nA" color="#ff00ff" timeScale="1ms" />
             <Line id="isyn l23 e flat noise" quantity="l23ePopFlat[0]/iNoise" scale="1nA" color="#ffff00" timeScale="1ms" />
-            
+        
             <Line id="isyn i" quantity="iPop[0]/iSyn" scale="1nA" color="#ff0000" timeScale="1ms" />
             <Line id="phi i" quantity="iPop[0]/phi" scale="1" color="#ff7777" timeScale="1ms" />-->
         </Display>

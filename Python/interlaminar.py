@@ -147,9 +147,9 @@ def interlaminar_analysis_periodeogram(rate, segment2, transient, dt, min_freq2,
 
     # try loading mat file with the correct input to the spectogram
     from scipy.io import loadmat
-    matfile = '../Matlab/fig3/segment2.mat'
-    mat = loadmat(matfile)
-    segment2 = mat['segment2']
+    # matfile = '../Matlab/fig3/segment2.mat'
+    # mat = loadmat(matfile)
+    # segment2 = mat['segment2']
 
     Sxx = np.zeros((freq_displayed.shape[0], 83, numberofzones), dtype=complex)
     for n in range(numberofzones):
