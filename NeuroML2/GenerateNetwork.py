@@ -33,10 +33,10 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
 
     suffix = '' if noise else '_flat'
     suffix2 = '' if dt == 0.2 else '_smalldt'
-    l23ecell = Cell(id='L23_E'+suffix+suffix2, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
-    l56ecell = Cell(id='L56_E'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
-    l56icell = Cell(id='L56_I'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
+    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
+    l56icell = Cell(id='L56_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
 
     net.cells.append(l23ecell)
     net.cells.append(l23icell)
@@ -45,7 +45,9 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
 
 
     net.synapses.append(Synapse(id='rs', 
-                                lems_source_file='NoisyCurrentSource.xml')) #  hack to include this file too.  
+                                lems_source_file='Prototypes.xml'))   
+    net.synapses.append(Synapse(id='silent1', 
+                                lems_source_file='Prototypes.xml')) 
 
     net.parameters['stim_amp'] = '1nA'
 
@@ -120,6 +122,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
                                                   presynaptic=used_ids[src], 
                                                   postsynaptic=used_ids[tgt],
                                                   synapse='rs',
+                                                  pre_synapse='silent1',
                                                   type='continuousProjection',
                                                   weight=fln,
                                                   random_connectivity=RandomConnectivity(probability=1)))
