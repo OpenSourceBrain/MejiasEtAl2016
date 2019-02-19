@@ -19,4 +19,4 @@ python Mejias-2016.py -analysis interlaminar_a -nogui
 
 cd ../NeuroML2
 
-python GenerateNeuroMLlite.py -interlaminar
+python GenerateNeuroMLlite.py -interlaminar -jnml
