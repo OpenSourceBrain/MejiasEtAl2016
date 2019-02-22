@@ -10,7 +10,7 @@ sys.path.append("../Python")
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
              i_l5e_l2i=0., i_l2e_l5e=0.,
              areas=['V1'], FF_l2e_l2e=0., FB_l5e_l2i=0., FB_l5e_l5e=0., FB_l5e_l5i=0., FB_l5e_l2e=0.,
-             sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[0, 0], count=0,
+             sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[[0, 0]], count=0,
              net_id='MejiasFig2'):
 
     ################################################################################
@@ -55,15 +55,17 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     net.cells.append(l56icell)
 
     # Background input
-    input_source_l23 = InputSource(id='iclamp_23',
-                                   neuroml2_input='PulseGenerator',
-                                   parameters={'amplitude':'%snA'%Iext[0], 'delay':'0ms', 'duration':'%sms'%duration})
-    net.input_sources.append(input_source_l23)
-    input_source_l56 = InputSource(id='iclamp_56',
-                                   neuroml2_input='PulseGenerator',
-                                   parameters={'amplitude':'%snA'%Iext[1], 'delay':'0ms', 'duration':'%sms'%duration})
+    # Iterate over the different possible areas
+    for area_idx, area in enumerate(areas):
+        input_source_l23 = InputSource(id='iclamp_23_%s' %area,
+                                       neuroml2_input='PulseGenerator',
+                                       parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
+        net.input_sources.append(input_source_l23)
+        input_source_l56 = InputSource(id='iclamp_56_%s' %area,
+                                       neuroml2_input='PulseGenerator',
+                                       parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
 
-    net.input_sources.append(input_source_l56)
+        net.input_sources.append(input_source_l56)
 
 
     color_str = {'l23e':'.8 0 0','l23i':'0 0 .8',
@@ -276,7 +278,7 @@ if __name__ == "__main__":
                         pop_color = pop_colors[pop_type]
                         colors.append(pop_color)
 
-                        hist1, edges1 = np.histogram(traces[tr],bins=hist_bins)
+                        hist1, edges1 = np.histogram(traces[tr], bins=hist_bins)
                         mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                         histxs.append(mid1)
                         histys.append(hist1)
@@ -310,7 +312,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = np.histogram(l23e,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l23e, bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -324,7 +326,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = np.histogram(l23i,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l23i, bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -338,7 +340,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = np.histogram(l56e,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l56e, bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -351,7 +353,7 @@ if __name__ == "__main__":
                     labels.append(pop)
                     colors.append(pop_colors[pop])
 
-                    hist1, edges1 = np.histogram(l56i,bins=hist_bins)
+                    hist1, edges1 = np.histogram(l56i, bins=hist_bins)
                     mid1 = [e +(edges1[1]-edges1[0])/2 for e in edges1[:-1]]
                     histxs.append(mid1)
                     histys.append(hist1)
@@ -412,7 +414,7 @@ if __name__ == "__main__":
             simulation[Iext] = {}
             for run in range(nruns):
                 sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, duration=25000,
-                                    areas=['V1'], Iext=[Iext, Iext], count=run,
+                                    areas=['V1'], Iext=[[Iext, Iext]], count=run,
                                     net_id='Intralaminar')
                                     
                 ################################################################################
@@ -464,7 +466,7 @@ if __name__ == "__main__":
 
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, dt=dt,
-                            areas=['V1'], duration=duration, Iext=[8, 8], count=0,
+                            areas=['V1'], duration=duration, Iext=[[8, 8]], count=0,
                             net_id='Interlaminar')
         # Run in some simulators
         check_to_generate_or_run(sys.argv, sim)
@@ -577,7 +579,7 @@ if __name__ == "__main__":
             # Repeat the calculations for the case where there is no connection between layers
             wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = 0; l2e_l5e = 0
             sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, duration=duration,
-                                areas=['V1'], Iext=[8, 8], count=0)
+                                areas=['V1'], Iext=[[8, 8]], count=0)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim)
             simulator = 'jNeuroML'
@@ -689,7 +691,9 @@ if __name__ == "__main__":
     elif '-interareal' in sys.argv:
         from interareal import interareal_analysis
 
-        # Background current simulation
+        # Background current simulation.
+        # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
+        # passed
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         FF_l2e_l2e = 1; FB_l5e_l2i = .5; FB_l5e_l5e=.9; FB_l5e_l5i = .5; FB_l5e_l2e = .1
         dt = 2e-01
@@ -698,46 +702,93 @@ if __name__ == "__main__":
         minfreq = 30 # Hz
         Iext0 = 2; Iext1= 4 # external injected current
 
-        sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii,
-                            i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
-                            areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
-                            FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                            dt=dt, duration=duration, Iext=[Iext0, Iext1])
-        # Run in some simulators
-        check_to_generate_or_run(sys.argv, sim)
-        simulator = 'jNeuroML'
+        # for testing purpose generate one single simulation
+        if '-analysis' in sys.argv:
+            stats = 5
+        else:
+            stats = 1
 
-        nmllr = NeuroMLliteRunner('%s.json' %sim.id,
-                                    simulator=simulator)
-        traces, events = nmllr.run_once('/tmp')
-        rate_conn = np.array([])
+        traces_rest_stats = []
+        traces_stim_stats = []
+        for stat in range(stats):
+            # Run simulation at rest
+            sim_rest, net_rest = generate(wee=wee, wei=wei, wie=wie, wii=wii,
+                                          i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
+                                          areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
+                                          FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
+                                          dt=dt, duration=duration, Iext=[[Iext0, Iext1],[Iext0, Iext1]])
+            # Run in some simulators
+            check_to_generate_or_run(sys.argv, sim_rest)
+            simulator = 'jNeuroML'
+
+            nmllr = NeuroMLliteRunner('%s.json' %sim_rest.id,
+                                        simulator=simulator)
+            traces_rest, events_rest = nmllr.run_once('/tmp')
+            traces_rest_stats.append(traces_rest)
+
+            # Run simulation with microsimulation
+            # Injection is applied at V1
+            Iext_stim = 15
+            sim_stim, net_stim = generate(wee=wee, wei=wei, wie=wie, wii=wii,
+                                          i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
+                                          areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
+                                          FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
+                                          dt=dt, duration=duration, Iext=[[Iext_stim + Iext0, Iext_stim + Iext1], [Iext0, Iext1]])
+            # Run in some simulators
+            check_to_generate_or_run(sys.argv, sim_rest)
+            simulator = 'jNeuroML'
+
+            nmllr = NeuroMLliteRunner('%s.json' %sim_rest.id,
+                                      simulator=simulator)
+            traces_stim, events_stim = nmllr.run_once('/tmp')
+            traces_stim_stats.append(traces_rest)
+
 
         if '-analysis' in sys.argv:
 
             n_areas = 2
-            stats = 2
+            # No stimulus
+            rate_rest_all = np.zeros((len(traces_rest_stats[1]) - 1, len(traces_rest_stats[1]['V1_L23_E/0/L23_E_comp/r']), stats))
+            for stat in range(stats):
+                for idx, key in enumerate(sorted(traces_rest_stats[stat].keys())):
+                    if key is not 't':
+                        rate_rest_all[idx, :, stat] = traces_rest_stats[stat][key]
+            # With stimulus
+            rate_stim_all = np.zeros((len(traces_rest_stats[1]) - 1, len(traces_rest_stats[1]['V1_L23_E/0/L23_E_comp/r']), stats))
+            for stat in range(stats):
+                for idx, key in enumerate(sorted(traces_stim_stats[stat].keys())):
+                    if key is not 't':
+                        rate_stim_all[idx, :, stat] = traces_stim_stats[stat][key]
+
+            # TODO: Make this more obvious
+            # for compatibility with the Python code, expand the third dimension
+            rate_rest = np.expand_dims(rate_rest_all, axis=2)
+            # transform the dt from ms to s, for the rest of the analysis
+            s_dt = dt / 1000
+            # perform simulation with background current
+
             # TODO: Improve the generalisation of the code
             # for key in traces.keys():
             #     if key is not 't':
             #         curr_array = np.array(traces[key])
             #         rate_conn = np.stack([rate_conn, curr_array], axis=0)
-            rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
-                                  np.array(traces['V1_L23_I/0/L23_I_comp/r']),
-                                  np.array(traces['V1_L56_E/0/L56_E_comp/r']),
-                                  np.array(traces['V1_L56_I/0/L56_I_comp/r']),
-                                  np.array(traces['V4_L23_E/0/L23_E_comp/r']),
-                                  np.array(traces['V4_L23_I/0/L23_I_comp/r']),
-                                  np.array(traces['V4_L56_E/0/L56_E_comp/r']),
-                                  np.array(traces['V4_L56_I/0/L56_I_comp/r']),
+            rate_stim = np.array([])
+            rate_stim = np.stack((np.array(traces_stim['V1_L23_E/0/L23_E_comp/r']),
+                                  np.array(traces_stim['V1_L23_I/0/L23_I_comp/r']),
+                                  np.array(traces_stim['V1_L56_E/0/L56_E_comp/r']),
+                                  np.array(traces_stim['V1_L56_I/0/L56_I_comp/r']),
+                                  np.array(traces_stim['V4_L23_E/0/L23_E_comp/r']),
+                                  np.array(traces_stim['V4_L23_I/0/L23_I_comp/r']),
+                                  np.array(traces_stim['V4_L56_E/0/L56_E_comp/r']),
+                                  np.array(traces_stim['V4_L56_I/0/L56_I_comp/r']),
                                   ))
 
             # TODO: Make this more obvious
             # for compatibility with the Python code, expand the third dimension
-            rate_conn = np.expand_dims(rate_conn, axis=2)
-            # transform the dt from ms to s, for the rest of the analysis
-            s_dt = dt / 1000
-            # perform simulation with background current
-            interareal_analysis(rate_conn, transient, s_dt, minfreq, n_areas, stats)
+            rate_stim = np.expand_dims(rate_stim, axis=2)
+
+            # Perfrom analysis with both rest and stimulated simulation
+            interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq, n_areas, stats)
 
         print('Done')
 
