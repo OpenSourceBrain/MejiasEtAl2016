@@ -54,19 +54,6 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     net.cells.append(l56ecell)
     net.cells.append(l56icell)
 
-    # Background input
-    # Iterate over the different possible areas
-    for area_idx, area in enumerate(areas):
-        input_source_l23 = InputSource(id='iclamp_23_%s' %area,
-                                       neuroml2_input='PulseGenerator',
-                                       parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
-        net.input_sources.append(input_source_l23)
-        input_source_l56 = InputSource(id='iclamp_56_%s' %area,
-                                       neuroml2_input='PulseGenerator',
-                                       parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
-
-        net.input_sources.append(input_source_l56)
-
 
     color_str = {'l23e':'.8 0 0','l23i':'0 0 .8',
                  'l56e':'1 .2 0','l56i':'0 .2 1'}
@@ -87,29 +74,6 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
 
     n_areas = len(areas)
-    pops = []
-    for area in areas:
-        l23 = RectangularRegion(id='%s_L23' %(area), x=0,y=100,z=0,width=10,height=10,depth=10)
-        net.regions.append(l23)
-        l56 = RectangularRegion(id='%s_L56' %(area), x=0,y=0,z=0,width=10,height=10,depth=10)
-        net.regions.append(l56)
-
-        pl23e = Population(id='%s_L23_E' %(area), size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
-        pops.append(pl23e)
-        pl23i = Population(id='%s_L23_I' %(area), size=1, component=l23icell.id, properties={'color':color_str['l23i']},random_layout = RandomLayout(region=l23.id))
-        pops.append(pl23i)
-
-        pl56e = Population(id='%s_L56_E' %(area), size=1, component=l56ecell.id, properties={'color':color_str['l56e']},random_layout = RandomLayout(region=l56.id))
-        pops.append(pl56e)
-        pl56i = Population(id='%s_L56_I' %(area), size=1, component=l56icell.id, properties={'color':color_str['l56i']},random_layout = RandomLayout(region=l56.id))
-        pops.append(pl56i)
-
-        net.populations.append(pl23e)
-        net.populations.append(pl23i)
-
-        net.populations.append(pl56e)
-        net.populations.append(pl56i)
-
     if n_areas == 1:
         l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
         l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
@@ -149,26 +113,62 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     else:
         ValueError('Connectivity matrix not defined for more than 2 regions')
 
-    for pre_pop in pops:
-        for post_pop in pops:
-            internal_connections(pops, W, pre_pop, post_pop)
-
-
-
 
     net.synapses.append(Synapse(id='rs',
                                 lems_source_file='Prototypes.xml'))
 
 
-    # Add modulation
-    net.inputs.append(Input(id='modulation_l23_E',
-                            input_source=input_source_l23.id,
-                            population=pl23e.id,
-                            percentage=100))
-    net.inputs.append(Input(id='modulation_l56_E',
-                            input_source=input_source_l56.id,
-                            population=pl56e.id,
-                            percentage=100))
+    # Background input
+    # Iterate over the different possible areas
+    pops = []
+    for area_idx, area in enumerate(areas):
+        # Add populations
+        l23 = RectangularRegion(id='%s_L23' %(area), x=0,y=100,z=0,width=10,height=10,depth=10)
+        net.regions.append(l23)
+        l56 = RectangularRegion(id='%s_L56' %(area), x=0,y=0,z=0,width=10,height=10,depth=10)
+        net.regions.append(l56)
+
+        pl23e = Population(id='%s_L23_E' %(area), size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
+        pops.append(pl23e)
+        pl23i = Population(id='%s_L23_I' %(area), size=1, component=l23icell.id, properties={'color':color_str['l23i']},random_layout = RandomLayout(region=l23.id))
+        pops.append(pl23i)
+
+        pl56e = Population(id='%s_L56_E' %(area), size=1, component=l56ecell.id, properties={'color':color_str['l56e']},random_layout = RandomLayout(region=l56.id))
+        pops.append(pl56e)
+        pl56i = Population(id='%s_L56_I' %(area), size=1, component=l56icell.id, properties={'color':color_str['l56i']},random_layout = RandomLayout(region=l56.id))
+        pops.append(pl56i)
+
+        net.populations.append(pl23e)
+        net.populations.append(pl23i)
+
+        net.populations.append(pl56e)
+        net.populations.append(pl56i)
+
+        # Add inputs
+        input_source_l23 = InputSource(id='iclamp_23_%s' %area,
+                                       neuroml2_input='PulseGenerator',
+                                       parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
+        net.input_sources.append(input_source_l23)
+        # Add modulation
+        net.inputs.append(Input(id='modulation_l23_E',
+                                input_source=input_source_l23.id,
+                                population=pl23e.id,
+                                percentage=100))
+        input_source_l56 = InputSource(id='iclamp_56_%s' %area,
+                                       neuroml2_input='PulseGenerator',
+                                       parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
+
+        net.input_sources.append(input_source_l56)
+        # Add modulation
+        net.inputs.append(Input(id='modulation_l56_E',
+                                input_source=input_source_l56.id,
+                                population=pl56e.id,
+                                percentage=100))
+
+    for pre_pop in pops:
+        for post_pop in pops:
+            internal_connections(pops, W, pre_pop, post_pop)
+
 
 
     print(net)
@@ -704,7 +704,7 @@ if __name__ == "__main__":
 
         # for testing purpose generate one single simulation
         if '-analysis' in sys.argv:
-            stats = 5
+            stats = 8
         else:
             stats = 1
 
@@ -716,15 +716,14 @@ if __name__ == "__main__":
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                                          dt=dt, duration=duration, Iext=[[Iext0, Iext1],[Iext0, Iext1]])
+                                          dt=dt, duration=duration, Iext=[[Iext0, Iext1],[Iext0, Iext1]], count=stat)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
 
-            nmllr = NeuroMLliteRunner('%s.json' %sim_rest.id,
+            nmllr_rest = NeuroMLliteRunner('%s.json' %sim_rest.id,
                                         simulator=simulator)
-            traces_rest, events_rest = nmllr.run_once('/tmp')
-            traces_rest_stats.append(traces_rest)
+            traces_rest, events_rest = nmllr_rest.run_once('/tmp')
 
             # Run simulation with microsimulation
             # Injection is applied at V1
@@ -735,26 +734,32 @@ if __name__ == "__main__":
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
                                           dt=dt, duration=duration, Iext=[[Iext_stim + Iext0, Iext_stim + Iext1], [Iext0, Iext1]])
             # Run in some simulators
-            check_to_generate_or_run(sys.argv, sim_rest)
+            check_to_generate_or_run(sys.argv, sim_stim)
             simulator = 'jNeuroML'
 
-            nmllr = NeuroMLliteRunner('%s.json' %sim_rest.id,
+            nmllr_stim = NeuroMLliteRunner('%s.json' %sim_stim.id,
                                       simulator=simulator)
-            traces_stim, events_stim = nmllr.run_once('/tmp')
-            traces_stim_stats.append(traces_rest)
+            traces_stim, events_stim = nmllr_stim.run_once('/tmp')
+
+            
+
+            # Save the traces for each different run
+            traces_rest_stats.append(traces_rest)
+            traces_stim_stats.append(traces_stim)
 
 
         if '-analysis' in sys.argv:
 
             n_areas = 2
+            # Concatenate the simulation results in the same format as the matlab code
             # No stimulus
-            rate_rest_all = np.zeros((len(traces_rest_stats[1]) - 1, len(traces_rest_stats[1]['V1_L23_E/0/L23_E_comp/r']), stats))
+            rate_rest_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
             for stat in range(stats):
                 for idx, key in enumerate(sorted(traces_rest_stats[stat].keys())):
                     if key is not 't':
                         rate_rest_all[idx, :, stat] = traces_rest_stats[stat][key]
             # With stimulus
-            rate_stim_all = np.zeros((len(traces_rest_stats[1]) - 1, len(traces_rest_stats[1]['V1_L23_E/0/L23_E_comp/r']), stats))
+            rate_stim_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
             for stat in range(stats):
                 for idx, key in enumerate(sorted(traces_stim_stats[stat].keys())):
                     if key is not 't':
@@ -763,29 +768,13 @@ if __name__ == "__main__":
             # TODO: Make this more obvious
             # for compatibility with the Python code, expand the third dimension
             rate_rest = np.expand_dims(rate_rest_all, axis=2)
+            rate_stim = np.expand_dims(rate_stim_all, axis=2)
             # transform the dt from ms to s, for the rest of the analysis
             s_dt = dt / 1000
             # perform simulation with background current
 
-            # TODO: Improve the generalisation of the code
-            # for key in traces.keys():
-            #     if key is not 't':
-            #         curr_array = np.array(traces[key])
-            #         rate_conn = np.stack([rate_conn, curr_array], axis=0)
-            rate_stim = np.array([])
-            rate_stim = np.stack((np.array(traces_stim['V1_L23_E/0/L23_E_comp/r']),
-                                  np.array(traces_stim['V1_L23_I/0/L23_I_comp/r']),
-                                  np.array(traces_stim['V1_L56_E/0/L56_E_comp/r']),
-                                  np.array(traces_stim['V1_L56_I/0/L56_I_comp/r']),
-                                  np.array(traces_stim['V4_L23_E/0/L23_E_comp/r']),
-                                  np.array(traces_stim['V4_L23_I/0/L23_I_comp/r']),
-                                  np.array(traces_stim['V4_L56_E/0/L56_E_comp/r']),
-                                  np.array(traces_stim['V4_L56_I/0/L56_I_comp/r']),
-                                  ))
-
+            #rate_stim = np.stack([traces_stim[key] for key in sorted(traces_stim.keys()) if key is not 't'])
             # TODO: Make this more obvious
-            # for compatibility with the Python code, expand the third dimension
-            rate_stim = np.expand_dims(rate_stim, axis=2)
 
             # Perfrom analysis with both rest and stimulated simulation
             interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq, n_areas, stats)
