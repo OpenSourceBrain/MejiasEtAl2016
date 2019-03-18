@@ -165,7 +165,7 @@ def calculate_periodogram(re, transient, dt):
     # print('Done calculating Periodogram!')
     return pxx, fxx
 
-def find_peak_frequency(fxx,pxx, min_freq, restate):
+def find_peak_frequency(fxx, pxx, min_freq, restate):
     # find the frequency of the oscillations
     z = np.where(fxx > min_freq)
     pxx_freq = pxx[z]
@@ -192,6 +192,33 @@ def find_peak_frequency(fxx,pxx, min_freq, restate):
     amplitudeB = 2 * np.std(restate)
     amplitudeC = np.max(restate) - np.min(restate)
     return frequency, amplitudeA, amplitudeB, amplitudeC
+
+
+def plt_filled_std(ax, fxx_plt, data_mean, data_std, color, label):
+    # calculate upper and lower bounds of the plot
+    cis = (data_mean - data_std, data_mean + data_std)
+    # plot filled area
+    ax.fill_between(fxx_plt, cis[0], cis[1], alpha=0.2, color=color)
+    # plot mean
+    ax.plot(fxx_plt, data_mean, color=color, linewidth=2, label=label)
+    ax.margins(x=0)
+
+
+def matlab_smooth(data, window_size):
+    # assumes the data is one dimensional
+    n = data.shape[0]
+    c = signal.lfilter(np.ones(window_size)/window_size, 1, data)
+    idx_begin = range(0, window_size - 2)
+    cbegin = data[idx_begin].cumsum()
+    # select every second elemeent and divide by their index
+    cbegin = cbegin[0::2] / range(1, window_size - 1, 2)
+    # select the list backwards
+    idx_end = range(n-1, n-window_size + 1, -1)
+    cend = data[idx_end].cumsum()
+    # select every other element until the end backwards
+    cend = cend[-1::-2] / (range(window_size - 2, 0, -2))
+    c = np.concatenate([cbegin, c[window_size-1:], cend])
+    return c
 
 
 def compress_data(pxx, fxx, bin):

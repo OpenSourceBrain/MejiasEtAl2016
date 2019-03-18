@@ -689,7 +689,7 @@ if __name__ == "__main__":
             plt.show()
             
     elif '-interareal' in sys.argv:
-        from interareal import interareal_analysis
+        from interareal import interareal_analysis, interareal_plt
 
         # Background current simulation.
         # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
@@ -704,7 +704,7 @@ if __name__ == "__main__":
 
         # for testing purpose generate one single simulation
         if '-analysis' in sys.argv:
-            stats = 8
+            stats = 10
         else:
             stats = 1
 
@@ -741,7 +741,7 @@ if __name__ == "__main__":
                                       simulator=simulator)
             traces_stim, events_stim = nmllr_stim.run_once('/tmp')
 
-            
+
 
             # Save the traces for each different run
             traces_rest_stats.append(traces_rest)
@@ -777,7 +777,11 @@ if __name__ == "__main__":
             # TODO: Make this more obvious
 
             # Perfrom analysis with both rest and stimulated simulation
-            interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq, n_areas, stats)
+            px2, px20, fx2 = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq, n_areas, stats)
+
+            # Plot the results
+            area = 1 # 0 corresponds to V1; 1 corresponds to V4
+            interareal_plt(area, px20, px2, fx2)
 
         print('Done')
 
