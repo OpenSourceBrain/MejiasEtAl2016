@@ -699,12 +699,13 @@ if __name__ == "__main__":
         dt = 2e-01
         transient = 5
         duration = 4e04
-        minfreq = 30 # Hz
+        minfreq_l23 = 30 # Hz
+        minfreq_l56 = 3 # Hz
         Iext0 = 2; Iext1= 4 # external injected current
 
         # for testing purpose generate one single simulation
         if '-analysis' in sys.argv:
-            stats = 10
+            stats = 6
         else:
             stats = 1
 
@@ -732,7 +733,8 @@ if __name__ == "__main__":
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                                          dt=dt, duration=duration, Iext=[[Iext_stim + Iext0, Iext_stim + Iext1], [Iext0, Iext1]])
+                                          dt=dt, duration=duration, Iext=[[Iext_stim + Iext0, Iext_stim + Iext1], [Iext0, Iext1]],
+                                          count=stat)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_stim)
             simulator = 'jNeuroML'
@@ -777,7 +779,8 @@ if __name__ == "__main__":
             # TODO: Make this more obvious
 
             # Perfrom analysis with both rest and stimulated simulation
-            px2, px20, fx2 = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq, n_areas, stats)
+            px20, px2, fx2 = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq_l23, minfreq_l56,
+                                                 n_areas, stats)
 
             # Plot the results
             area = 1 # 0 corresponds to V1; 1 corresponds to V4
