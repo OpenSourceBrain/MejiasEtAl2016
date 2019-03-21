@@ -702,10 +702,11 @@ if __name__ == "__main__":
         minfreq_l23 = 30 # Hz
         minfreq_l56 = 3 # Hz
         Iext0 = 2; Iext1= 4 # external injected current
+        areas = ['V1', 'V4']
 
         # for testing purpose generate one single simulation
         if '-analysis' in sys.argv:
-            stats = 6
+            stats = 3
         else:
             stats = 1
 
@@ -715,7 +716,7 @@ if __name__ == "__main__":
             # Run simulation at rest
             sim_rest, net_rest = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
-                                          areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
+                                          areas=areas, FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
                                           dt=dt, duration=duration, Iext=[[Iext0, Iext1],[Iext0, Iext1]], count=stat)
             # Run in some simulators
@@ -731,7 +732,7 @@ if __name__ == "__main__":
             Iext_stim = 15
             sim_stim, net_stim = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
-                                          areas=['V1', 'V4'], FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
+                                          areas=areas, FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
                                           dt=dt, duration=duration, Iext=[[Iext_stim + Iext0, Iext_stim + Iext1], [Iext0, Iext1]],
                                           count=stat)
@@ -779,12 +780,11 @@ if __name__ == "__main__":
             # TODO: Make this more obvious
 
             # Perfrom analysis with both rest and stimulated simulation
-            px20, px2, fx2 = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq_l23, minfreq_l56,
-                                                 n_areas, stats)
+            px20, px2, px50, px5, fx2 = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq_l23, minfreq_l56,
+                                                            n_areas, stats)
 
             # Plot the results
-            area = 1 # 0 corresponds to V1; 1 corresponds to V4
-            interareal_plt(area, px20, px2, fx2)
+            interareal_plt(areas, px20, px2, px50, px5, fx2)
 
         print('Done')
 
