@@ -123,9 +123,9 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     pops = []
     for area_idx, area in enumerate(areas):
         # Add populations
-        l23 = RectangularRegion(id='%s_L23' %(area), x=0,y=100,z=0,width=10,height=10,depth=10)
+        l23 = RectangularRegion(id='%s_L23' %(area), x=0, y=100, z=0, width=10, height=10, depth=10)
         net.regions.append(l23)
-        l56 = RectangularRegion(id='%s_L56' %(area), x=0,y=0,z=0,width=10,height=10,depth=10)
+        l56 = RectangularRegion(id='%s_L56' %(area), x=0, y=0, z=0, width=10, height=10, depth=10)
         net.regions.append(l56)
 
         pl23e = Population(id='%s_L23_E' %(area), size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
@@ -691,6 +691,7 @@ if __name__ == "__main__":
     elif '-interareal' in sys.argv:
         from interareal import interareal_analysis, interareal_plt
 
+
         # Background current simulation.
         # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
         # passed
@@ -701,7 +702,6 @@ if __name__ == "__main__":
         duration = 4e04
         minfreq_l23 = 30 # Hz
         minfreq_l56 = 3 # Hz
-        Iext0 = 2; Iext1= 4 # external injected current
         areas = ['V1', 'V4']
 
         # for testing purpose generate one single simulation
@@ -709,6 +709,26 @@ if __name__ == "__main__":
             stats = 3
         else:
             stats = 1
+
+        if '-stimulate_V1' in sys.argv:
+            # Iext0: Excitatory current on E L23,
+            # Iext1: Excitatory current on layer E l56
+            # The first 2 values correspond to the first area, the last 2 values for the second area
+            stimulated_area = 'stimulate_V1'
+            Iext0 = 2; Iext1= 4 # background current at excitatory population
+            Iext_rest = [[Iext0, Iext1],[Iext0, Iext1]]
+            # Injection is applied at V1
+            stim = 15
+            Iext_stim = [[stim + Iext0, stim + Iext1], [Iext0, Iext1]]
+        elif '-stimulate_V4' in sys.argv:
+            stimulated_area = 'stimulate_V4'
+            Iext0 = 1; Iext1= 1 # background current at excitatory population
+            Iext_rest = [[Iext0, Iext1],[Iext0, Iext1]]
+            # Injection is applied at V4
+            stim = 15
+            Iext_stim = [[Iext0, Iext1], [stim + Iext0, stim + Iext1]]
+        else:
+            IOError('Please make sure you are stimulating either V1 or V4. Stimulation to other areas are not yet supported.')
 
         traces_rest_stats = []
         traces_stim_stats = []
@@ -718,30 +738,28 @@ if __name__ == "__main__":
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=areas, FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                                          dt=dt, duration=duration, Iext=[[Iext0, Iext1],[Iext0, Iext1]], count=stat)
+                                          dt=dt, duration=duration, Iext=Iext_rest, count=stat)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
 
             nmllr_rest = NeuroMLliteRunner('%s.json' %sim_rest.id,
-                                        simulator=simulator)
+                                           simulator=simulator)
             traces_rest, events_rest = nmllr_rest.run_once('/tmp')
+            # if -analysis is not passed generate a single network using the rest as default
 
             # Run simulation with microsimulation
-            # Injection is applied at V1
-            Iext_stim = 15
             sim_stim, net_stim = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=areas, FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                                          dt=dt, duration=duration, Iext=[[Iext_stim + Iext0, Iext_stim + Iext1], [Iext0, Iext1]],
-                                          count=stat)
+                                          dt=dt, duration=duration, Iext=Iext_stim, count=stat)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_stim)
             simulator = 'jNeuroML'
 
             nmllr_stim = NeuroMLliteRunner('%s.json' %sim_stim.id,
-                                      simulator=simulator)
+                                           simulator=simulator)
             traces_stim, events_stim = nmllr_stim.run_once('/tmp')
 
 
@@ -749,7 +767,6 @@ if __name__ == "__main__":
             # Save the traces for each different run
             traces_rest_stats.append(traces_rest)
             traces_stim_stats.append(traces_stim)
-
 
         if '-analysis' in sys.argv:
 
@@ -784,7 +801,7 @@ if __name__ == "__main__":
                                                             n_areas, stats)
 
             # Plot the results
-            interareal_plt(areas, px20, px2, px50, px5, fx2)
+            interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area)
 
         print('Done')
 

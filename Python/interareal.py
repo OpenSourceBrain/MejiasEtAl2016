@@ -98,7 +98,7 @@ def interareal_analysis(rate_rest, rate_stim, transient, dt, minfreq_l23, minfre
 
     return px20, px2, px50, px5, fx2
 
-def plot_powerspectrum(filter, area, layer, px0, px, fx2, lcolours):
+def plot_powerspectrum( area, layer, px0, px, fx2, lcolours, stimulated_area):
     '''
     Plot power spectrum for the rest and stimulated layers   for the different layers
 
@@ -125,11 +125,14 @@ def plot_powerspectrum(filter, area, layer, px0, px, fx2, lcolours):
 
     if layer == 'l23':
         resbin = 20
-        xlim = [20, 80]
-        ylim = [0, .006]
+        filter = [20, 80]
+        if stimulated_area == 'stimulate_V1':
+            ylim = [0, .006]
+        elif stimulated_area == 'stimulate_V4':
+            ylim = [0, .0015]
     elif layer == 'l56':
         resbin = 10
-        xlim = [5, 20]
+        filter = [5, 20]
         ylim = [0, .03]
     else:
         IOError('Passed layer is not l23 or l56. Please check your input.')
@@ -175,24 +178,28 @@ def plot_powerspectrum(filter, area, layer, px0, px, fx2, lcolours):
     fig, ax = plt.subplots(1)
     plt_filled_std(ax, fx0[1:-1:resbin], pxx20[1:-1:resbin], pxx20sig[1:-1:resbin], lcolours[0], 'rest')
     plt_filled_std(ax, fx[1:-1:resbin], pxx2[1:-1:resbin], pxx2sig[1:-1:resbin], lcolours[1], 'stimulus')
-    plt.xlim(xlim)
+    plt.xlim(filter)
     plt.ylim(ylim)
     plt.xlabel('Frequency(Hz)')
-    plt.ylabel('Power (resp. rest)')
+    plt.ylabel('V4 %s Power' %layer)
     plt.legend()
-    plt.savefig('interareal/%s_%s.png' %(area, layer))
+    plt.savefig('interareal/%s_layer_%s_%s.png' %(stimulated_area, area, layer))
 
 
-def interareal_plt(areas, px20, px2, px50, px5, fx2):
+def interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area):
     '''
 
     '''
 
-    # Plot the results only for V4.
-    filter = [20, 80]
+    if stimulated_area == 'stimulate_V4':
+        recording_area = areas[0]
+    elif stimulated_area == 'stimulate_V1':
+        recording_area = areas[1]
+    else:
+        IOError('Stimulated area is not defined.')
     lcolours = ['#1F5E43', '#31C522', '#2242C5']
-    plot_powerspectrum(filter, areas[1], 'l23', px20, px2, fx2, lcolours)
-    plot_powerspectrum(filter, areas[1], 'l56', px50, px5, fx2, lcolours)
+    plot_powerspectrum(recording_area, 'l23', px20, px2, fx2, lcolours, stimulated_area)
+    plot_powerspectrum(recording_area, 'l56', px50, px5, fx2, lcolours, stimulated_area)
 
 
 
