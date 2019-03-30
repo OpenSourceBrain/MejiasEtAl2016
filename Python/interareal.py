@@ -2,36 +2,23 @@ import numpy as np
 from scipy.stats import ttest_ind
 import matplotlib.pylab as plt
 
-from calculate_rate import calculate_rate
 from helper_functions import calculate_periodogram, find_peak_frequency, matlab_smooth, plt_filled_std
 
 
-def interareal_simulation(t, dt, tstop, J, W, tau, Iext, Ibkg, sig, noise):
-    # feedback selectiviyt
-    Gw = 1
-
-    Nareas = 2
-    stat = 10 # TODO: Number of time to repeat the analysis
-    powerpeak = np.zeros((4, stat))
-    freqpeak = np.zeros((4, stat))
-    nobs = t.shpae[0]
-    binx = 10; eta=.2
-    X = np.zeros((Nareas, int(round(nobs/binx)), stat))
-
-    for jj in range(stat):
-        calculate_rate(t, dt, tstop, J, tau, sig, Iext, Ibkg, noise, Nareas, W, Gw)
-        # adapt the code so that it can take an array of Iext and return
-        # mean input (if interareal_simulation). Interareal simulation also
-        # takes an aditional argument W
-
-    return fx2, px2, fx5, px5, powerpeak, fpeak, mean_input
-
 def trialstat(rate, transient, dt, minfreq_l23, minfreq_l56, nareas, stats):
-    '''Main Interareal Analysis
+    '''
+    Calculates the periodogram and the peak frequency for L2/3 and L5/6 from the areas
+    under analysis.
+
+    Parameters
+    ----------
         rate: Simulated rate
-        transient: Number of points to averate over
+        transient: Number of points to average over
         dt: dt of the simulation
-        minfrequence: Frequencies below this threshold get discarded
+        minfrequence_l23: Frequencies below this threshold get discarded. Specific for layer L2/3
+        minfrequence_l56: Frequencies below this threshold get discarded. Specific for layer L5/6
+        nareas: Number of areas to take into account
+        stats: Number or repetions
 
     '''
 
@@ -80,14 +67,36 @@ def trialstat(rate, transient, dt, minfreq_l23, minfreq_l56, nareas, stats):
 
 
 def interareal_analysis(rate_rest, rate_stim, transient, dt, minfreq_l23, minfreq_l56, nareas, stats):
+    '''
+    Calculate the power spectrum and its peak value.
 
+    Parameters
+    ----------
+        rate_rest: Simulated rest time series
+        rate_stim: Simulated stimulated time series
+        transient:
+        dt: dt of the simulation
+        minfrequence_l23: Frequencies below this threshold get discarded. Specific for layer L2/3
+        minfrequence_l56: Frequencies below this threshold get discarded. Specific for layer L5/6
+        nareas: Number of areas to take into account
+        stats: Number or repetions
+    Returns
+    -------
+        px20: Power spectrum for layer L2/3 at rest
+        px2: Power spectrum for layer L3/3 after stimulus
+        px50: Power spectrum for layer L5/6 at rest
+        px5: Power spectrum for layer L5/6 after stimulus
+        fx2: Array of sample frequencies
+        pgamma: P-value for the difference between stimulus and rest for the gamma frequency
+        palpha: P-value for the difference between stimulus and rest for the alpha frequency
+    '''
     # Analysis of the simulation at rest
     fx20, px20, fx50, px50, powerpeak0, fpeak0 = trialstat(rate_rest, transient, dt, minfreq_l23, minfreq_l56, nareas, stats)
     # Analysis of the simulation with additional stimulation
     fx2, px2, fx5, px5, powerpeak1, fpeak1 = trialstat(rate_stim, transient, dt, minfreq_l23, minfreq_l56, nareas, stats)
 
-    # Analysis after microstimulation
-    # significance
+    # Analysis after microstimulation. Test if there is a significant difference in the max peak between
+    # rest and stimulation significance
     #  Note: We are using -1 because Python starts with 0 indexing
     z1 = 3-1; z2 = 4-1; # Excitatory and inhibitory layers L5/6 (feedforward)
     gamma0 = powerpeak0[z1, :]; gamma1 = powerpeak1[z1, :]
@@ -96,29 +105,31 @@ def interareal_analysis(rate_rest, rate_stim, transient, dt, minfreq_l23, minfre
     statistic, pgamma = ttest_ind(gamma0, gamma1)
     statistic2, palpha = ttest_ind(alpha0, alpha1)
 
-    return px20, px2, px50, px5, fx2
+    return px20, px2, px50, px5, fx2, pgamma, palpha
 
-def plot_powerspectrum( area, layer, px0, px, fx2, lcolours, stimulated_area):
+
+def plot_powerspectrum(recording_area, layer, px0, px, fx2, lcolours, stimulated_area, nstats):
     '''
-    Plot power spectrum for the rest and stimulated layers   for the different layers
+    Plot power spectrum for the rest and stimulated layers for the areas under analysis
 
-    inputs:
-        filter: [lower, upper frequence in Hz]
-        area: Area to be analysed
-        px0: rate with no stimulation
-        px: rate with stimulation
-        fx2:
+    Parameters
+    ----------
+        recording_area: Area where the stimulus is being recorded
+        layer: Layer of interest (can be either L2/3 or L/56)
+        px0: Rate time series with no stimulation
+        px: Rate time series with stimulation
+        fx2: Array of sample frequencies
         lcolours: List of colours to use for plotting
+        nstats: Number of simulation repetitions
     '''
 
-    barrasgamma = np.zeros((2,2))
-    barrasalpha = np.zeros((2,2))
+    barrasfrequency = np.zeros((2, 2))
 
     # Set configuration according to passed layers
     window_size = 99
-    if area == 'V1':
+    if recording_area == 'V1':
         area_idx = 0
-    elif area == 'V4':
+    elif recording_area == 'V4':
         area_idx = 1
     else:
         IOError('Rate in this area was not simulated. Please, check your area again.')
@@ -145,24 +156,24 @@ def plot_powerspectrum( area, layer, px0, px, fx2, lcolours, stimulated_area):
     # Note: The matlab code transforms an even-window size into an odd number by subtracting by one.
     # So for simplicity I already define the window size as an odd number
     pxx0 = []
-    for i in range(len(pz0)):
+    for i in range(nstats):
         pxx0.append(matlab_smooth(pz0[i, :], window_size))
     pxx0 = np.asarray(pxx0)
     pxx20 = np.mean(pxx0, axis=0)
     pxx20sig = np.std(pxx0, axis=0)
 
-    fxx_plt_idx = np.where((fx0 > filter[0]) & (fx0 < filter[1]))
-    z1 = pxx20[fxx_plt_idx]
-    z2 = pxx20sig[fxx_plt_idx]
-    b2 = np.argmax(z1)
-    barrasgamma[0, 0] = z1[b2]
-    barrasgamma[0, 1] = z2[b2]
+    fxx_plt_idx_0 = np.where((fx0 > filter[0]) & (fx0 < filter[1]))
+    z10 = pxx20[fxx_plt_idx_0]
+    z20 = pxx20sig[fxx_plt_idx_0]
+    b20 = np.argmax(z10)
+    barrasfrequency[0, 0] = z10[b20]
+    barrasfrequency[0, 1] = z20[b20]
 
     ## Analysis for model with stimulus
     pz = np.squeeze(np.transpose(px[:, area_idx, :]))
-    fx = np.transpose(fx2[:, area_idx, 1])
+    fx = np.transpose(fx2[:, area_idx, 0])
     pxx = []
-    for i in range(len(pz)):
+    for i in range(nstats):
         pxx.append(matlab_smooth(pz[i, :], window_size))
     pxx = np.asarray(pxx)
     pxx2 = np.mean(pxx, axis=0)
@@ -171,8 +182,8 @@ def plot_powerspectrum( area, layer, px0, px, fx2, lcolours, stimulated_area):
     z1 = pxx2[fxx_plt_idx]
     z2 = pxx2sig[fxx_plt_idx]
     b2 = np.argmax(z1)
-    barrasgamma[1, 0] = z1[b2]
-    barrasgamma[1, 1] = z2[b2]
+    barrasfrequency[1, 0] = z1[b2]
+    barrasfrequency[1, 1] = z2[b2]
 
     # Plot results
     fig, ax = plt.subplots(1)
@@ -181,14 +192,27 @@ def plot_powerspectrum( area, layer, px0, px, fx2, lcolours, stimulated_area):
     plt.xlim(filter)
     plt.ylim(ylim)
     plt.xlabel('Frequency(Hz)')
-    plt.ylabel('V4 %s Power' %layer)
+    plt.ylabel('%s %s Power' %(recording_area, layer))
     plt.legend()
-    plt.savefig('interareal/%s_layer_%s_%s.png' %(stimulated_area, area, layer))
+    plt.savefig('interareal/%s_layer_%s_%s.png' %(stimulated_area, recording_area, layer))
+
+    return barrasfrequency
 
 
-def interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area):
+def interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area, nstats):
     '''
+    Plot Powerspectrum and peak value of the power for the the passed areas of interest
 
+    Parameters
+    ----------
+        areas: List of areas being simulated
+        px20: Rate time series for E L2/3 at rest
+        px2: Rate time series for E L2/3 after stimulation
+        px50: Rate time series for I L5/6 at rest
+        px5: Rate time series for I L5/6 after stimulation
+        fx2: Array of sample frequencies
+        stimulated_area: Define in which area the stimulus was applied
+        nstats: Number of times that the experiment was repeated
     '''
 
     if stimulated_area == 'stimulate_V4':
@@ -197,9 +221,30 @@ def interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area):
         recording_area = areas[1]
     else:
         IOError('Stimulated area is not defined.')
-    lcolours = ['#1F5E43', '#31C522', '#2242C5']
-    plot_powerspectrum(recording_area, 'l23', px20, px2, fx2, lcolours, stimulated_area)
-    plot_powerspectrum(recording_area, 'l56', px50, px5, fx2, lcolours, stimulated_area)
 
+    # Define colours to be used for the plotting
+    lcolours = ['#1F5E43', '#31C522', '#944610', '#E67E22']
 
+    # Plot power spectrum for the L23 and L5/6 Layers
+    barrasgamma = plot_powerspectrum(recording_area, 'l23', px20, px2, fx2, lcolours[:2], stimulated_area, nstats)
+    barrasalpha = plot_powerspectrum(recording_area, 'l56', px50, px5, fx2, lcolours[-2:], stimulated_area, nstats)
 
+    # Plot the peak value of the power spectraum at the supergranular layer for both areas
+    if stimulated_area == 'stimulate_V4':
+        yaxis_gamma = [0, .002]
+        yaxis_alpha = [0, .04]
+    elif stimulated_area == 'stimulate_V1':
+        yaxis_gamma = [0, .007]
+        yaxis_alpha = [0, .04]
+
+    plt.figure()
+    plt.bar(['Rest', 'Stim'], barrasgamma[:, 0], color=lcolours[:2], yerr=barrasgamma[:, 1])
+    plt.ylim(yaxis_gamma)
+    plt.ylabel(r'$\gamma$ power')
+    plt.savefig('interareal/%s_layer_gamma.png' % (stimulated_area))
+
+    plt.figure()
+    plt.bar(['Rest', 'Stim'], barrasalpha[:, 0], color=lcolours[-2:], yerr=barrasalpha[:, 1])
+    plt.ylabel(r'$\alpha$ power')
+    plt.ylim(yaxis_alpha)
+    plt.savefig('interareal/%s_layer_alpha.png' % (stimulated_area))

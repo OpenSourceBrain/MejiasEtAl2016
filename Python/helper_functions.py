@@ -165,6 +165,7 @@ def calculate_periodogram(re, transient, dt):
     # print('Done calculating Periodogram!')
     return pxx, fxx
 
+
 def find_peak_frequency(fxx, pxx, min_freq, restate):
     # find the frequency of the oscillations
     z = np.where(fxx > min_freq)

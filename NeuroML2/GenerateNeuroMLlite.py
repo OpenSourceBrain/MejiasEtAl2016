@@ -700,13 +700,14 @@ if __name__ == "__main__":
         dt = 2e-01
         transient = 5
         duration = 4e04
-        minfreq_l23 = 30 # Hz
-        minfreq_l56 = 3 # Hz
+        minfreq_l23 = 30. # Hz
+        minfreq_l56 = 3. # Hz
         areas = ['V1', 'V4']
+        nareas = len(areas)
 
         # for testing purpose generate one single simulation
         if '-analysis' in sys.argv:
-            stats = 3
+            stats = 10
         else:
             stats = 1
 
@@ -715,7 +716,7 @@ if __name__ == "__main__":
             # Iext1: Excitatory current on layer E l56
             # The first 2 values correspond to the first area, the last 2 values for the second area
             stimulated_area = 'stimulate_V1'
-            Iext0 = 2; Iext1= 4 # background current at excitatory population
+            Iext0 = 2; Iext1 = 4 # background current at excitatory population
             Iext_rest = [[Iext0, Iext1],[Iext0, Iext1]]
             # Injection is applied at V1
             stim = 15
@@ -770,7 +771,6 @@ if __name__ == "__main__":
 
         if '-analysis' in sys.argv:
 
-            n_areas = 2
             # Concatenate the simulation results in the same format as the matlab code
             # No stimulus
             rate_rest_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
@@ -797,11 +797,11 @@ if __name__ == "__main__":
             # TODO: Make this more obvious
 
             # Perfrom analysis with both rest and stimulated simulation
-            px20, px2, px50, px5, fx2 = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq_l23, minfreq_l56,
-                                                            n_areas, stats)
+            px20, px2, px50, px5, fx2, pgamma, palpha = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq_l23, minfreq_l56,
+                                                            nareas, stats)
 
             # Plot the results
-            interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area)
+            interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area, stats)
 
         print('Done')
 
