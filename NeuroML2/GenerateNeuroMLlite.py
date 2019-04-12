@@ -111,7 +111,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                        [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i]],
                      dtype='U14')
     else:
-        ValueError('Connectivity matrix not defined for more than 2 regions')
+        raise ValueError('Connectivity matrix not defined for more than 2 regions')
 
 
     net.synapses.append(Synapse(id='rs',
@@ -121,11 +121,16 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     # Background input
     # Iterate over the different possible areas
     pops = []
+    area_edge = 30
+    area_spacing = 30
+    
+    layer_thickness = 30
     for area_idx, area in enumerate(areas):
         # Add populations
-        l23 = RectangularRegion(id='%s_L23' %(area), x=0, y=100, z=0, width=10, height=10, depth=10)
+        x_offset = area_idx*(area_edge + area_spacing)
+        l23 = RectangularRegion(id='%s_L23' %(area), x=x_offset, y=layer_thickness, z=0, width=area_edge, height=30, depth=area_edge)
         net.regions.append(l23)
-        l56 = RectangularRegion(id='%s_L56' %(area), x=0, y=0, z=0, width=10, height=10, depth=10)
+        l56 = RectangularRegion(id='%s_L56' %(area), x=x_offset, y=0, z=0, width=area_edge, height=layer_thickness, depth=area_edge)
         net.regions.append(l56)
 
         pl23e = Population(id='%s_L23_E' %(area), size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
@@ -729,7 +734,7 @@ if __name__ == "__main__":
             stim = 15
             Iext_stim = [[Iext0, Iext1], [stim + Iext0, stim + Iext1]]
         else:
-            IOError('Please make sure you are stimulating either V1 or V4. Stimulation to other areas are not yet supported.')
+            raise IOError('Please make sure you are stimulating either V1 (-stimulate_V1) or V4 (-stimulate_V4). Stimulation to other areas are not yet supported.')
 
         traces_rest_stats = []
         traces_stim_stats = []
@@ -739,7 +744,8 @@ if __name__ == "__main__":
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=areas, FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
                                           FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                                          dt=dt, duration=duration, Iext=Iext_rest, count=stat)
+                                          dt=dt, duration=duration, Iext=Iext_rest, count=stat,
+                                          net_id='Interareal')
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'

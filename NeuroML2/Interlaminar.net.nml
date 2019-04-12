@@ -34,36 +34,36 @@
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L23_I"/>
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L56_E"/>
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L56_I"/>
-    <pulseGenerator id="iclamp_23" delay="0ms" duration="1000.0ms" amplitude="8nA"/>
-    <pulseGenerator id="iclamp_56" delay="0ms" duration="1000.0ms" amplitude="8nA"/>
+    <pulseGenerator id="iclamp_23_V1" delay="0ms" duration="1000.0ms" amplitude="8nA"/>
+    <pulseGenerator id="iclamp_56_V1" delay="0ms" duration="1000.0ms" amplitude="8nA"/>
     <network id="Interlaminar">
         <notes>Testing...</notes>
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">
             <property tag="color" value=".8 0 0"/>
             <property tag="region" value="V1_L23"/>
             <instance id="0">
-                <location x="9.664535356921387" y="104.407325991753524" z="0.074914700585872"/>
+                <location x="28.993606070764162" y="43.221977975260579" z="0.224744101757616"/>
             </instance>
         </population>
         <population id="V1_L23_I" component="L23_I_comp" size="1" type="populationList">
             <property tag="color" value="0 0 .8"/>
             <property tag="region" value="V1_L23"/>
             <instance id="0">
-                <location x="9.109759624491241" y="109.392689973637644" z="5.822275730589491"/>
+                <location x="27.329278873473726" y="58.178069920912918" z="17.466827191768473"/>
             </instance>
         </population>
         <population id="V1_L56_E" component="L56_E_comp" size="1" type="populationList">
             <property tag="color" value="1 .2 0"/>
             <property tag="region" value="V1_L56"/>
             <instance id="0">
-                <location x="6.71563481487985" y="0.83938226837084" z="7.664809327917963"/>
+                <location x="20.146904444639553" y="2.518146805112519" z="22.994427983753887"/>
             </instance>
         </population>
         <population id="V1_L56_I" component="L56_I_comp" size="1" type="populationList">
             <property tag="color" value="0 .2 1"/>
             <property tag="region" value="V1_L56"/>
             <instance id="0">
-                <location x="2.368097753631178" y="0.3081402172661" z="7.887727172362835"/>
+                <location x="7.104293260893533" y="0.924420651798299" z="23.663181517088503"/>
             </instance>
         </population>
         <continuousProjection id="proj_V1_L23_E_V1_L23_E" presynapticPopulation="V1_L23_E" postsynapticPopulation="V1_L23_E">
@@ -114,10 +114,10 @@
         <continuousProjection id="proj_V1_L56_I_V1_L56_I" presynapticPopulation="V1_L56_I" postsynapticPopulation="V1_L56_I">
             <continuousConnectionInstanceW id="0" preCell="../V1_L56_I/0/L56_I_comp" postCell="../V1_L56_I/0/L56_I_comp" preComponent="silentSyn_proj_V1_L56_I_V1_L56_I" postComponent="rs" weight="-2.5"/>
         </continuousProjection>
-        <inputList id="modulation_l23_E" population="V1_L23_E" component="iclamp_23">
+        <inputList id="modulation_l23_E" population="V1_L23_E" component="iclamp_23_V1">
             <input id="0" target="../V1_L23_E/0/L23_E_comp" destination="synapses"/>
         </inputList>
-        <inputList id="modulation_l56_E" population="V1_L56_E" component="iclamp_56">
+        <inputList id="modulation_l56_E" population="V1_L56_E" component="iclamp_56_V1">
             <input id="0" target="../V1_L56_E/0/L56_E_comp" destination="synapses"/>
         </inputList>
     </network>
