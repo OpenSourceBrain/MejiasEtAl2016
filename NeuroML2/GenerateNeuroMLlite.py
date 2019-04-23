@@ -2,6 +2,7 @@ from neuromllite import Network, Cell, InputSource, Population, Synapse,Rectangu
 from neuromllite import Projection, RandomConnectivity, Input, Simulation
 import numpy as np
 import pickle
+from itertools import permutations
 
 # Add the Python folder to the Python path
 import sys
@@ -694,7 +695,8 @@ if __name__ == "__main__":
             plt.show()
             
     elif '-interareal' in sys.argv:
-        from interareal import interareal_analysis, interareal_plt
+        from interareal import interareal_analysis, interareal_plt, load_sln_data
+
 
 
         # Background current simulation.
@@ -709,6 +711,21 @@ if __name__ == "__main__":
         minfreq_l56 = 3. # Hz
         areas = ['V1', 'V4']
         nareas = len(areas)
+
+        # Load previously calculated SLN to define which regions are FF and which FB
+        sln_file_path = '../Matlab/Fig6/subgraphData20.mat'
+        mat = load_sln_data(sln_file_path)
+
+        # Find SLN values for the areas under analysis
+        # First, check if we have the SLN values for all areas passed for the analysis
+        missing_area = [area for area in areas if area not in mat['areaList']]
+        assert(len(missing_area) > 0, 'Missing SLN values for the passed list')
+        areas_idx = [np.where(mat['areaList'] == area)[0] for area in areas]
+        areas_idx_matrix = list(permutations(areas_idx, 2))
+        sln_areas = [mat['slnMat'][perm][0] for perm in areas_idx_matrix]
+        # Find the max sln value. This will be the FF connection
+        sln_max = np.argmax(sln_areas)
+        print('FF connection between: ')
 
         # for testing purpose generate one single simulation
         if '-analysis' in sys.argv:

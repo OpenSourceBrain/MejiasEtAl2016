@@ -301,3 +301,8 @@ def firing_rate_analysis(noconns=False,
                       tau, sig, Iexts, Ibgk, nruns, sigmaoverride, Nareas, noconns, initialrate)
 
     print("Finished debug simulation Interlaminar of duration %s ms; conns removed: %s"%(testduration, noconns))
+
+    ########################################################################################################################
+    #                                                      Interareal
+    ########################################################################################################################
+
