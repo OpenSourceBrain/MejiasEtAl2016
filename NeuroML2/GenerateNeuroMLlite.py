@@ -2,8 +2,6 @@ from neuromllite import Network, Cell, InputSource, Population, Synapse,Rectangu
 from neuromllite import Projection, RandomConnectivity, Input, Simulation
 import numpy as np
 import pickle
-import pandas as pd
-from itertools import permutations
 
 # Add the Python folder to the Python path
 import sys
@@ -11,7 +9,7 @@ sys.path.append("../Python")
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
              i_l5e_l2i=0., i_l2e_l5e=0.,
-             areas=['V1'], FF_l2e_l2e=0., FB_l5e_l2i=0., FB_l5e_l5e=0., FB_l5e_l5i=0., FB_l5e_l2e=0.,
+             areas=['V1'],
              sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[[0, 0]], count=0,
              net_id='MejiasFig2'):
 
@@ -21,22 +19,89 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     net = Network(id=net_id)
     net.notes = 'Testing...'
 
-    net.parameters = { 'wee': wee,
-                       'wei': wei,
-                       'wie': wie,
-                       'wii': wii,
-                       'l5e_l2i': i_l5e_l2i,
-                       'l2e_l5e': i_l2e_l5e,
-                       'FF_l2e_l2e': FF_l2e_l2e,
-                       'FB_l5e_l2i': FB_l5e_l2i,
-                       'FB_l5e_l5e': FB_l5e_l5e,
-                       'FB_l5e_l5i': FB_l5e_l5i,
-                       'FB_l5e_l2e': FB_l5e_l2e,
-                       'sigma23': sigma23,
-                       'sigma56': sigma56 }
+    # specify the interareal FF and FB connections depending on the number of areas under analysis
+    if len(areas) == 1:
+        FF_l2e_l2e = 0.
+        FB_l5e_l2i = 0.
+        FB_l5e_l5e = 0.
+        FB_l5e_l5i = 0.
+        FB_l5e_l2e = 0.
+        net.parameters = { 'wee': wee,
+                           'wei': wei,
+                           'wie': wie,
+                           'wii': wii,
+                           'l5e_l2i': i_l5e_l2i,
+                           'l2e_l5e': i_l2e_l5e,
+                           'FF_l2e_l2e': FF_l2e_l2e,
+                           'FB_l5e_l2i': FB_l5e_l2i,
+                           'FB_l5e_l5e': FB_l5e_l5e,
+                           'FB_l5e_l5i': FB_l5e_l5i,
+                           'FB_l5e_l2e': FB_l5e_l2e,
+                           'sigma23': sigma23,
+                           'sigma56': sigma56 }
+    elif len(areas) == 2:
+        FF_l2e_l2e = 1.
+        FB_l5e_l2i = .5
+        FB_l5e_l5e = .9
+        FB_l5e_l5i = .5
+        FB_l5e_l2e = .1
+        net.parameters = { 'wee': wee,
+                           'wei': wei,
+                           'wie': wie,
+                           'wii': wii,
+                           'l5e_l2i': i_l5e_l2i,
+                           'l2e_l5e': i_l2e_l5e,
+                           'FF_l2e_l2e': FF_l2e_l2e,
+                           'FB_l5e_l2i': FB_l5e_l2i,
+                           'FB_l5e_l5e': FB_l5e_l5e,
+                           'FB_l5e_l5i': FB_l5e_l5i,
+                           'FB_l5e_l2e': FB_l5e_l2e,
+                           'sigma23': sigma23,
+                           'sigma56': sigma56 }
+    elif len(areas) == 3:
+        V1_V4_FF_l2e_l2e = 1.
+        V1_V4_FB_l5e_l2i = 5.
+        V1_V4_FB_l5e_l5e = .9
+        V1_V4_FB_l5e_l5i = .5
+        V1_V4_FB_l5e_l2e = .1
+
+        V1_MT_FF_l2e_l2e = 1.
+        V1_MT_FB_l5e_l2i = 5.
+        V1_MT_FB_l5e_l5e = .9
+        V1_MT_FB_l5e_l5i = .5
+        V1_MT_FB_l5e_l2e = .1
+
+        V4_MT_FF_l2e_l2e = 1.
+        V4_MT_FB_l5e_l2i = 5.
+        V4_MT_FB_l5e_l5e = .9
+        V4_MT_FB_l5e_l5i = .5
+        V4_MT_FB_l5e_l2e = .1
+        net.parameters = { 'wee': wee,
+                           'wei': wei,
+                           'wie': wie,
+                           'wii': wii,
+                           'l5e_l2i': i_l5e_l2i,
+                           'l2e_l5e': i_l2e_l5e,
+                           'V1_V4_FF_l2e_l2e': V1_V4_FF_l2e_l2e,
+                           'V1_V4_FB_l5e_l2i': V1_V4_FB_l5e_l2i,
+                           'V1_V4_FB_l5e_l5e': V1_V4_FB_l5e_l5e,
+                           'V1_V4_FB_l5e_l5i': V1_V4_FB_l5e_l5i,
+                           'V1_V4_FB_l5e_l2e': V1_V4_FB_l5e_l2e,
+                           'V4_MT_FF_l2e_l2e': V4_MT_FF_l2e_l2e,
+                           'V4_MT_FB_l5e_l2i': V4_MT_FB_l5e_l2i,
+                           'V4_MT_FB_l5e_l5e': V4_MT_FB_l5e_l5e,
+                           'V4_MT_FB_l5e_l5i': V4_MT_FB_l5e_l5i,
+                           'V4_MT_FB_l5e_l2e': V4_MT_FB_l5e_l2e,
+                           'V1_MT_FF_l2e_l2e': V1_MT_FF_l2e_l2e,
+                           'V1_MT_FB_l5e_l2i': V1_MT_FB_l5e_l2i,
+                           'V1_MT_FB_l5e_l5e': V1_MT_FB_l5e_l5e,
+                           'V1_MT_FB_l5e_l5i': V1_MT_FB_l5e_l5i,
+                           'V1_MT_FB_l5e_l2e': V1_MT_FB_l5e_l2e,
+                           'sigma23': sigma23,
+                           'sigma56': sigma56 }
 
     suffix = '' if noise else '_flat'
-    
+
     if dt==0.2:
         suffix2 = ''
     elif dt==0.02:
@@ -44,7 +109,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     else:
         print('Using a value for dt which is not supported!!')
         quit()
-        
+
     l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
     l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
     l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
@@ -75,38 +140,94 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                               random_connectivity=RandomConnectivity(probability=1)))
 
 
-    # Basic case when there is just one area
-    l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
-    l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
-    l2e_l5i = 0; l2e_l5e = 'l2e_l5e'; l2i_l5e = 0; l2i_l5i = 0;
-    l5e_l2e = 0; l5e_l2i= 'l5e_l2i'; l5i_l2e = 0; l5i_l2i = 0;
-    W_tmp = np.array([[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
-                     [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
-                     [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
-                     [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]], dtype='U14')
-    # Todo: change the areas[0]
-    n_areas = len(areas[0])
-    # Create the correct connectivity size matrix
-    W = np.zeros((4 * n_areas, 4 * n_areas), dtype='U14')
+    n_areas = len(areas)
+    if n_areas == 1:
+        l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
+        l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
+        l2e_l5i = 0; l2e_l5e = 'l2e_l5e'; l2i_l5e = 0; l2i_l5i = 0;
+        l5e_l2e = 0; l5e_l2i= 'l5e_l2i'; l5i_l2e = 0; l5i_l2i = 0;
+        W = np.array([[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
+                       [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
+                       [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
+                       [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]], dtype='U14')
 
-    for i in range(n_areas):
-        for j in range(n_areas):
-            W[4*i:4*i+4, 4*j:4*j+4] = W_tmp
+    elif n_areas == 2:
+        v1_v1_l2e_l2e = v4_v4_l2e_l2e = 'wee'; v1_v1_l5e_l5e = v4_v4_l5e_l5e = 'wee'
+        v1_v1_l2e_l2i = v4_v4_l2e_l2i = 'wei'; v1_v1_l5e_l5i = v4_v4_l5e_l5i = 'wei'
+        v1_v1_l2i_l2e = v4_v4_l2i_l2e = 'wie'; v1_v1_l5i_l5e = v4_v4_l5i_l5e = 'wie'
+        v1_v1_l2i_l2i = v4_v4_l2i_l2i = 'wii'; v1_v1_l5i_l5i = v4_v4_l5i_l5i = 'wii'
 
-    # Define FF and FB connections
-    W[0, 4] = 'FF_l2e_l2e'
-    W[6, 0] = 'FB_l5e_l2i'
-    W[6, 1] = 'FB_l5e_l2i'
-    W[6, 2] = 'FB_l5e_l5e'
-    W[6, 3] = 'FB_l5e_l5i'
+        v1_v1_l2e_l5e = v4_v4_l2e_l5e = 'l2e_l5e'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = 0;
+        v1_v1_l5e_l2i = v4_v4_l5e_l2i = 'l5e_l2i'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = 0;
+        v1_v1_l2i_l5e = v4_v4_l2i_l5e = 0; v1_v1_l5i_l2i = v4_v4_l5i_l2i = 0;
+        v1_v1_l5i_l2e = v4_v4_l5i_l2e = 0; v1_v1_l2i_l5i = v4_v4_l2i_l5i = 0;
 
-    # Set the connections between regions
-    # TODO: continue filling up this list
-    W[0, 5] = 0 #region1_region2_l2e-l2i
-    W[1, 4] = 0 # region2_region1 l2e-l2i
-    W[0, 6] = 0 # region1 region2 l2e-l5e
-    W[2, 4] = 0 # region2 region1 l2e-l5e
-    W[0, 7] = 0 # region1 region2 l2e-l5i
+        # interareal
+        v1_v4_l2e_l2e = 'FF_l2e_l2e'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
+        v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
+        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'FB_l5e_l2i'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'FB_l5e_l2i';
+        v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
+
+        W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i],
+                       [v1_v1_l2i_l2e, v1_v1_l2i_l2i, v1_v1_l2i_l5e, v1_v1_l2i_l5i, v1_v4_l2i_l2e, v1_v4_l2i_l2i, v1_v4_l2i_l5e, v1_v4_l2i_l5i],
+                       [v1_v1_l5e_l2e, v1_v1_l5e_l2i, v1_v1_l5e_l5e, v1_v1_l5e_l5i, v1_v4_l5e_l2e, v1_v4_l5e_l2i, v1_v4_l5e_l5e, v1_v4_l5e_l5i],
+                       [v1_v1_l5i_l2e, v1_v1_l5i_l2i, v1_v1_l5i_l5e, v1_v1_l5i_l5i, v1_v4_l5i_l2e, v1_v4_l5i_l2i, v1_v4_l5i_l5e, v1_v4_l5i_l5i],
+                       [v4_v1_l2e_l2e, v4_v1_l2e_l2i, v4_v1_l2e_l5e, v4_v1_l2e_l5i, v4_v4_l2e_l2e, v4_v4_l2e_l2i, v4_v4_l2e_l5e, v4_v4_l2e_l5i],
+                       [v4_v1_l2i_l2e, v4_v1_l2i_l2i, v4_v1_l2i_l5e, v4_v1_l2i_l5i, v4_v4_l2i_l2e, v4_v4_l2i_l2i, v4_v4_l2i_l5e, v4_v4_l2i_l5i],
+                       [v4_v1_l5e_l2e, v4_v1_l5e_l2i, v4_v1_l5e_l5e, v4_v1_l5e_l5i, v4_v4_l5e_l2e, v4_v4_l5e_l2i, v4_v4_l5e_l5e, v4_v4_l5e_l5i],
+                       [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i]],
+                     dtype='U14')
+
+    elif n_areas == 3:
+        # Check if you have 3 time (1 FF and 3 FB connection)
+
+
+        v1_v1_l2e_l2e = v4_v4_l2e_l2e = mt_mt_l2e_l2e = 'wee'; v1_v1_l5e_l5e = v4_v4_l5e_l5e = mt_mt_l5e_l5e ='wee'
+        v1_v1_l2e_l2i = v4_v4_l2e_l2i = mt_mt_l2e_l2i = 'wei'; v1_v1_l5e_l5i = v4_v4_l5e_l5i = mt_mt_l5e_l5i ='wei'
+        v1_v1_l2i_l2e = v4_v4_l2i_l2e = mt_mt_l2i_l2e = 'wie'; v1_v1_l5i_l5e = v4_v4_l5i_l5e = mt_mt_l5i_l5e ='wie'
+        v1_v1_l2i_l2i = v4_v4_l2i_l2i = mt_mt_l2i_l2i = 'wii'; v1_v1_l5i_l5i = v4_v4_l5i_l5i = mt_mt_l5i_l5i ='wii'
+
+        v1_v1_l2e_l5e = v4_v4_l2e_l5e = mt_mt_l2e_l5e = 'l2e_l5e'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = mt_mt_l2e_l5i = 0
+        v1_v1_l5e_l2i = v4_v4_l5e_l2i = mt_mt_l5e_l2i = 'l5e_l2i'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = mt_mt_l5e_l2e = 0
+        v1_v1_l2i_l5e = v4_v4_l2i_l5e = mt_mt_l2i_l5e = 0;         v1_v1_l5i_l2i = v4_v4_l5i_l2i = mt_mt_l2i_l5i = 0
+        v1_v1_l5i_l2e = v4_v4_l5i_l2e = mt_mt_l5i_l2e = 0;         v1_v1_l2i_l5i = v4_v4_l2i_l5i = mt_mt_l5i_l2i = 0
+
+        # interareal
+        # V1 -> V4
+        v1_v4_l2e_l2e = 'V1_V4_FF_l2e_l2e'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
+        v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
+        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'V1_V4_FB_l5e_l2i'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'V1_V4_FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'V1_V4_FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'V1_V4_FB_l5e_l2i';
+        v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
+
+        # V4 -> MT
+        v4_mt_l2e_l2e = 'V4_MT_FF_l2e_l2e'; mt_v4_l2e_l2e = 0; v4_mt_l2e_l2i = mt_v4_l2e_l2i = 0; v4_mt_l2e_l5e = mt_v4_l2e_l5e = 0; v4_mt_l2e_l5i = mt_v4_l2e_l5i= 0;
+        v4_mt_l2i_l2e = mt_v4_l2i_l2e = 0; v4_mt_l2i_l2i = mt_v4_l2i_l2i = 0; v4_mt_l2i_l5e = mt_v4_l2i_l5e = 0; v4_mt_l2i_l5i = mt_v4_l2i_l5i = 0;
+        v4_mt_l5e_l2e = 0; mt_v4_l5e_l2e = 'V4_MT_FB_l5e_l2i'; v4_mt_l5e_l2i = 0; mt_v4_l5e_l2i = 'V4_MT_FB_l5e_l2i'; v4_mt_l5e_l5e = 0;  mt_v4_l5e_l5e = 'V4_MT_FB_l5e_l5e'; v4_mt_l5e_l5i = 0; mt_v4_l5e_l5i= 'V4_MT_FB_l5e_l2i';
+        v4_mt_l5i_l2e = mt_v4_l5i_l2e = 0; v4_mt_l5i_l2i = mt_v4_l5i_l2i = 0; v4_mt_l5i_l5e = mt_v4_l5i_l5e = 0; v4_mt_l5i_l5i = mt_v4_l5i_l5i= 0;
+
+        # V1 -> MT
+        v1_mt_l2e_l2e = 'V1_MT_FF_l2e_l2e'; mt_v1_l2e_l2e = 0; v1_mt_l2e_l2i = mt_v1_l2e_l2i = 0; v1_mt_l2e_l5e = mt_v1_l2e_l5e = 0; v1_mt_l2e_l5i = mt_v1_l2e_l5i= 0;
+        v1_mt_l2i_l2e = mt_v1_l2i_l2e = 0; v1_mt_l2i_l2i = mt_v1_l2i_l2i = 0; v1_mt_l2i_l5e = mt_v1_l2i_l5e = 0; v1_mt_l2i_l5i = mt_v1_l2i_l5i = 0;
+        v1_mt_l5e_l2e = 0; mt_v1_l5e_l2e = 'V1_MT_FB_l5e_l2i'; v1_mt_l5e_l2i = 0; mt_v1_l5e_l2i = 'V1_MT_FB_l5e_l2i'; v1_mt_l5e_l5e = 0;  mt_v1_l5e_l5e = 'V1_MT_FB_l5e_l5e'; v1_mt_l5e_l5i = 0; mt_v1_l5e_l5i= 'V1_MT_FB_l5e_l2i';
+        v1_mt_l5i_l2e = mt_v1_l5i_l2e = 0; v1_mt_l5i_l2i = mt_v1_l5i_l2i = 0; v1_mt_l5i_l5e = mt_v1_l5i_l5e = 0; v1_mt_l5i_l5i = mt_v1_l5i_l5i= 0;
+
+        W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i, v1_mt_l2e_l2e, v1_mt_l2e_l2i, v1_mt_l2e_l5e, v1_mt_l2e_l5i],
+                       [v1_v1_l2i_l2e, v1_v1_l2i_l2i, v1_v1_l2i_l5e, v1_v1_l2i_l5i, v1_v4_l2i_l2e, v1_v4_l2i_l2i, v1_v4_l2i_l5e, v1_v4_l2i_l5i, v1_mt_l2i_l2e, v1_mt_l2i_l2i, v1_mt_l2i_l5e, v1_mt_l2i_l5i],
+                       [v1_v1_l5e_l2e, v1_v1_l5e_l2i, v1_v1_l5e_l5e, v1_v1_l5e_l5i, v1_v4_l5e_l2e, v1_v4_l5e_l2i, v1_v4_l5e_l5e, v1_v4_l5e_l5i, v1_mt_l5e_l2e, v1_mt_l5e_l2i, v1_mt_l5e_l5e, v1_mt_l5e_l5i],
+                       [v1_v1_l5i_l2e, v1_v1_l5i_l2i, v1_v1_l5i_l5e, v1_v1_l5i_l5i, v1_v4_l5i_l2e, v1_v4_l5i_l2i, v1_v4_l5i_l5e, v1_v4_l5i_l5i, v1_mt_l5i_l2e, v1_mt_l5i_l2i, v1_mt_l5i_l5e, v1_mt_l5i_l5i],
+                       [v4_v1_l2e_l2e, v4_v1_l2e_l2i, v4_v1_l2e_l5e, v4_v1_l2e_l5i, v4_v4_l2e_l2e, v4_v4_l2e_l2i, v4_v4_l2e_l5e, v4_v4_l2e_l5i, v4_mt_l2e_l2e, v4_mt_l2e_l2i, v4_mt_l2e_l5e, v4_mt_l2e_l5i],
+                       [v4_v1_l2i_l2e, v4_v1_l2i_l2i, v4_v1_l2i_l5e, v4_v1_l2i_l5i, v4_v4_l2i_l2e, v4_v4_l2i_l2i, v4_v4_l2i_l5e, v4_v4_l2i_l5i, v4_mt_l2i_l2e, v4_mt_l2i_l2i, v4_mt_l2i_l5e, v4_mt_l2i_l5i],
+                       [v4_v1_l5e_l2e, v4_v1_l5e_l2i, v4_v1_l5e_l5e, v4_v1_l5e_l5i, v4_v4_l5e_l2e, v4_v4_l5e_l2i, v4_v4_l5e_l5e, v4_v4_l5e_l5i, v4_mt_l5e_l2e, v4_mt_l5e_l2i, v4_mt_l5e_l5e, v4_mt_l5e_l5i],
+                       [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i, v4_mt_l5i_l2e, v4_mt_l5i_l2i, v4_mt_l5i_l5e, v4_mt_l5i_l5i],
+                       [mt_v1_l2e_l2e, mt_v1_l2e_l2i, mt_v1_l2e_l5e, mt_v1_l2e_l5i, mt_v4_l2e_l2e, mt_v4_l2e_l2i, mt_v4_l2e_l5e, mt_v4_l2e_l5i, mt_mt_l2e_l2e, mt_mt_l2e_l2i, mt_mt_l2e_l5e, mt_mt_l2e_l5i],
+                       [mt_v1_l2i_l2e, mt_v1_l2i_l2i, mt_v1_l2i_l5e, mt_v1_l2i_l5i, mt_v4_l2i_l2e, mt_v4_l2i_l2i, mt_v4_l2i_l5e, mt_v4_l2i_l5i, mt_mt_l2i_l2e, mt_mt_l2i_l2i, mt_mt_l2i_l5e, mt_mt_l2i_l5i],
+                       [mt_v1_l5e_l2e, mt_v1_l5e_l2i, mt_v1_l5e_l5e, mt_v1_l5e_l5i, mt_v4_l5e_l2e, mt_v4_l5e_l2i, mt_v4_l5e_l5e, mt_v4_l5e_l5i, mt_mt_l5e_l2e, mt_mt_l5e_l2i, mt_mt_l5e_l5e, mt_mt_l5e_l5i],
+                       [mt_v1_l5i_l2e, mt_v1_l5i_l2i, mt_v1_l5i_l5e, mt_v1_l5i_l5i, mt_v4_l5i_l2e, mt_v4_l5i_l2i, mt_v4_l5i_l5e, mt_v4_l5i_l5i, mt_mt_l5i_l2e, mt_mt_l5i_l2i, mt_mt_l5i_l5e, mt_mt_l5i_l5i],
+                       ],
+                     dtype='U18')
+
+    else:
+        raise ValueError('Connectivity matrix not defined for more than 3 regions')
 
 
     net.synapses.append(Synapse(id='rs',
@@ -118,7 +239,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     pops = []
     area_edge = 30
     area_spacing = 30
-    
+
     layer_thickness = 30
     for area_idx, area in enumerate(areas):
         # Add populations
@@ -416,13 +537,13 @@ if __name__ == "__main__":
                 sim, net = generate(wee=wee, wei=wei, wie=wie, wii=wii, i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e, duration=25000,
                                     areas=['V1'], Iext=[[Iext, Iext]], count=run,
                                     net_id='Intralaminar')
-                                    
+
                 ################################################################################
                 ###   Run in some simulators
 
                 if not '-analysis' in sys.argv:
                     check_to_generate_or_run(sys.argv, sim)
-                    
+
                 else:
                     simulator = 'jNeuroML'
 
@@ -473,13 +594,13 @@ if __name__ == "__main__":
 
 
         if '-analysis' in sys.argv:
-            
+
             simulator = 'jNeuroML'
 
             nmllr = NeuroMLliteRunner('%s.json' % sim.id,
                                       simulator=simulator)
             traces, events = nmllr.run_once('/tmp')
-            
+
             rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
                                   np.array(traces['V1_L23_I/0/L23_I_comp/r']),
                                   np.array(traces['V1_L56_E/0/L56_E_comp/r']),
@@ -687,146 +808,138 @@ if __name__ == "__main__":
                                              'interlaminar')
 
             plt.show()
-            
+
     elif '-interareal' in sys.argv:
-        from interareal import interareal_analysis, interareal_plt, load_sln_data
+        from interareal import interareal_analysis, interareal_plt
 
-
-
-        # Background current simulation.
-        # Note: For testing purpose, only the rest simulation is performed if the flag '-analysis' is not
-        # passed
+        # Set model settings
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
-        FF_l2e_l2e = 1; FB_l5e_l2i = .5; FB_l5e_l5e=.9; FB_l5e_l5i = .5; FB_l5e_l2e = .1
         dt = 2e-01
         transient = 5
         duration = 4e04
         minfreq_l23 = 30. # Hz
         minfreq_l56 = 3. # Hz
-        areas = ['V1', 'V4']
-        nareas = len(areas)
 
-        # Load previously calculated SLN to define which regions are FF and which FB
-        sln_file_path = 'sln.csv'
-        df_sln = pd.read_csv('sln.text', index_col=0)
 
-        # Find SLN values for the areas under analysis
-        # First, check if we have the SLN values for all areas passed for the analysis
+        if '-3rois' not in sys.argv:
+            # Background current simulation.
+            # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
+            # passed
+            areas = ['V1', 'V4']
+            nareas = len(areas)
 
-        missing_area = [area for area in areas if area not in df_sln.columns]
-        assert(len(missing_area) > 0, 'Missing SLN values for the passed list')
-        sln = []
-        max_sln = 0
-        for region1, region2 in permutations(areas, 2):
-            print(region1 + '-->' + region2 + ': ' + str(df_sln[region1][region2]))
-            if df_sln[region1][region2] > max_sln:
-                max_sln = df_sln[region1][region2]
-                # TODO: you might want to have a list of lists
-                ff_connection = [region1, region2]
-        for connection in range(len(ff_connection)):
-            print('FF connection between: %s -> %s' %(ff_connection[connection][0], ff_connection[connection][1]))
+            # for testing purpose generate one single simulation
+            if '-analysis' in sys.argv:
+                stats = 10
+            else:
+                stats = 1
 
-        # for testing purpose generate one single simulation
-        if '-analysis' in sys.argv:
-            stats = 10
+            if '-stimulate_V1' in sys.argv:
+                # Iext0: Excitatory current on E L23,
+                # Iext1: Excitatory current on layer E l56
+                # The first 2 values correspond to the first area, the last 2 values for the second area
+                stimulated_area = 'stimulate_V1'
+                Iext0 = 2; Iext1 = 4 # background current at excitatory population
+                Iext_rest = [[Iext0, Iext1],[Iext0, Iext1]]
+                # Injection is applied at V1
+                stim = 15
+                Iext_stim = [[stim + Iext0, stim + Iext1], [Iext0, Iext1]]
+            elif '-stimulate_V4' in sys.argv:
+                stimulated_area = 'stimulate_V4'
+                Iext0 = 1; Iext1= 1 # background current at excitatory population
+                Iext_rest = [[Iext0, Iext1],[Iext0, Iext1]]
+                # Injection is applied at V4
+                stim = 15
+                Iext_stim = [[Iext0, Iext1], [stim + Iext0, stim + Iext1]]
+            else:
+                raise IOError('Please make sure you are stimulating either V1 (-stimulate_V1) or V4 (-stimulate_V4). Stimulation to other areas are not yet supported.')
+
+            traces_rest_stats = []
+            traces_stim_stats = []
+            for stat in range(stats):
+                # Run simulation at rest
+                sim_rest, net_rest = generate(wee=wee, wei=wei, wie=wie, wii=wii,
+                                              i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
+                                              areas=areas,
+                                              dt=dt, duration=duration, Iext=Iext_rest, count=stat,
+                                              net_id='Interareal')
+                # Run in some simulators
+                check_to_generate_or_run(sys.argv, sim_rest)
+                simulator = 'jNeuroML'
+
+                nmllr_rest = NeuroMLliteRunner('%s.json' %sim_rest.id,
+                                               simulator=simulator)
+                traces_rest, events_rest = nmllr_rest.run_once('/tmp')
+                # if -analysis is not passed generate a single network using the rest as default
+
+                # Run simulation with microsimulation
+                sim_stim, net_stim = generate(wee=wee, wei=wei, wie=wie, wii=wii,
+                                              i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
+                                              areas=areas,
+                                              dt=dt, duration=duration, Iext=Iext_stim, count=stat)
+                # Run in some simulators
+                check_to_generate_or_run(sys.argv, sim_stim)
+                simulator = 'jNeuroML'
+
+                nmllr_stim = NeuroMLliteRunner('%s.json' %sim_stim.id,
+                                               simulator=simulator)
+                traces_stim, events_stim = nmllr_stim.run_once('/tmp')
+
+
+
+                # Save the traces for each different run
+                traces_rest_stats.append(traces_rest)
+                traces_stim_stats.append(traces_stim)
+
+            if '-analysis' in sys.argv:
+
+                # Concatenate the simulation results in the same format as the matlab code
+                # No stimulus
+                rate_rest_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
+                for stat in range(stats):
+                    for idx, key in enumerate(sorted(traces_rest_stats[stat].keys())):
+                        if key is not 't':
+                            rate_rest_all[idx, :, stat] = traces_rest_stats[stat][key]
+                # With stimulus
+                rate_stim_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
+                for stat in range(stats):
+                    for idx, key in enumerate(sorted(traces_stim_stats[stat].keys())):
+                        if key is not 't':
+                            rate_stim_all[idx, :, stat] = traces_stim_stats[stat][key]
+
+                # TODO: Make this more obvious
+                # for compatibility with the Python code, expand the third dimension
+                rate_rest = np.expand_dims(rate_rest_all, axis=2)
+                rate_stim = np.expand_dims(rate_stim_all, axis=2)
+                # transform the dt from ms to s, for the rest of the analysis
+                s_dt = dt / 1000
+                # perform simulation with background current
+
+                #rate_stim = np.stack([traces_stim[key] for key in sorted(traces_stim.keys()) if key is not 't'])
+                # TODO: Make this more obvious
+
+                # Perfrom analysis with both rest and stimulated simulation
+                px20, px2, px50, px5, fx2, pgamma, palpha = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq_l23, minfreq_l56,
+                                                                nareas, stats)
+
+                # Plot the results
+                interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area, stats)
+
+            print('Done')
+
         else:
-            stats = 1
-
-        if '-stimulate_V1' in sys.argv:
-            # Iext0: Excitatory current on E L23,
-            # Iext1: Excitatory current on layer E l56
-            # The first 2 values correspond to the first area, the last 2 values for the second area
-            stimulated_area = 'stimulate_V1'
+            areas = ['V1', 'V4', 'MT']
             Iext0 = 2; Iext1 = 4 # background current at excitatory population
-            Iext_rest = [[Iext0, Iext1],[Iext0, Iext1]]
-            # Injection is applied at V1
-            stim = 15
-            Iext_stim = [[stim + Iext0, stim + Iext1], [Iext0, Iext1]]
-        elif '-stimulate_V4' in sys.argv:
-            stimulated_area = 'stimulate_V4'
-            Iext0 = 1; Iext1= 1 # background current at excitatory population
-            Iext_rest = [[Iext0, Iext1],[Iext0, Iext1]]
-            # Injection is applied at V4
-            stim = 15
-            Iext_stim = [[Iext0, Iext1], [stim + Iext0, stim + Iext1]]
-        else:
-            raise IOError('Please make sure you are stimulating either V1 (-stimulate_V1) or V4 (-stimulate_V4). Stimulation to other areas are not yet supported.')
-
-        traces_rest_stats = []
-        traces_stim_stats = []
-        for stat in range(stats):
-            # Run simulation at rest
+            Iext = [[Iext0, Iext1], [Iext0, Iext1], [Iext0, Iext1]]
+            # Run pyNeuroML to test simulation with 3 regions
             sim_rest, net_rest = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
-                                          areas=areas, FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
-                                          FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                                          dt=dt, duration=duration, Iext=Iext_rest, count=stat,
+                                          areas=areas,
+                                          dt=dt, duration=duration, Iext=Iext,
                                           net_id='Interareal')
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
-
-            nmllr_rest = NeuroMLliteRunner('%s.json' %sim_rest.id,
-                                           simulator=simulator)
-            traces_rest, events_rest = nmllr_rest.run_once('/tmp')
-            # if -analysis is not passed generate a single network using the rest as default
-
-            # Run simulation with microsimulation
-            sim_stim, net_stim = generate(wee=wee, wei=wei, wie=wie, wii=wii,
-                                          i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
-                                          areas=areas, FF_l2e_l2e=FF_l2e_l2e, FB_l5e_l2i=FB_l5e_l2i, FB_l5e_l5e=FB_l5e_l5e,
-                                          FB_l5e_l5i=FB_l5e_l5i, FB_l5e_l2e=FB_l5e_l2e,
-                                          dt=dt, duration=duration, Iext=Iext_stim, count=stat)
-            # Run in some simulators
-            check_to_generate_or_run(sys.argv, sim_stim)
-            simulator = 'jNeuroML'
-
-            nmllr_stim = NeuroMLliteRunner('%s.json' %sim_stim.id,
-                                           simulator=simulator)
-            traces_stim, events_stim = nmllr_stim.run_once('/tmp')
-
-
-
-            # Save the traces for each different run
-            traces_rest_stats.append(traces_rest)
-            traces_stim_stats.append(traces_stim)
-
-        if '-analysis' in sys.argv:
-
-            # Concatenate the simulation results in the same format as the matlab code
-            # No stimulus
-            rate_rest_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
-            for stat in range(stats):
-                for idx, key in enumerate(sorted(traces_rest_stats[stat].keys())):
-                    if key is not 't':
-                        rate_rest_all[idx, :, stat] = traces_rest_stats[stat][key]
-            # With stimulus
-            rate_stim_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
-            for stat in range(stats):
-                for idx, key in enumerate(sorted(traces_stim_stats[stat].keys())):
-                    if key is not 't':
-                        rate_stim_all[idx, :, stat] = traces_stim_stats[stat][key]
-
-            # TODO: Make this more obvious
-            # for compatibility with the Python code, expand the third dimension
-            rate_rest = np.expand_dims(rate_rest_all, axis=2)
-            rate_stim = np.expand_dims(rate_stim_all, axis=2)
-            # transform the dt from ms to s, for the rest of the analysis
-            s_dt = dt / 1000
-            # perform simulation with background current
-
-            #rate_stim = np.stack([traces_stim[key] for key in sorted(traces_stim.keys()) if key is not 't'])
-            # TODO: Make this more obvious
-
-            # Perfrom analysis with both rest and stimulated simulation
-            px20, px2, px50, px5, fx2, pgamma, palpha = interareal_analysis(rate_rest, rate_stim, transient, s_dt, minfreq_l23, minfreq_l56,
-                                                            nareas, stats)
-
-            # Plot the results
-            interareal_plt(areas, px20, px2, px50, px5, fx2, stimulated_area, stats)
-
-        print('Done')
-
 
     else:
 
