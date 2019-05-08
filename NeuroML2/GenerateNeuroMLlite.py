@@ -2,6 +2,7 @@ from neuromllite import Network, Cell, InputSource, Population, Synapse,Rectangu
 from neuromllite import Projection, RandomConnectivity, Input, Simulation
 import numpy as np
 import pickle
+import pandas as pd
 from itertools import permutations
 
 # Add the Python folder to the Python path
@@ -74,45 +75,38 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                               random_connectivity=RandomConnectivity(probability=1)))
 
 
-    n_areas = len(areas)
-    if n_areas == 1:
-        l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
-        l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
-        l2e_l5i = 0; l2e_l5e = 'l2e_l5e'; l2i_l5e = 0; l2i_l5i = 0;
-        l5e_l2e = 0; l5e_l2i= 'l5e_l2i'; l5i_l2e = 0; l5i_l2i = 0;
-        W = np.array([[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
-                       [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
-                       [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
-                       [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]], dtype='U14')
+    # Basic case when there is just one area
+    l2e_l2e = 'wee'; l2e_l2i = 'wei'; l2i_l2e = 'wie'; l2i_l2i = 'wii';
+    l5e_l5e = 'wee'; l5e_l5i = 'wei'; l5i_l5e = 'wie'; l5i_l5i = 'wii';
+    l2e_l5i = 0; l2e_l5e = 'l2e_l5e'; l2i_l5e = 0; l2i_l5i = 0;
+    l5e_l2e = 0; l5e_l2i= 'l5e_l2i'; l5i_l2e = 0; l5i_l2i = 0;
+    W_tmp = np.array([[l2e_l2e, l2e_l2i, l2e_l5e, l2e_l5i],
+                     [l2i_l2e, l2i_l2i, l2i_l5e, l2i_l5i],
+                     [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
+                     [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]], dtype='U14')
+    # Todo: change the areas[0]
+    n_areas = len(areas[0])
+    # Create the correct connectivity size matrix
+    W = np.zeros((4 * n_areas, 4 * n_areas), dtype='U14')
 
-    elif n_areas == 2:
-        v1_v1_l2e_l2e = v4_v4_l2e_l2e = 'wee'; v1_v1_l5e_l5e = v4_v4_l5e_l5e = 'wee'
-        v1_v1_l2e_l2i = v4_v4_l2e_l2i = 'wei'; v1_v1_l5e_l5i = v4_v4_l5e_l5i = 'wei'
-        v1_v1_l2i_l2e = v4_v4_l2i_l2e = 'wie'; v1_v1_l5i_l5e = v4_v4_l5i_l5e = 'wie'
-        v1_v1_l2i_l2i = v4_v4_l2i_l2i = 'wii'; v1_v1_l5i_l5i = v4_v4_l5i_l5i = 'wii'
+    for i in range(n_areas):
+        for j in range(n_areas):
+            W[4*i:4*i+4, 4*j:4*j+4] = W_tmp
 
-        v1_v1_l2e_l5e = v4_v4_l2e_l5e = 'l2e_l5e'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = 0;
-        v1_v1_l5e_l2i = v4_v4_l5e_l2i = 'l5e_l2i'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = 0;
-        v1_v1_l2i_l5e = v4_v4_l2i_l5e = 0; v1_v1_l5i_l2i = v4_v4_l5i_l2i = 0;
-        v1_v1_l5i_l2e = v4_v4_l5i_l2e = 0; v1_v1_l2i_l5i = v4_v4_l2i_l5i = 0;
+    # Define FF and FB connections
+    W[0, 4] = 'FF_l2e_l2e'
+    W[6, 0] = 'FB_l5e_l2i'
+    W[6, 1] = 'FB_l5e_l2i'
+    W[6, 2] = 'FB_l5e_l5e'
+    W[6, 3] = 'FB_l5e_l5i'
 
-        # interareal
-        v1_v4_l2e_l2e = 'FF_l2e_l2e'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
-        v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
-        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'FB_l5e_l2i'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'FB_l5e_l2i';
-        v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
-
-        W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i],
-                       [v1_v1_l2i_l2e, v1_v1_l2i_l2i, v1_v1_l2i_l5e, v1_v1_l2i_l5i, v1_v4_l2i_l2e, v1_v4_l2i_l2i, v1_v4_l2i_l5e, v1_v4_l2i_l5i],
-                       [v1_v1_l5e_l2e, v1_v1_l5e_l2i, v1_v1_l5e_l5e, v1_v1_l5e_l5i, v1_v4_l5e_l2e, v1_v4_l5e_l2i, v1_v4_l5e_l5e, v1_v4_l5e_l5i],
-                       [v1_v1_l5i_l2e, v1_v1_l5i_l2i, v1_v1_l5i_l5e, v1_v1_l5i_l5i, v1_v4_l5i_l2e, v1_v4_l5i_l2i, v1_v4_l5i_l5e, v1_v4_l5i_l5i],
-                       [v4_v1_l2e_l2e, v4_v1_l2e_l2i, v4_v1_l2e_l5e, v4_v1_l2e_l5i, v4_v4_l2e_l2e, v4_v4_l2e_l2i, v4_v4_l2e_l5e, v4_v4_l2e_l5i],
-                       [v4_v1_l2i_l2e, v4_v1_l2i_l2i, v4_v1_l2i_l5e, v4_v1_l2i_l5i, v4_v4_l2i_l2e, v4_v4_l2i_l2i, v4_v4_l2i_l5e, v4_v4_l2i_l5i],
-                       [v4_v1_l5e_l2e, v4_v1_l5e_l2i, v4_v1_l5e_l5e, v4_v1_l5e_l5i, v4_v4_l5e_l2e, v4_v4_l5e_l2i, v4_v4_l5e_l5e, v4_v4_l5e_l5i],
-                       [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i]],
-                     dtype='U14')
-    else:
-        raise ValueError('Connectivity matrix not defined for more than 2 regions')
+    # Set the connections between regions
+    # TODO: continue filling up this list
+    W[0, 5] = 0 #region1_region2_l2e-l2i
+    W[1, 4] = 0 # region2_region1 l2e-l2i
+    W[0, 6] = 0 # region1 region2 l2e-l5e
+    W[2, 4] = 0 # region2 region1 l2e-l5e
+    W[0, 7] = 0 # region1 region2 l2e-l5i
 
 
     net.synapses.append(Synapse(id='rs',
@@ -700,7 +694,7 @@ if __name__ == "__main__":
 
 
         # Background current simulation.
-        # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
+        # Note: For testing purpose, only the rest simulation is performed if the flag '-analysis' is not
         # passed
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
         FF_l2e_l2e = 1; FB_l5e_l2i = .5; FB_l5e_l5e=.9; FB_l5e_l5i = .5; FB_l5e_l2e = .1
@@ -713,19 +707,24 @@ if __name__ == "__main__":
         nareas = len(areas)
 
         # Load previously calculated SLN to define which regions are FF and which FB
-        sln_file_path = '../Matlab/Fig6/subgraphData20.mat'
-        mat = load_sln_data(sln_file_path)
+        sln_file_path = 'sln.csv'
+        df_sln = pd.read_csv('sln.text', index_col=0)
 
         # Find SLN values for the areas under analysis
         # First, check if we have the SLN values for all areas passed for the analysis
-        missing_area = [area for area in areas if area not in mat['areaList']]
+
+        missing_area = [area for area in areas if area not in df_sln.columns]
         assert(len(missing_area) > 0, 'Missing SLN values for the passed list')
-        areas_idx = [np.where(mat['areaList'] == area)[0] for area in areas]
-        areas_idx_matrix = list(permutations(areas_idx, 2))
-        sln_areas = [mat['slnMat'][perm][0] for perm in areas_idx_matrix]
-        # Find the max sln value. This will be the FF connection
-        sln_max = np.argmax(sln_areas)
-        print('FF connection between: ')
+        sln = []
+        max_sln = 0
+        for region1, region2 in permutations(areas, 2):
+            print(region1 + '-->' + region2 + ': ' + str(df_sln[region1][region2]))
+            if df_sln[region1][region2] > max_sln:
+                max_sln = df_sln[region1][region2]
+                # TODO: you might want to have a list of lists
+                ff_connection = [region1, region2]
+        for connection in range(len(ff_connection)):
+            print('FF connection between: %s -> %s' %(ff_connection[connection][0], ff_connection[connection][1]))
 
         # for testing purpose generate one single simulation
         if '-analysis' in sys.argv:
