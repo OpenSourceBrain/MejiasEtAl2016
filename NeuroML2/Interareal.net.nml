@@ -1,7 +1,4 @@
 <neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/development/Schemas/NeuroML2/NeuroML_v2beta5.xsd" id="Interareal">
-    <include href="Prototypes.xml"/>
-    <include href="RateBased.xml"/>
-    <include href="NoisyCurrentSource.xml"/>    
     <notes>Generated network: Interareal
     Generation seed: 1234
     NeuroMLlite parameters: 
@@ -10,7 +7,7 @@
         FB_l5e_l5e = 0.9
         wee = 1.5
         l5e_l2i = 0.75
-        FF_l2e_l2e = 1
+        FF_l2e_l2e = 1.0
         l2e_l5e = 1
         wii = -2.5
         sigma56 = 0.45
@@ -18,6 +15,9 @@
         FB_l5e_l2i = 0.5
         FB_l5e_l5i = 0.5
         sigma23 = 0.3</notes>
+    <include href="Prototypes.xml"/>
+    <include href="RateBased.xml"/>
+    <include href="NoisyCurrentSource.xml"/>
     <silentSynapse id="silentSyn_proj_V1_L23_E_V1_L23_E"/>
     <silentSynapse id="silentSyn_proj_V1_L23_E_V1_L23_I"/>
     <silentSynapse id="silentSyn_proj_V1_L23_E_V1_L56_E"/>

@@ -60,19 +60,19 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'sigma56': sigma56 }
     elif len(areas) == 3:
         V1_V4_FF_l2e_l2e = 1.
-        V1_V4_FB_l5e_l2i = 5.
+        V1_V4_FB_l5e_l2i = .5
         V1_V4_FB_l5e_l5e = .9
         V1_V4_FB_l5e_l5i = .5
         V1_V4_FB_l5e_l2e = .1
 
         V1_MT_FF_l2e_l2e = 1.
-        V1_MT_FB_l5e_l2i = 5.
+        V1_MT_FB_l5e_l2i = .5
         V1_MT_FB_l5e_l5e = .9
         V1_MT_FB_l5e_l5i = .5
         V1_MT_FB_l5e_l2e = .1
 
         V4_MT_FF_l2e_l2e = 1.
-        V4_MT_FB_l5e_l2i = 5.
+        V4_MT_FB_l5e_l2i = .5
         V4_MT_FB_l5e_l5e = .9
         V4_MT_FB_l5e_l5i = .5
         V4_MT_FB_l5e_l2e = .1
@@ -819,6 +819,8 @@ if __name__ == "__main__":
         duration = 4e04
         minfreq_l23 = 30. # Hz
         minfreq_l56 = 3. # Hz
+        
+        net_id='Interareal'
 
 
         if '-3rois' not in sys.argv:
@@ -862,7 +864,7 @@ if __name__ == "__main__":
                                               i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                               areas=areas,
                                               dt=dt, duration=duration, Iext=Iext_rest, count=stat,
-                                              net_id='Interareal')
+                                              net_id=net_id)
                 # Run in some simulators
                 check_to_generate_or_run(sys.argv, sim_rest)
                 simulator = 'jNeuroML'
@@ -876,7 +878,8 @@ if __name__ == "__main__":
                 sim_stim, net_stim = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                               i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                               areas=areas,
-                                              dt=dt, duration=duration, Iext=Iext_stim, count=stat)
+                                              dt=dt, duration=duration, Iext=Iext_stim, count=stat,
+                                              net_id=net_id)
                 # Run in some simulators
                 check_to_generate_or_run(sys.argv, sim_stim)
                 simulator = 'jNeuroML'
@@ -929,6 +932,8 @@ if __name__ == "__main__":
 
         else:
             areas = ['V1', 'V4', 'MT']
+            net_id='Interareal_3'
+            
             Iext0 = 2; Iext1 = 4 # background current at excitatory population
             Iext = [[Iext0, Iext1], [Iext0, Iext1], [Iext0, Iext1]]
             # Run pyNeuroML to test simulation with 3 regions
@@ -936,7 +941,7 @@ if __name__ == "__main__":
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=areas,
                                           dt=dt, duration=duration, Iext=Iext,
-                                          net_id='Interareal')
+                                          net_id=net_id)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
