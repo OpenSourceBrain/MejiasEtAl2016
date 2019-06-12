@@ -59,44 +59,16 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
     elif len(areas) == 3:
-        V1_V4_FF_l2e_l2e = 1.
-        V1_V4_FB_l5e_l2i = 5.
-        V1_V4_FB_l5e_l5e = .9
-        V1_V4_FB_l5e_l5i = .5
-        V1_V4_FB_l5e_l2e = .1
+        interareal_conn = np.array([[0, 1, 0],
+                                    [1, 0, 0],
+                                    [0, 1, 0]])
 
-        V1_MT_FF_l2e_l2e = 1.
-        V1_MT_FB_l5e_l2i = 5.
-        V1_MT_FB_l5e_l5e = .9
-        V1_MT_FB_l5e_l5i = .5
-        V1_MT_FB_l5e_l2e = .1
-
-        V4_MT_FF_l2e_l2e = 1.
-        V4_MT_FB_l5e_l2i = 5.
-        V4_MT_FB_l5e_l5e = .9
-        V4_MT_FB_l5e_l5i = .5
-        V4_MT_FB_l5e_l2e = .1
         net.parameters = { 'wee': wee,
                            'wei': wei,
                            'wie': wie,
                            'wii': wii,
                            'l5e_l2i': i_l5e_l2i,
                            'l2e_l5e': i_l2e_l5e,
-                           'V1_V4_FF_l2e_l2e': V1_V4_FF_l2e_l2e,
-                           'V1_V4_FB_l5e_l2i': V1_V4_FB_l5e_l2i,
-                           'V1_V4_FB_l5e_l5e': V1_V4_FB_l5e_l5e,
-                           'V1_V4_FB_l5e_l5i': V1_V4_FB_l5e_l5i,
-                           'V1_V4_FB_l5e_l2e': V1_V4_FB_l5e_l2e,
-                           'V4_MT_FF_l2e_l2e': V4_MT_FF_l2e_l2e,
-                           'V4_MT_FB_l5e_l2i': V4_MT_FB_l5e_l2i,
-                           'V4_MT_FB_l5e_l5e': V4_MT_FB_l5e_l5e,
-                           'V4_MT_FB_l5e_l5i': V4_MT_FB_l5e_l5i,
-                           'V4_MT_FB_l5e_l2e': V4_MT_FB_l5e_l2e,
-                           'V1_MT_FF_l2e_l2e': V1_MT_FF_l2e_l2e,
-                           'V1_MT_FB_l5e_l2i': V1_MT_FB_l5e_l2i,
-                           'V1_MT_FB_l5e_l5e': V1_MT_FB_l5e_l5e,
-                           'V1_MT_FB_l5e_l5i': V1_MT_FB_l5e_l5i,
-                           'V1_MT_FB_l5e_l2e': V1_MT_FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
 
@@ -165,7 +137,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         # interareal
         v1_v4_l2e_l2e = 'FF_l2e_l2e'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
         v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
-        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'FB_l5e_l2i'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'FB_l5e_l2i';
+        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'FB_l5e_l2e'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'FB_l5e_l2i';
         v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
 
         W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i],
@@ -179,52 +151,55 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                      dtype='U14')
 
     elif n_areas == 3:
-        # Check if you have 3 time (1 FF and 3 FB connection)
+
+        nregions = 3
+        nlayers = 4
+
+        # Define connections between regions
+        conn = np.array([[0, 0, 0],
+                         [1, 0, 0],
+                         [0, 1, 0]])
+        # TODO: Check if the user did not specifiy twice that there is a FF and a FB connection
+        # NOTE: This assumes that the matrix has been organised by ranking
+
+        # Define connections to self areas (diagonal entries)
+        interlayer_conn_diag = np.array([[wee, wei, i_l2e_l5e, 0],
+                                         [wie, wii, 0, 0],
+                                         [0, i_l5e_l2i, wee, wei],
+                                         [0, 0, wie, wii]
+                                         ])
+
+        # Define the main connectivity matrix
+        W = np.zeros((nregions * nlayers, nregions * nlayers))
+
+        # Get the upper or the lower diagonal. This information is useful to now if the connection is FF(uper triangular matrix)
+        #  or FB (lower triangular matrix)
+        up_tri = zip(np.triu_indices(3,1)[0], np.triu_indices(3,1)[1])
+        lw_tri = zip(np.tril_indices(3,-1)[0], np.tril_indices(3,-1)[1])
+        for row in range(conn.shape[0]):
+            for col in range(conn.shape[1]):
+                #  What to do in the self-connection case
+                if row == col:
+                    W[row * 4:row * 4 + 4, col * 4:col * 4 + 4] = interlayer_conn_diag
+                    continue
+                # Define connection between different areas
+                if conn[row, col] != 0:
+                    # Add FF connection
+                    if (row, col) in up_tri:
+                        W[row*4 + 2, col* 4 + 0] = .1 # FB l5e_l2e
+                        W[row*4 + 2, col* 4 + 3] = .5 # FB l5e_l5i
+                        W[row*4 + 2, col* 4 + 2] = .9 # FB l5e_l5e
+                        W[row*4 + 2, col* 4 + 1] = .5 # FB l5e_l2i
+                        W[col*4 + 0, row* 4 + 0] = 1. # FF_L2e_l2e
 
 
-        v1_v1_l2e_l2e = v4_v4_l2e_l2e = mt_mt_l2e_l2e = 'wee'; v1_v1_l5e_l5e = v4_v4_l5e_l5e = mt_mt_l5e_l5e ='wee'
-        v1_v1_l2e_l2i = v4_v4_l2e_l2i = mt_mt_l2e_l2i = 'wei'; v1_v1_l5e_l5i = v4_v4_l5e_l5i = mt_mt_l5e_l5i ='wei'
-        v1_v1_l2i_l2e = v4_v4_l2i_l2e = mt_mt_l2i_l2e = 'wie'; v1_v1_l5i_l5e = v4_v4_l5i_l5e = mt_mt_l5i_l5e ='wie'
-        v1_v1_l2i_l2i = v4_v4_l2i_l2i = mt_mt_l2i_l2i = 'wii'; v1_v1_l5i_l5i = v4_v4_l5i_l5i = mt_mt_l5i_l5i ='wii'
-
-        v1_v1_l2e_l5e = v4_v4_l2e_l5e = mt_mt_l2e_l5e = 'l2e_l5e'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = mt_mt_l2e_l5i = 0
-        v1_v1_l5e_l2i = v4_v4_l5e_l2i = mt_mt_l5e_l2i = 'l5e_l2i'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = mt_mt_l5e_l2e = 0
-        v1_v1_l2i_l5e = v4_v4_l2i_l5e = mt_mt_l2i_l5e = 0;         v1_v1_l5i_l2i = v4_v4_l5i_l2i = mt_mt_l2i_l5i = 0
-        v1_v1_l5i_l2e = v4_v4_l5i_l2e = mt_mt_l5i_l2e = 0;         v1_v1_l2i_l5i = v4_v4_l2i_l5i = mt_mt_l5i_l2i = 0
-
-        # interareal
-        # V1 -> V4
-        v1_v4_l2e_l2e = 'V1_V4_FF_l2e_l2e'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
-        v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
-        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'V1_V4_FB_l5e_l2i'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'V1_V4_FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'V1_V4_FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'V1_V4_FB_l5e_l2i';
-        v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
-
-        # V4 -> MT
-        v4_mt_l2e_l2e = 'V4_MT_FF_l2e_l2e'; mt_v4_l2e_l2e = 0; v4_mt_l2e_l2i = mt_v4_l2e_l2i = 0; v4_mt_l2e_l5e = mt_v4_l2e_l5e = 0; v4_mt_l2e_l5i = mt_v4_l2e_l5i= 0;
-        v4_mt_l2i_l2e = mt_v4_l2i_l2e = 0; v4_mt_l2i_l2i = mt_v4_l2i_l2i = 0; v4_mt_l2i_l5e = mt_v4_l2i_l5e = 0; v4_mt_l2i_l5i = mt_v4_l2i_l5i = 0;
-        v4_mt_l5e_l2e = 0; mt_v4_l5e_l2e = 'V4_MT_FB_l5e_l2i'; v4_mt_l5e_l2i = 0; mt_v4_l5e_l2i = 'V4_MT_FB_l5e_l2i'; v4_mt_l5e_l5e = 0;  mt_v4_l5e_l5e = 'V4_MT_FB_l5e_l5e'; v4_mt_l5e_l5i = 0; mt_v4_l5e_l5i= 'V4_MT_FB_l5e_l2i';
-        v4_mt_l5i_l2e = mt_v4_l5i_l2e = 0; v4_mt_l5i_l2i = mt_v4_l5i_l2i = 0; v4_mt_l5i_l5e = mt_v4_l5i_l5e = 0; v4_mt_l5i_l5i = mt_v4_l5i_l5i= 0;
-
-        # V1 -> MT
-        v1_mt_l2e_l2e = 'V1_MT_FF_l2e_l2e'; mt_v1_l2e_l2e = 0; v1_mt_l2e_l2i = mt_v1_l2e_l2i = 0; v1_mt_l2e_l5e = mt_v1_l2e_l5e = 0; v1_mt_l2e_l5i = mt_v1_l2e_l5i= 0;
-        v1_mt_l2i_l2e = mt_v1_l2i_l2e = 0; v1_mt_l2i_l2i = mt_v1_l2i_l2i = 0; v1_mt_l2i_l5e = mt_v1_l2i_l5e = 0; v1_mt_l2i_l5i = mt_v1_l2i_l5i = 0;
-        v1_mt_l5e_l2e = 0; mt_v1_l5e_l2e = 'V1_MT_FB_l5e_l2i'; v1_mt_l5e_l2i = 0; mt_v1_l5e_l2i = 'V1_MT_FB_l5e_l2i'; v1_mt_l5e_l5e = 0;  mt_v1_l5e_l5e = 'V1_MT_FB_l5e_l5e'; v1_mt_l5e_l5i = 0; mt_v1_l5e_l5i= 'V1_MT_FB_l5e_l2i';
-        v1_mt_l5i_l2e = mt_v1_l5i_l2e = 0; v1_mt_l5i_l2i = mt_v1_l5i_l2i = 0; v1_mt_l5i_l5e = mt_v1_l5i_l5e = 0; v1_mt_l5i_l5i = mt_v1_l5i_l5i= 0;
-
-        W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i, v1_mt_l2e_l2e, v1_mt_l2e_l2i, v1_mt_l2e_l5e, v1_mt_l2e_l5i],
-                       [v1_v1_l2i_l2e, v1_v1_l2i_l2i, v1_v1_l2i_l5e, v1_v1_l2i_l5i, v1_v4_l2i_l2e, v1_v4_l2i_l2i, v1_v4_l2i_l5e, v1_v4_l2i_l5i, v1_mt_l2i_l2e, v1_mt_l2i_l2i, v1_mt_l2i_l5e, v1_mt_l2i_l5i],
-                       [v1_v1_l5e_l2e, v1_v1_l5e_l2i, v1_v1_l5e_l5e, v1_v1_l5e_l5i, v1_v4_l5e_l2e, v1_v4_l5e_l2i, v1_v4_l5e_l5e, v1_v4_l5e_l5i, v1_mt_l5e_l2e, v1_mt_l5e_l2i, v1_mt_l5e_l5e, v1_mt_l5e_l5i],
-                       [v1_v1_l5i_l2e, v1_v1_l5i_l2i, v1_v1_l5i_l5e, v1_v1_l5i_l5i, v1_v4_l5i_l2e, v1_v4_l5i_l2i, v1_v4_l5i_l5e, v1_v4_l5i_l5i, v1_mt_l5i_l2e, v1_mt_l5i_l2i, v1_mt_l5i_l5e, v1_mt_l5i_l5i],
-                       [v4_v1_l2e_l2e, v4_v1_l2e_l2i, v4_v1_l2e_l5e, v4_v1_l2e_l5i, v4_v4_l2e_l2e, v4_v4_l2e_l2i, v4_v4_l2e_l5e, v4_v4_l2e_l5i, v4_mt_l2e_l2e, v4_mt_l2e_l2i, v4_mt_l2e_l5e, v4_mt_l2e_l5i],
-                       [v4_v1_l2i_l2e, v4_v1_l2i_l2i, v4_v1_l2i_l5e, v4_v1_l2i_l5i, v4_v4_l2i_l2e, v4_v4_l2i_l2i, v4_v4_l2i_l5e, v4_v4_l2i_l5i, v4_mt_l2i_l2e, v4_mt_l2i_l2i, v4_mt_l2i_l5e, v4_mt_l2i_l5i],
-                       [v4_v1_l5e_l2e, v4_v1_l5e_l2i, v4_v1_l5e_l5e, v4_v1_l5e_l5i, v4_v4_l5e_l2e, v4_v4_l5e_l2i, v4_v4_l5e_l5e, v4_v4_l5e_l5i, v4_mt_l5e_l2e, v4_mt_l5e_l2i, v4_mt_l5e_l5e, v4_mt_l5e_l5i],
-                       [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i, v4_mt_l5i_l2e, v4_mt_l5i_l2i, v4_mt_l5i_l5e, v4_mt_l5i_l5i],
-                       [mt_v1_l2e_l2e, mt_v1_l2e_l2i, mt_v1_l2e_l5e, mt_v1_l2e_l5i, mt_v4_l2e_l2e, mt_v4_l2e_l2i, mt_v4_l2e_l5e, mt_v4_l2e_l5i, mt_mt_l2e_l2e, mt_mt_l2e_l2i, mt_mt_l2e_l5e, mt_mt_l2e_l5i],
-                       [mt_v1_l2i_l2e, mt_v1_l2i_l2i, mt_v1_l2i_l5e, mt_v1_l2i_l5i, mt_v4_l2i_l2e, mt_v4_l2i_l2i, mt_v4_l2i_l5e, mt_v4_l2i_l5i, mt_mt_l2i_l2e, mt_mt_l2i_l2i, mt_mt_l2i_l5e, mt_mt_l2i_l5i],
-                       [mt_v1_l5e_l2e, mt_v1_l5e_l2i, mt_v1_l5e_l5e, mt_v1_l5e_l5i, mt_v4_l5e_l2e, mt_v4_l5e_l2i, mt_v4_l5e_l5e, mt_v4_l5e_l5i, mt_mt_l5e_l2e, mt_mt_l5e_l2i, mt_mt_l5e_l5e, mt_mt_l5e_l5i],
-                       [mt_v1_l5i_l2e, mt_v1_l5i_l2i, mt_v1_l5i_l5e, mt_v1_l5i_l5i, mt_v4_l5i_l2e, mt_v4_l5i_l2i, mt_v4_l5i_l5e, mt_v4_l5i_l5i, mt_mt_l5i_l2e, mt_mt_l5i_l2i, mt_mt_l5i_l5e, mt_mt_l5i_l5i],
-                       ],
-                     dtype='U18')
+                    # Add FB connection
+                    if (row, col) in lw_tri:
+                        W[row*4 + 2, col* 4 + 0] = .1 # FB l5e_l2e
+                        W[row*4 + 2, col* 4 + 3] = .5 # FB l5e_l5i
+                        W[row*4 + 2, col* 4 + 2] = .9 # FB l5e_l5e
+                        W[row*4 + 2, col* 4 + 1] = .5 # FB l5e_l2i
+                        W[col*4 + 0, row* 4 + 0] = 1. # FF_L2e_l2e
 
     else:
         raise ValueError('Connectivity matrix not defined for more than 3 regions')
@@ -928,7 +903,24 @@ if __name__ == "__main__":
             print('Done')
 
         else:
+            #Load the array with the ordered rank
+            import pandas as pd
             areas = ['V1', 'V4', 'MT']
+            ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
+            # TODO:Check if all the regions are present
+            # sort the regions by the areas in the ranking
+            ranked_areas = ranking[ranking['region'].isin(areas)]
+
+            # Create the fw and bw connectivity
+
+            # connbw = np.zeros((ranked_areas['region'].shape[0], ranked_areas['regions'].shape[0]))
+            # conn_fw = np.array([[0, 1, 0],
+            #                     [0, 0, 1],
+            #                     [1, 0, 0]])
+            # define if areas are connected
+            # conn = np.zeros((ranked_areas['region'].shape[0], ranked_areas['regions'].shape[0]))
+
+
             Iext0 = 2; Iext1 = 4 # background current at excitatory population
             Iext = [[Iext0, Iext1], [Iext0, Iext1], [Iext0, Iext1]]
             # Run pyNeuroML to test simulation with 3 regions
