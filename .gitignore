@@ -36,3 +36,4 @@ NeuroML2/*.png
 Matlab/*.png
 /NeuroML2/*.svg
 /NeuroML2/subgraphData30.mat
+/NeuroML2/clean.sh

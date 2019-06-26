@@ -58,6 +58,8 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'FB_l5e_l2e': FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
+
+
     elif len(areas) > 2:
         net.parameters = { 'wee': wee,
                            'wei': wei,
@@ -97,7 +99,12 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         print('Connection %s -> %s:' %(pre_pop.id[:2], post_pop.id[:2]))
         weight = str(W[pops.index(pre_pop)][pops.index(post_pop)])
         print('    Connection %s -> %s weight %s'%(pre_pop.id, post_pop.id, weight))
-        if weight!=0:
+        zero_weight = False
+        try:
+            zero_weight = float(weight)==0
+        except:
+            pass
+        if not zero_weight:
             net.projections.append(Projection(id='proj_%s_%s'%(pre_pop.id, post_pop.id),
                                               presynaptic=pre_pop.id,
                                               postsynaptic=post_pop.id,
@@ -106,6 +113,9 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                               delay=0,
                                               weight=weight,
                                               random_connectivity=RandomConnectivity(probability=1)))
+        else:
+            print('    Ignoring, as weight=0...')
+            
 
 
     n_areas = len(areas)
@@ -234,22 +244,22 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         net.populations.append(pl56i)
 
         # Add inputs
-        input_source_l23 = InputSource(id='iclamp_23_%s' %area,
+        input_source_l23 = InputSource(id='iclamp_%s_L23' %area,
                                        neuroml2_input='PulseGenerator',
                                        parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
         net.input_sources.append(input_source_l23)
         # Add modulation
-        net.inputs.append(Input(id='modulation_l23_E',
+        net.inputs.append(Input(id='modulation_%s_L23_E'%area,
                                 input_source=input_source_l23.id,
                                 population=pl23e.id,
                                 percentage=100))
-        input_source_l56 = InputSource(id='iclamp_56_%s' %area,
+        input_source_l56 = InputSource(id='iclamp_%s_L56' %area,
                                        neuroml2_input='PulseGenerator',
                                        parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
 
         net.input_sources.append(input_source_l56)
         # Add modulation
-        net.inputs.append(Input(id='modulation_l56_E',
+        net.inputs.append(Input(id='modulation_%s_L56_E'%area,
                                 input_source=input_source_l56.id,
                                 population=pl56e.id,
                                 percentage=100))
@@ -261,7 +271,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
 
     print(net)
-    print(net.to_json())
+    #print(net.to_json())
     new_file = net.to_json_file('%s.json'%net.id)
 
 
@@ -787,6 +797,8 @@ if __name__ == "__main__":
         duration = 4e04
         minfreq_l23 = 30. # Hz
         minfreq_l56 = 3. # Hz
+        
+        net_id='Interareal'
 
 
         if '-3rois' not in sys.argv:
@@ -830,7 +842,7 @@ if __name__ == "__main__":
                                               i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                               areas=areas,
                                               dt=dt, duration=duration, Iext=Iext_rest, count=stat,
-                                              net_id='Interareal')
+                                              net_id=net_id)
                 # Run in some simulators
                 check_to_generate_or_run(sys.argv, sim_rest)
                 simulator = 'jNeuroML'
@@ -844,7 +856,8 @@ if __name__ == "__main__":
                 sim_stim, net_stim = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                               i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                               areas=areas,
-                                              dt=dt, duration=duration, Iext=Iext_stim, count=stat)
+                                              dt=dt, duration=duration, Iext=Iext_stim, count=stat,
+                                              net_id=net_id)
                 # Run in some simulators
                 check_to_generate_or_run(sys.argv, sim_stim)
                 simulator = 'jNeuroML'
@@ -898,7 +911,11 @@ if __name__ == "__main__":
         else:
             #Load the array with the ordered rank
             import pandas as pd
+
+
             areas = ['V1', 'V4', 'MT', 'TEO']
+            net_id='Interareal_%d' %len(areas)
+
             ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
             # Check if the selected regions are present in the file that describe the ranking
             assert(len(areas) == sum(ranking['region'].isin(areas)))
@@ -913,14 +930,13 @@ if __name__ == "__main__":
                              [0, 1, 0, 0],
                              [0, 0, 1, 0]])
 
-
             Iext0 = 2; Iext1 = 4 # background current at excitatory population
             Iext = [[Iext0, Iext1]] * len(areas)
             sim_rest, net_rest = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=areas,
                                           dt=dt, duration=duration, Iext=Iext,
-                                          net_id='Interareal', conn=conn)
+                                          net_id=net_id, conn=conn)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
