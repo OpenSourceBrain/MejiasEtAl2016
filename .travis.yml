@@ -30,10 +30,10 @@ install:
     # install pyelectro
     - pip install git+https://github.com/NeuralEnsemble/pyelectro.git
 
-    - pip install pyNeuroML
     - git clone https://github.com/NeuroML/NeuroMLlite.git
     - cd NeuroMLlite
     - python setup.py install
+    - pip install pyNeuroML
     - cd examples
     - python Example2.py # test one example...
     - cd ../..
