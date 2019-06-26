@@ -54,56 +54,56 @@
             <property tag="color" value=".8 0 0"/>
             <property tag="region" value="V1_L23"/>
             <instance id="0">
-                <location x="28.993606070764162" y="43.221977975260579" z="0.224744101757616"/>
+                <location x="0." y="50." z="0."/>
             </instance>
         </population>
         <population id="V1_L23_I" component="L23_I_comp" size="1" type="populationList">
             <property tag="color" value="0 0 .8"/>
             <property tag="region" value="V1_L23"/>
             <instance id="0">
-                <location x="27.329278873473726" y="58.178069920912918" z="17.466827191768473"/>
+                <location x="0." y="40." z="0."/>
             </instance>
         </population>
         <population id="V1_L56_E" component="L56_E_comp" size="1" type="populationList">
             <property tag="color" value="1 .2 0"/>
             <property tag="region" value="V1_L56"/>
             <instance id="0">
-                <location x="20.146904444639553" y="2.518146805112519" z="22.994427983753887"/>
+                <location x="0." y="20." z="0."/>
             </instance>
         </population>
         <population id="V1_L56_I" component="L56_I_comp" size="1" type="populationList">
             <property tag="color" value="0 .2 1"/>
             <property tag="region" value="V1_L56"/>
             <instance id="0">
-                <location x="7.104293260893533" y="0.924420651798299" z="23.663181517088503"/>
+                <location x="0." y="10." z="0."/>
             </instance>
         </population>
         <population id="V4_L23_E" component="L23_E_comp" size="1" type="populationList">
             <property tag="color" value=".8 0 0"/>
             <property tag="region" value="V4_L23"/>
             <instance id="0">
-                <location x="70.382668967913688" y="48.698444251175054" z="18.474470853108457"/>
+                <location x="60." y="50." z="0."/>
             </instance>
         </population>
         <population id="V4_L23_I" component="L23_I_comp" size="1" type="populationList">
             <property tag="color" value="0 0 .8"/>
             <property tag="region" value="V4_L23"/>
             <instance id="0">
-                <location x="64.456639161248631" y="35.492719422297952" z="3.432389090660629"/>
+                <location x="60." y="40." z="0."/>
             </instance>
         </population>
         <population id="V4_L56_E" component="L56_E_comp" size="1" type="populationList">
             <property tag="color" value="1 .2 0"/>
             <property tag="region" value="V4_L56"/>
             <instance id="0">
-                <location x="60.438563414607273" y="14.60254621814275" z="28.947046827486471"/>
+                <location x="60." y="20." z="0."/>
             </instance>
         </population>
         <population id="V4_L56_I" component="L56_I_comp" size="1" type="populationList">
             <property tag="color" value="0 .2 1"/>
             <property tag="region" value="V4_L56"/>
             <instance id="0">
-                <location x="61.936868429315581" y="16.232645566533908" z="13.976956770249288"/>
+                <location x="60." y="10." z="0."/>
             </instance>
         </population>
         <continuousProjection id="proj_V1_L23_E_V1_L23_E" presynapticPopulation="V1_L23_E" postsynapticPopulation="V1_L23_E">

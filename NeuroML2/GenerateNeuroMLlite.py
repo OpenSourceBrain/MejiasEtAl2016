@@ -1,4 +1,4 @@
-from neuromllite import Network, Cell, InputSource, Population, Synapse,RectangularRegion,RandomLayout
+from neuromllite import Network, Cell, InputSource, Population, Synapse, RectangularRegion, RelativeLayout
 from neuromllite import Projection, RandomConnectivity, Input, Simulation
 import numpy as np
 import pickle
@@ -219,6 +219,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     area_spacing = 30
 
     layer_thickness = 30
+    
     for area_idx, area in enumerate(areas):
         # Add populations
         x_offset = area_idx*(area_edge + area_spacing)
@@ -226,15 +227,33 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         net.regions.append(l23)
         l56 = RectangularRegion(id='%s_L56' %(area), x=x_offset, y=0, z=0, width=area_edge, height=layer_thickness, depth=area_edge)
         net.regions.append(l56)
-
-        pl23e = Population(id='%s_L23_E' %(area), size=1, component=l23ecell.id, properties={'color':color_str['l23e']},random_layout = RandomLayout(region=l23.id))
+        
+        pl23e = Population(id='%s_L23_E' %(area), 
+                           size=1, 
+                           component=l23ecell.id, 
+                           properties={'color':color_str['l23e']},
+                           relative_layout = RelativeLayout(region=l23.id,x=0,y=layer_thickness*2/3.,z=0))
         pops.append(pl23e)
-        pl23i = Population(id='%s_L23_I' %(area), size=1, component=l23icell.id, properties={'color':color_str['l23i']},random_layout = RandomLayout(region=l23.id))
+        
+        pl23i = Population(id='%s_L23_I' %(area), 
+                           size=1, 
+                           component=l23icell.id, 
+                           properties={'color':color_str['l23i']},
+                           relative_layout = RelativeLayout(region=l23.id,x=0,y=layer_thickness*1/3.,z=0))
         pops.append(pl23i)
 
-        pl56e = Population(id='%s_L56_E' %(area), size=1, component=l56ecell.id, properties={'color':color_str['l56e']},random_layout = RandomLayout(region=l56.id))
+        pl56e = Population(id='%s_L56_E' %(area), 
+                           size=1, 
+                           component=l56ecell.id, 
+                           properties={'color':color_str['l56e']},
+                           relative_layout = RelativeLayout(region=l56.id,x=0,y=layer_thickness*2/3.,z=0))
         pops.append(pl56e)
-        pl56i = Population(id='%s_L56_I' %(area), size=1, component=l56icell.id, properties={'color':color_str['l56i']},random_layout = RandomLayout(region=l56.id))
+        
+        pl56i = Population(id='%s_L56_I' %(area), 
+                           size=1, 
+                           component=l56icell.id, 
+                           properties={'color':color_str['l56i']},
+                           relative_layout = RelativeLayout(region=l56.id,x=0,y=layer_thickness*1/3.,z=0))
         pops.append(pl56i)
 
         net.populations.append(pl23e)
@@ -801,7 +820,7 @@ if __name__ == "__main__":
         net_id='Interareal'
 
 
-        if '-3rois' not in sys.argv:
+        if '-3rois' not in sys.argv and '-4rois' not in sys.argv:
             # Background current simulation.
             # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
             # passed
@@ -912,8 +931,24 @@ if __name__ == "__main__":
             #Load the array with the ordered rank
             import pandas as pd
 
-
-            areas = ['V1', 'V4', 'MT', 'TEO']
+            if '-3rois' in sys.argv:
+                areas = ['V1', 'V4', 'MT']
+                # Create the FB and FF connectiviy between the areas.
+                # Define connections between regions
+                # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
+                conn = np.array([[0, 1, 0],
+                                 [1, 0, 1],
+                                 [0, 1, 0]])
+            if '-4rois' in sys.argv:
+                areas = ['V1', 'V4', 'MT', 'TEO']
+                # Create the FB and FF connectiviy between the areas.
+                # Define connections between regions
+                # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
+                conn = np.array([[0, 1, 0, 0],
+                                 [1, 0, 1, 0],
+                                 [0, 1, 0, 0],
+                                 [0, 0, 1, 0]])
+                
             net_id='Interareal_%d' %len(areas)
 
             ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
@@ -922,13 +957,6 @@ if __name__ == "__main__":
             # sort the regions by the areas in the ranking
             ranked_areas = ranking[ranking['region'].isin(areas)]
 
-            # Create the FB and FF connectiviy between the areas.
-            # Define connections between regions
-            # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
-            conn = np.array([[0, 1, 0, 0],
-                             [1, 0, 1, 0],
-                             [0, 1, 0, 0],
-                             [0, 0, 1, 0]])
 
             Iext0 = 2; Iext1 = 4 # background current at excitatory population
             Iext = [[Iext0, Iext1]] * len(areas)
@@ -940,7 +968,7 @@ if __name__ == "__main__":
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
-
+            
     else:
 
         sim, net = generate()
