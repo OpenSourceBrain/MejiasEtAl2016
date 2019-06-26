@@ -11,7 +11,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
              i_l5e_l2i=0., i_l2e_l5e=0.,
              areas=['V1'],
              sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[[0, 0]], count=0,
-             net_id='MejiasFig2'):
+             net_id='MejiasFig2', conn=None):
 
     ################################################################################
     ###   Build new network
@@ -58,10 +58,9 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'FB_l5e_l2e': FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
-    elif len(areas) == 3:
-        interareal_conn = np.array([[0, 1, 0],
-                                    [1, 0, 0],
-                                    [0, 1, 0]])
+
+
+    elif len(areas) > 2:
         net.parameters = { 'wee': wee,
                            'wei': wei,
                            'wie': wie,
@@ -157,17 +156,19 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                        [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i]],
                      dtype='U14')
 
-    elif n_areas == 3:
+    elif n_areas > 2:
 
-        nregions = 3
-        nlayers = 4
+        nlayers = 4 #(L2/3E, L5/6, L2/3I, L5/6I)
 
-        # Define connections between regions
-        conn = np.array([[0, 0, 0],
-                         [1, 0, 0],
-                         [0, 1, 0]])
-        # TODO: Check if the user did not specifiy twice that there is a FF and a FB connection
-        # NOTE: This assumes that the matrix has been organised by ranking
+        # If a FF or a FB connection the opposite connection cannot be specified. Therefore, check if the user did not
+        # specifiy both a FF and FB connection between two regions.
+        # extract values for the lower diagonal matrix
+        conn_tril = conn[np.tril_indices(n_areas, -1)]
+        conn_triu = conn[np.triu_indices(n_areas, 1)]
+        # if any(conn_tril + conn_triu >= 2):
+        #     raise ValueError('Both a FF and FB connection was specified for one of the areas. '
+        #                      'Please check your connectivity matrix')
+
 
         # Define connections to self areas (diagonal entries)
         interlayer_conn_diag = np.array([[wee, wei, i_l2e_l5e, 0],
@@ -177,12 +178,12 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                          ])
 
         # Define the main connectivity matrix
-        W = np.zeros((nregions * nlayers, nregions * nlayers))
+        W = np.zeros((n_areas * nlayers, n_areas * nlayers))
 
         # Get the upper or the lower diagonal. This information is useful to now if the connection is FF(uper triangular matrix)
         #  or FB (lower triangular matrix)
-        up_tri = zip(np.triu_indices(3,1)[0], np.triu_indices(3,1)[1])
-        lw_tri = zip(np.tril_indices(3,-1)[0], np.tril_indices(3,-1)[1])
+        up_tri = zip(np.triu_indices(n_areas,1)[0], np.triu_indices(n_areas,1)[1])
+        lw_tri = zip(np.tril_indices(n_areas,-1)[0], np.tril_indices(n_areas,-1)[1])
         for row in range(conn.shape[0]):
             for col in range(conn.shape[1]):
                 #  What to do in the self-connection case
@@ -193,20 +194,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                 if conn[row, col] != 0:
                     # Add FF connection
                     if (row, col) in up_tri:
-                        W[row*4 + 2, col* 4 + 0] = .1 # FB l5e_l2e
-                        W[row*4 + 2, col* 4 + 3] = .5 # FB l5e_l5i
-                        W[row*4 + 2, col* 4 + 2] = .9 # FB l5e_l5e
-                        W[row*4 + 2, col* 4 + 1] = .5 # FB l5e_l2i
-                        W[col*4 + 0, row* 4 + 0] = 1. # FF_L2e_l2e
+                        W[row * 4 + 0, col * 4 + 0] = 1. # FF_L2e_l2e
 
 
                     # Add FB connection
                     if (row, col) in lw_tri:
-                        W[row*4 + 2, col* 4 + 0] = .1 # FB l5e_l2e
-                        W[row*4 + 2, col* 4 + 3] = .5 # FB l5e_l5i
-                        W[row*4 + 2, col* 4 + 2] = .9 # FB l5e_l5e
-                        W[row*4 + 2, col* 4 + 1] = .5 # FB l5e_l2i
-                        W[col*4 + 0, row* 4 + 0] = 1. # FF_L2e_l2e
+                        W[row *4 + 2, col * 4 + 0] = .1 # FB l5e_l2e
+                        W[row *4 + 2, col * 4 + 3] = .5 # FB l5e_l5i
+                        W[row *4 + 2, col * 4 + 2] = .9 # FB l5e_l5e
+                        W[row *4 + 2, col * 4 + 1] = .5 # FB l5e_l2i
 
     else:
         raise ValueError('Connectivity matrix not defined for more than 3 regions')
@@ -915,31 +911,32 @@ if __name__ == "__main__":
         else:
             #Load the array with the ordered rank
             import pandas as pd
-            areas = ['V1', 'V4', 'MT']
-            net_id='Interareal_3'
-            
+
+
+            areas = ['V1', 'V4', 'MT', 'TEO']
+            net_id='Interareal_%d' %len(areas)
+
             ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
-            # TODO:Check if all the regions are present
+            # Check if the selected regions are present in the file that describe the ranking
+            assert(len(areas) == sum(ranking['region'].isin(areas)))
             # sort the regions by the areas in the ranking
             ranked_areas = ranking[ranking['region'].isin(areas)]
 
-            # Create the fw and bw connectivity
-
-            # connbw = np.zeros((ranked_areas['region'].shape[0], ranked_areas['regions'].shape[0]))
-            # conn_fw = np.array([[0, 1, 0],
-            #                     [0, 0, 1],
-            #                     [1, 0, 0]])
-            # define if areas are connected
-            # conn = np.zeros((ranked_areas['region'].shape[0], ranked_areas['regions'].shape[0]))
+            # Create the FB and FF connectiviy between the areas.
+            # Define connections between regions
+            # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
+            conn = np.array([[0, 1, 0, 0],
+                             [1, 0, 1, 0],
+                             [0, 1, 0, 0],
+                             [0, 0, 1, 0]])
 
             Iext0 = 2; Iext1 = 4 # background current at excitatory population
-            Iext = [[Iext0, Iext1], [Iext0, Iext1], [Iext0, Iext1]]
-            # Run pyNeuroML to test simulation with 3 regions
+            Iext = [[Iext0, Iext1]] * len(areas)
             sim_rest, net_rest = generate(wee=wee, wei=wei, wie=wie, wii=wii,
                                           i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                           areas=areas,
                                           dt=dt, duration=duration, Iext=Iext,
-                                          net_id=net_id)
+                                          net_id=net_id, conn=conn)
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
