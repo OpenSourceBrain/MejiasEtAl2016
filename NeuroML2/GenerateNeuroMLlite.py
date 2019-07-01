@@ -160,16 +160,6 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
         nlayers = 4 #(L2/3E, L5/6, L2/3I, L5/6I)
 
-        # If a FF or a FB connection the opposite connection cannot be specified. Therefore, check if the user did not
-        # specifiy both a FF and FB connection between two regions.
-        # extract values for the lower diagonal matrix
-        conn_tril = conn[np.tril_indices(n_areas, -1)]
-        conn_triu = conn[np.triu_indices(n_areas, 1)]
-        # if any(conn_tril + conn_triu >= 2):
-        #     raise ValueError('Both a FF and FB connection was specified for one of the areas. '
-        #                      'Please check your connectivity matrix')
-
-
         # Define connections to self areas (diagonal entries)
         interlayer_conn_diag = np.array([[wee, wei, i_l2e_l5e, 0],
                                          [wie, wii, 0, 0],
@@ -820,7 +810,9 @@ if __name__ == "__main__":
         net_id='Interareal'
 
 
-        if '-3rois' not in sys.argv and '-4rois' not in sys.argv:
+        if '-3rois' not in sys.argv and \
+           '-4rois' not in sys.argv and \
+           '-30rois' not in sys.argv:
             # Background current simulation.
             # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
             # passed
@@ -931,6 +923,7 @@ if __name__ == "__main__":
             #Load the array with the ordered rank
             import pandas as pd
 
+            ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
             if '-3rois' in sys.argv:
                 areas = ['V1', 'V4', 'MT']
                 # Create the FB and FF connectiviy between the areas.
@@ -948,10 +941,15 @@ if __name__ == "__main__":
                                  [1, 0, 1, 0],
                                  [0, 1, 0, 0],
                                  [0, 0, 1, 0]])
-                
+
+            if '-30rois' in sys.argv:
+                areas = list(ranking['region'])
+                conn = pd.read_csv('../Python/interareal/fln_conn.txt', sep='\t', header=None)
+                # Transfrom dataframe into numpy array
+                conn = np.array(conn)
+
             net_id='Interareal_%d' %len(areas)
 
-            ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
             # Check if the selected regions are present in the file that describe the ranking
             assert(len(areas) == sum(ranking['region'].isin(areas)))
             # sort the regions by the areas in the ranking
