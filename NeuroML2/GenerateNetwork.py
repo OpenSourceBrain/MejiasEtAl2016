@@ -3,6 +3,15 @@ from neuromllite import *
 import random
 
 
+def hex_to_pop_color(hex):
+
+    r = int('0x%s'%hex[0:2],16)/255.
+    g = int('0x%s'%hex[2:4],16)/255.
+    b = int('0x%s'%hex[4:],16)/255.
+    c = '%s %s %s'%(r,g,b)
+    print('%s -> %s'%(hex, c))
+    return c
+
 
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
              interlaminar2=0, sigma23=.3, sigma56=.45, 
@@ -23,7 +32,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
     ################################################################################
     ###   Build a new network
 
-    net = Network(id='MejiasNetwork')
+    net = Network(id='TestNetwork')
     net.notes = "...."
     net.parameters = {}
     
@@ -102,12 +111,13 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
 
                     r = RectangularRegion(id='Region_%s'%used_ids[pop_id], x=p[0],y=p[1],z=p[2],width=1,height=1,depth=1)
                     net.regions.append(r)
-
+                    color_hex = colors[repl]
                     p0 = Population(id=used_ids[pop_id], 
                                     size=1, 
                                     component=l23ecell.id, 
-                                    properties={'color':'%s %s %s'%(random.random(),random.random(),random.random()),
-                                                'radius':scale},
+                                    properties={'color':hex_to_pop_color(color_hex),
+                                                'radius':scale,
+                                                'color_hex':color_hex},
                                     random_layout = RandomLayout(region=r.id))
 
                     net.populations.append(p0)
