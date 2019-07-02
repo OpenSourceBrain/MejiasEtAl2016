@@ -53,6 +53,7 @@
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">
             <property tag="color" value=".8 0 0"/>
             <property tag="region" value="V1_L23"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="0." y="50." z="0."/>
             </instance>
@@ -60,6 +61,7 @@
         <population id="V1_L23_I" component="L23_I_comp" size="1" type="populationList">
             <property tag="color" value="0 0 .8"/>
             <property tag="region" value="V1_L23"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="0." y="40." z="0."/>
             </instance>
@@ -67,6 +69,7 @@
         <population id="V1_L56_E" component="L56_E_comp" size="1" type="populationList">
             <property tag="color" value="1 .2 0"/>
             <property tag="region" value="V1_L56"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="0." y="20." z="0."/>
             </instance>
@@ -74,6 +77,7 @@
         <population id="V1_L56_I" component="L56_I_comp" size="1" type="populationList">
             <property tag="color" value="0 .2 1"/>
             <property tag="region" value="V1_L56"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="0." y="10." z="0."/>
             </instance>
@@ -81,6 +85,7 @@
         <population id="V4_L23_E" component="L23_E_comp" size="1" type="populationList">
             <property tag="color" value=".8 0 0"/>
             <property tag="region" value="V4_L23"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="60." y="50." z="0."/>
             </instance>
@@ -88,6 +93,7 @@
         <population id="V4_L23_I" component="L23_I_comp" size="1" type="populationList">
             <property tag="color" value="0 0 .8"/>
             <property tag="region" value="V4_L23"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="60." y="40." z="0."/>
             </instance>
@@ -95,6 +101,7 @@
         <population id="V4_L56_E" component="L56_E_comp" size="1" type="populationList">
             <property tag="color" value="1 .2 0"/>
             <property tag="region" value="V4_L56"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="60." y="20." z="0."/>
             </instance>
@@ -102,6 +109,7 @@
         <population id="V4_L56_I" component="L56_I_comp" size="1" type="populationList">
             <property tag="color" value="0 .2 1"/>
             <property tag="region" value="V4_L56"/>
+            <property tag="radius" value="1"/>
             <instance id="0">
                 <location x="60." y="10." z="0."/>
             </instance>

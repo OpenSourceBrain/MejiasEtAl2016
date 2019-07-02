@@ -10,4 +10,6 @@ python GenerateNeuroMLlite.py -interareal -nml -stimulate_V1 -3rois
 
 python GenerateNeuroMLlite.py -interareal -nml -stimulate_V1 -4rois
 
+python GenerateNeuroMLlite.py -interareal -nml -stimulate_V1 -30rois
+
 
