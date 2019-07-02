@@ -1835,7 +1835,7 @@
     <network id="Interareal_30">
         <notes>Testing...</notes>
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.95 0.95 0"/>
+            <property tag="color" value="0.95 1.0 0.0"/>
             <property tag="region" value="V1"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -1843,7 +1843,7 @@
             </instance>
         </population>
         <population id="V1_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.95 0.95 0"/>
+            <property tag="color" value="0.95 1.0 0.0"/>
             <property tag="region" value="V1"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1851,7 +1851,7 @@
             </instance>
         </population>
         <population id="V1_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.95 0.95 0"/>
+            <property tag="color" value="0.95 1.0 0.0"/>
             <property tag="region" value="V1"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -1859,7 +1859,7 @@
             </instance>
         </population>
         <population id="V1_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.95 0.95 0"/>
+            <property tag="color" value="0.95 1.0 0.0"/>
             <property tag="region" value="V1"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1867,7 +1867,7 @@
             </instance>
         </population>
         <population id="V2_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.918333333333 0.94 0"/>
+            <property tag="color" value="0.933333333333 0.966666666667 0.0133333333333"/>
             <property tag="region" value="V2"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -1875,7 +1875,7 @@
             </instance>
         </population>
         <population id="V2_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.918333333333 0.94 0"/>
+            <property tag="color" value="0.933333333333 0.966666666667 0.0133333333333"/>
             <property tag="region" value="V2"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1883,7 +1883,7 @@
             </instance>
         </population>
         <population id="V2_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.918333333333 0.94 0"/>
+            <property tag="color" value="0.933333333333 0.966666666667 0.0133333333333"/>
             <property tag="region" value="V2"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -1891,7 +1891,7 @@
             </instance>
         </population>
         <population id="V2_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.918333333333 0.94 0"/>
+            <property tag="color" value="0.933333333333 0.966666666667 0.0133333333333"/>
             <property tag="region" value="V2"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1899,7 +1899,7 @@
             </instance>
         </population>
         <population id="V4_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.886666666667 0.93 0"/>
+            <property tag="color" value="0.916666666667 0.933333333333 0.0266666666667"/>
             <property tag="region" value="V4"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -1907,7 +1907,7 @@
             </instance>
         </population>
         <population id="V4_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.886666666667 0.93 0"/>
+            <property tag="color" value="0.916666666667 0.933333333333 0.0266666666667"/>
             <property tag="region" value="V4"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1915,7 +1915,7 @@
             </instance>
         </population>
         <population id="V4_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.886666666667 0.93 0"/>
+            <property tag="color" value="0.916666666667 0.933333333333 0.0266666666667"/>
             <property tag="region" value="V4"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -1923,7 +1923,7 @@
             </instance>
         </population>
         <population id="V4_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.886666666667 0.93 0"/>
+            <property tag="color" value="0.916666666667 0.933333333333 0.0266666666667"/>
             <property tag="region" value="V4"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1931,7 +1931,7 @@
             </instance>
         </population>
         <population id="DP_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.855 0.92 0"/>
+            <property tag="color" value="0.9 0.9 0.04"/>
             <property tag="region" value="DP"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -1939,7 +1939,7 @@
             </instance>
         </population>
         <population id="DP_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.855 0.92 0"/>
+            <property tag="color" value="0.9 0.9 0.04"/>
             <property tag="region" value="DP"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1947,7 +1947,7 @@
             </instance>
         </population>
         <population id="DP_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.855 0.92 0"/>
+            <property tag="color" value="0.9 0.9 0.04"/>
             <property tag="region" value="DP"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -1955,7 +1955,7 @@
             </instance>
         </population>
         <population id="DP_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.855 0.92 0"/>
+            <property tag="color" value="0.9 0.9 0.04"/>
             <property tag="region" value="DP"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1963,7 +1963,7 @@
             </instance>
         </population>
         <population id="MT_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.823333333333 0.91 0"/>
+            <property tag="color" value="0.883333333333 0.866666666667 0.0533333333333"/>
             <property tag="region" value="MT"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -1971,7 +1971,7 @@
             </instance>
         </population>
         <population id="MT_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.823333333333 0.91 0"/>
+            <property tag="color" value="0.883333333333 0.866666666667 0.0533333333333"/>
             <property tag="region" value="MT"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1979,7 +1979,7 @@
             </instance>
         </population>
         <population id="MT_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.823333333333 0.91 0"/>
+            <property tag="color" value="0.883333333333 0.866666666667 0.0533333333333"/>
             <property tag="region" value="MT"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -1987,7 +1987,7 @@
             </instance>
         </population>
         <population id="MT_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.823333333333 0.91 0"/>
+            <property tag="color" value="0.883333333333 0.866666666667 0.0533333333333"/>
             <property tag="region" value="MT"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -1995,7 +1995,7 @@
             </instance>
         </population>
         <population id="a8m_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.791666666667 0.9 0"/>
+            <property tag="color" value="0.866666666667 0.833333333333 0.0666666666667"/>
             <property tag="region" value="8m"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2003,7 +2003,7 @@
             </instance>
         </population>
         <population id="a8m_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.791666666667 0.9 0"/>
+            <property tag="color" value="0.866666666667 0.833333333333 0.0666666666667"/>
             <property tag="region" value="8m"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2011,7 +2011,7 @@
             </instance>
         </population>
         <population id="a8m_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.791666666667 0.9 0"/>
+            <property tag="color" value="0.866666666667 0.833333333333 0.0666666666667"/>
             <property tag="region" value="8m"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2019,7 +2019,7 @@
             </instance>
         </population>
         <population id="a8m_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.791666666667 0.9 0"/>
+            <property tag="color" value="0.866666666667 0.833333333333 0.0666666666667"/>
             <property tag="region" value="8m"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2027,7 +2027,7 @@
             </instance>
         </population>
         <population id="a5_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.76 0.89 0"/>
+            <property tag="color" value="0.85 0.8 0.08"/>
             <property tag="region" value="5"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2035,7 +2035,7 @@
             </instance>
         </population>
         <population id="a5_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.76 0.89 0"/>
+            <property tag="color" value="0.85 0.8 0.08"/>
             <property tag="region" value="5"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2043,7 +2043,7 @@
             </instance>
         </population>
         <population id="a5_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.76 0.89 0"/>
+            <property tag="color" value="0.85 0.8 0.08"/>
             <property tag="region" value="5"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2051,7 +2051,7 @@
             </instance>
         </population>
         <population id="a5_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.76 0.89 0"/>
+            <property tag="color" value="0.85 0.8 0.08"/>
             <property tag="region" value="5"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2059,7 +2059,7 @@
             </instance>
         </population>
         <population id="a8l_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.728333333333 0.88 0"/>
+            <property tag="color" value="0.833333333333 0.766666666667 0.0933333333333"/>
             <property tag="region" value="8l"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2067,7 +2067,7 @@
             </instance>
         </population>
         <population id="a8l_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.728333333333 0.88 0"/>
+            <property tag="color" value="0.833333333333 0.766666666667 0.0933333333333"/>
             <property tag="region" value="8l"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2075,7 +2075,7 @@
             </instance>
         </population>
         <population id="a8l_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.728333333333 0.88 0"/>
+            <property tag="color" value="0.833333333333 0.766666666667 0.0933333333333"/>
             <property tag="region" value="8l"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2083,7 +2083,7 @@
             </instance>
         </population>
         <population id="a8l_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.728333333333 0.88 0"/>
+            <property tag="color" value="0.833333333333 0.766666666667 0.0933333333333"/>
             <property tag="region" value="8l"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2091,7 +2091,7 @@
             </instance>
         </population>
         <population id="a2_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.696666666667 0.87 0"/>
+            <property tag="color" value="0.816666666667 0.733333333333 0.106666666667"/>
             <property tag="region" value="2"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2099,7 +2099,7 @@
             </instance>
         </population>
         <population id="a2_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.696666666667 0.87 0"/>
+            <property tag="color" value="0.816666666667 0.733333333333 0.106666666667"/>
             <property tag="region" value="2"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2107,7 +2107,7 @@
             </instance>
         </population>
         <population id="a2_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.696666666667 0.87 0"/>
+            <property tag="color" value="0.816666666667 0.733333333333 0.106666666667"/>
             <property tag="region" value="2"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2115,7 +2115,7 @@
             </instance>
         </population>
         <population id="a2_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.696666666667 0.87 0"/>
+            <property tag="color" value="0.816666666667 0.733333333333 0.106666666667"/>
             <property tag="region" value="2"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2123,7 +2123,7 @@
             </instance>
         </population>
         <population id="TEO_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.665 0.86 0"/>
+            <property tag="color" value="0.8 0.7 0.12"/>
             <property tag="region" value="TEO"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2131,7 +2131,7 @@
             </instance>
         </population>
         <population id="TEO_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.665 0.86 0"/>
+            <property tag="color" value="0.8 0.7 0.12"/>
             <property tag="region" value="TEO"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2139,7 +2139,7 @@
             </instance>
         </population>
         <population id="TEO_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.665 0.86 0"/>
+            <property tag="color" value="0.8 0.7 0.12"/>
             <property tag="region" value="TEO"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2147,7 +2147,7 @@
             </instance>
         </population>
         <population id="TEO_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.665 0.86 0"/>
+            <property tag="color" value="0.8 0.7 0.12"/>
             <property tag="region" value="TEO"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2155,7 +2155,7 @@
             </instance>
         </population>
         <population id="F1_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.633333333333 0.85 0"/>
+            <property tag="color" value="0.783333333333 0.666666666667 0.133333333333"/>
             <property tag="region" value="F1"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2163,7 +2163,7 @@
             </instance>
         </population>
         <population id="F1_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.633333333333 0.85 0"/>
+            <property tag="color" value="0.783333333333 0.666666666667 0.133333333333"/>
             <property tag="region" value="F1"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2171,7 +2171,7 @@
             </instance>
         </population>
         <population id="F1_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.633333333333 0.85 0"/>
+            <property tag="color" value="0.783333333333 0.666666666667 0.133333333333"/>
             <property tag="region" value="F1"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2179,7 +2179,7 @@
             </instance>
         </population>
         <population id="F1_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.633333333333 0.85 0"/>
+            <property tag="color" value="0.783333333333 0.666666666667 0.133333333333"/>
             <property tag="region" value="F1"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2187,7 +2187,7 @@
             </instance>
         </population>
         <population id="STPc_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.601666666667 0.84 0"/>
+            <property tag="color" value="0.766666666667 0.633333333333 0.146666666667"/>
             <property tag="region" value="STPc"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2195,7 +2195,7 @@
             </instance>
         </population>
         <population id="STPc_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.601666666667 0.84 0"/>
+            <property tag="color" value="0.766666666667 0.633333333333 0.146666666667"/>
             <property tag="region" value="STPc"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2203,7 +2203,7 @@
             </instance>
         </population>
         <population id="STPc_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.601666666667 0.84 0"/>
+            <property tag="color" value="0.766666666667 0.633333333333 0.146666666667"/>
             <property tag="region" value="STPc"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2211,7 +2211,7 @@
             </instance>
         </population>
         <population id="STPc_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.601666666667 0.84 0"/>
+            <property tag="color" value="0.766666666667 0.633333333333 0.146666666667"/>
             <property tag="region" value="STPc"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2219,7 +2219,7 @@
             </instance>
         </population>
         <population id="a7A_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.57 0.83 0"/>
+            <property tag="color" value="0.75 0.6 0.16"/>
             <property tag="region" value="7A"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2227,7 +2227,7 @@
             </instance>
         </population>
         <population id="a7A_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.57 0.83 0"/>
+            <property tag="color" value="0.75 0.6 0.16"/>
             <property tag="region" value="7A"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2235,7 +2235,7 @@
             </instance>
         </population>
         <population id="a7A_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.57 0.83 0"/>
+            <property tag="color" value="0.75 0.6 0.16"/>
             <property tag="region" value="7A"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2243,7 +2243,7 @@
             </instance>
         </population>
         <population id="a7A_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.57 0.83 0"/>
+            <property tag="color" value="0.75 0.6 0.16"/>
             <property tag="region" value="7A"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2251,7 +2251,7 @@
             </instance>
         </population>
         <population id="a46d_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.538333333333 0.82 0"/>
+            <property tag="color" value="0.733333333333 0.566666666667 0.173333333333"/>
             <property tag="region" value="46d"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2259,7 +2259,7 @@
             </instance>
         </population>
         <population id="a46d_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.538333333333 0.82 0"/>
+            <property tag="color" value="0.733333333333 0.566666666667 0.173333333333"/>
             <property tag="region" value="46d"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2267,7 +2267,7 @@
             </instance>
         </population>
         <population id="a46d_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.538333333333 0.82 0"/>
+            <property tag="color" value="0.733333333333 0.566666666667 0.173333333333"/>
             <property tag="region" value="46d"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2275,7 +2275,7 @@
             </instance>
         </population>
         <population id="a46d_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.538333333333 0.82 0"/>
+            <property tag="color" value="0.733333333333 0.566666666667 0.173333333333"/>
             <property tag="region" value="46d"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2283,7 +2283,7 @@
             </instance>
         </population>
         <population id="a10_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.506666666667 0.81 0"/>
+            <property tag="color" value="0.716666666667 0.533333333333 0.186666666667"/>
             <property tag="region" value="10"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2291,7 +2291,7 @@
             </instance>
         </population>
         <population id="a10_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.506666666667 0.81 0"/>
+            <property tag="color" value="0.716666666667 0.533333333333 0.186666666667"/>
             <property tag="region" value="10"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2299,7 +2299,7 @@
             </instance>
         </population>
         <population id="a10_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.506666666667 0.81 0"/>
+            <property tag="color" value="0.716666666667 0.533333333333 0.186666666667"/>
             <property tag="region" value="10"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2307,7 +2307,7 @@
             </instance>
         </population>
         <population id="a10_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.506666666667 0.81 0"/>
+            <property tag="color" value="0.716666666667 0.533333333333 0.186666666667"/>
             <property tag="region" value="10"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2315,7 +2315,7 @@
             </instance>
         </population>
         <population id="a9_46v_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.475 0.8 0"/>
+            <property tag="color" value="0.7 0.5 0.2"/>
             <property tag="region" value="9/46v"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2323,7 +2323,7 @@
             </instance>
         </population>
         <population id="a9_46v_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.475 0.8 0"/>
+            <property tag="color" value="0.7 0.5 0.2"/>
             <property tag="region" value="9/46v"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2331,7 +2331,7 @@
             </instance>
         </population>
         <population id="a9_46v_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.475 0.8 0"/>
+            <property tag="color" value="0.7 0.5 0.2"/>
             <property tag="region" value="9/46v"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2339,7 +2339,7 @@
             </instance>
         </population>
         <population id="a9_46v_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.475 0.8 0"/>
+            <property tag="color" value="0.7 0.5 0.2"/>
             <property tag="region" value="9/46v"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2347,7 +2347,7 @@
             </instance>
         </population>
         <population id="a9_46d_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.443333333333 0.79 0"/>
+            <property tag="color" value="0.683333333333 0.466666666667 0.213333333333"/>
             <property tag="region" value="9/46d"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2355,7 +2355,7 @@
             </instance>
         </population>
         <population id="a9_46d_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.443333333333 0.79 0"/>
+            <property tag="color" value="0.683333333333 0.466666666667 0.213333333333"/>
             <property tag="region" value="9/46d"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2363,7 +2363,7 @@
             </instance>
         </population>
         <population id="a9_46d_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.443333333333 0.79 0"/>
+            <property tag="color" value="0.683333333333 0.466666666667 0.213333333333"/>
             <property tag="region" value="9/46d"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2371,7 +2371,7 @@
             </instance>
         </population>
         <population id="a9_46d_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.443333333333 0.79 0"/>
+            <property tag="color" value="0.683333333333 0.466666666667 0.213333333333"/>
             <property tag="region" value="9/46d"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2379,7 +2379,7 @@
             </instance>
         </population>
         <population id="F5_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.411666666667 0.78 0"/>
+            <property tag="color" value="0.666666666667 0.433333333333 0.226666666667"/>
             <property tag="region" value="F5"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2387,7 +2387,7 @@
             </instance>
         </population>
         <population id="F5_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.411666666667 0.78 0"/>
+            <property tag="color" value="0.666666666667 0.433333333333 0.226666666667"/>
             <property tag="region" value="F5"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2395,7 +2395,7 @@
             </instance>
         </population>
         <population id="F5_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.411666666667 0.78 0"/>
+            <property tag="color" value="0.666666666667 0.433333333333 0.226666666667"/>
             <property tag="region" value="F5"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2403,7 +2403,7 @@
             </instance>
         </population>
         <population id="F5_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.411666666667 0.78 0"/>
+            <property tag="color" value="0.666666666667 0.433333333333 0.226666666667"/>
             <property tag="region" value="F5"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2411,7 +2411,7 @@
             </instance>
         </population>
         <population id="TEpd_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.38 0.77 0"/>
+            <property tag="color" value="0.65 0.4 0.24"/>
             <property tag="region" value="TEpd"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2419,7 +2419,7 @@
             </instance>
         </population>
         <population id="TEpd_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.38 0.77 0"/>
+            <property tag="color" value="0.65 0.4 0.24"/>
             <property tag="region" value="TEpd"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2427,7 +2427,7 @@
             </instance>
         </population>
         <population id="TEpd_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.38 0.77 0"/>
+            <property tag="color" value="0.65 0.4 0.24"/>
             <property tag="region" value="TEpd"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2435,7 +2435,7 @@
             </instance>
         </population>
         <population id="TEpd_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.38 0.77 0"/>
+            <property tag="color" value="0.65 0.4 0.24"/>
             <property tag="region" value="TEpd"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2443,7 +2443,7 @@
             </instance>
         </population>
         <population id="Pbr_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.348333333333 0.76 0"/>
+            <property tag="color" value="0.633333333333 0.366666666667 0.253333333333"/>
             <property tag="region" value="Pbr"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2451,7 +2451,7 @@
             </instance>
         </population>
         <population id="Pbr_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.348333333333 0.76 0"/>
+            <property tag="color" value="0.633333333333 0.366666666667 0.253333333333"/>
             <property tag="region" value="Pbr"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2459,7 +2459,7 @@
             </instance>
         </population>
         <population id="Pbr_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.348333333333 0.76 0"/>
+            <property tag="color" value="0.633333333333 0.366666666667 0.253333333333"/>
             <property tag="region" value="Pbr"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2467,7 +2467,7 @@
             </instance>
         </population>
         <population id="Pbr_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.348333333333 0.76 0"/>
+            <property tag="color" value="0.633333333333 0.366666666667 0.253333333333"/>
             <property tag="region" value="Pbr"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2475,7 +2475,7 @@
             </instance>
         </population>
         <population id="a7m_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.316666666667 0.75 0"/>
+            <property tag="color" value="0.616666666667 0.333333333333 0.266666666667"/>
             <property tag="region" value="7m"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2483,7 +2483,7 @@
             </instance>
         </population>
         <population id="a7m_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.316666666667 0.75 0"/>
+            <property tag="color" value="0.616666666667 0.333333333333 0.266666666667"/>
             <property tag="region" value="7m"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2491,7 +2491,7 @@
             </instance>
         </population>
         <population id="a7m_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.316666666667 0.75 0"/>
+            <property tag="color" value="0.616666666667 0.333333333333 0.266666666667"/>
             <property tag="region" value="7m"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2499,7 +2499,7 @@
             </instance>
         </population>
         <population id="a7m_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.316666666667 0.75 0"/>
+            <property tag="color" value="0.616666666667 0.333333333333 0.266666666667"/>
             <property tag="region" value="7m"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2507,7 +2507,7 @@
             </instance>
         </population>
         <population id="LIP_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.285 0.74 0"/>
+            <property tag="color" value="0.6 0.3 0.28"/>
             <property tag="region" value="LIP"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2515,7 +2515,7 @@
             </instance>
         </population>
         <population id="LIP_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.285 0.74 0"/>
+            <property tag="color" value="0.6 0.3 0.28"/>
             <property tag="region" value="LIP"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2523,7 +2523,7 @@
             </instance>
         </population>
         <population id="LIP_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.285 0.74 0"/>
+            <property tag="color" value="0.6 0.3 0.28"/>
             <property tag="region" value="LIP"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2531,7 +2531,7 @@
             </instance>
         </population>
         <population id="LIP_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.285 0.74 0"/>
+            <property tag="color" value="0.6 0.3 0.28"/>
             <property tag="region" value="LIP"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2539,7 +2539,7 @@
             </instance>
         </population>
         <population id="F2_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.253333333333 0.73 0"/>
+            <property tag="color" value="0.583333333333 0.266666666667 0.293333333333"/>
             <property tag="region" value="F2"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2547,7 +2547,7 @@
             </instance>
         </population>
         <population id="F2_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.253333333333 0.73 0"/>
+            <property tag="color" value="0.583333333333 0.266666666667 0.293333333333"/>
             <property tag="region" value="F2"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2555,7 +2555,7 @@
             </instance>
         </population>
         <population id="F2_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.253333333333 0.73 0"/>
+            <property tag="color" value="0.583333333333 0.266666666667 0.293333333333"/>
             <property tag="region" value="F2"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2563,7 +2563,7 @@
             </instance>
         </population>
         <population id="F2_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.253333333333 0.73 0"/>
+            <property tag="color" value="0.583333333333 0.266666666667 0.293333333333"/>
             <property tag="region" value="F2"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2571,7 +2571,7 @@
             </instance>
         </population>
         <population id="a7B_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.221666666667 0.72 0"/>
+            <property tag="color" value="0.566666666667 0.233333333333 0.306666666667"/>
             <property tag="region" value="7B"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2579,7 +2579,7 @@
             </instance>
         </population>
         <population id="a7B_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.221666666667 0.72 0"/>
+            <property tag="color" value="0.566666666667 0.233333333333 0.306666666667"/>
             <property tag="region" value="7B"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2587,7 +2587,7 @@
             </instance>
         </population>
         <population id="a7B_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.221666666667 0.72 0"/>
+            <property tag="color" value="0.566666666667 0.233333333333 0.306666666667"/>
             <property tag="region" value="7B"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2595,7 +2595,7 @@
             </instance>
         </population>
         <population id="a7B_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.221666666667 0.72 0"/>
+            <property tag="color" value="0.566666666667 0.233333333333 0.306666666667"/>
             <property tag="region" value="7B"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2603,7 +2603,7 @@
             </instance>
         </population>
         <population id="ProM_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.19 0.71 0"/>
+            <property tag="color" value="0.55 0.2 0.32"/>
             <property tag="region" value="ProM"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2611,7 +2611,7 @@
             </instance>
         </population>
         <population id="ProM_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.19 0.71 0"/>
+            <property tag="color" value="0.55 0.2 0.32"/>
             <property tag="region" value="ProM"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2619,7 +2619,7 @@
             </instance>
         </population>
         <population id="ProM_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.19 0.71 0"/>
+            <property tag="color" value="0.55 0.2 0.32"/>
             <property tag="region" value="ProM"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2627,7 +2627,7 @@
             </instance>
         </population>
         <population id="ProM_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.19 0.71 0"/>
+            <property tag="color" value="0.55 0.2 0.32"/>
             <property tag="region" value="ProM"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2635,7 +2635,7 @@
             </instance>
         </population>
         <population id="STPi_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.158333333333 0.7 0"/>
+            <property tag="color" value="0.533333333333 0.166666666667 0.333333333333"/>
             <property tag="region" value="STPi"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2643,7 +2643,7 @@
             </instance>
         </population>
         <population id="STPi_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.158333333333 0.7 0"/>
+            <property tag="color" value="0.533333333333 0.166666666667 0.333333333333"/>
             <property tag="region" value="STPi"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2651,7 +2651,7 @@
             </instance>
         </population>
         <population id="STPi_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.158333333333 0.7 0"/>
+            <property tag="color" value="0.533333333333 0.166666666667 0.333333333333"/>
             <property tag="region" value="STPi"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2659,7 +2659,7 @@
             </instance>
         </population>
         <population id="STPi_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.158333333333 0.7 0"/>
+            <property tag="color" value="0.533333333333 0.166666666667 0.333333333333"/>
             <property tag="region" value="STPi"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2667,7 +2667,7 @@
             </instance>
         </population>
         <population id="F7_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.126666666667 0.69 0"/>
+            <property tag="color" value="0.516666666667 0.133333333333 0.346666666667"/>
             <property tag="region" value="F7"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2675,7 +2675,7 @@
             </instance>
         </population>
         <population id="F7_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.126666666667 0.69 0"/>
+            <property tag="color" value="0.516666666667 0.133333333333 0.346666666667"/>
             <property tag="region" value="F7"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2683,7 +2683,7 @@
             </instance>
         </population>
         <population id="F7_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.126666666667 0.69 0"/>
+            <property tag="color" value="0.516666666667 0.133333333333 0.346666666667"/>
             <property tag="region" value="F7"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2691,7 +2691,7 @@
             </instance>
         </population>
         <population id="F7_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.126666666667 0.69 0"/>
+            <property tag="color" value="0.516666666667 0.133333333333 0.346666666667"/>
             <property tag="region" value="F7"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2699,7 +2699,7 @@
             </instance>
         </population>
         <population id="a8B_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.095 0.68 0"/>
+            <property tag="color" value="0.5 0.1 0.36"/>
             <property tag="region" value="8B"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2707,7 +2707,7 @@
             </instance>
         </population>
         <population id="a8B_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.095 0.68 0"/>
+            <property tag="color" value="0.5 0.1 0.36"/>
             <property tag="region" value="8B"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2715,7 +2715,7 @@
             </instance>
         </population>
         <population id="a8B_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.095 0.68 0"/>
+            <property tag="color" value="0.5 0.1 0.36"/>
             <property tag="region" value="8B"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2723,7 +2723,7 @@
             </instance>
         </population>
         <population id="a8B_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.095 0.68 0"/>
+            <property tag="color" value="0.5 0.1 0.36"/>
             <property tag="region" value="8B"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2731,7 +2731,7 @@
             </instance>
         </population>
         <population id="STPr_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.0633333333333 0.67 0"/>
+            <property tag="color" value="0.483333333333 0.0666666666667 0.373333333333"/>
             <property tag="region" value="STPr"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2739,7 +2739,7 @@
             </instance>
         </population>
         <population id="STPr_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.0633333333333 0.67 0"/>
+            <property tag="color" value="0.483333333333 0.0666666666667 0.373333333333"/>
             <property tag="region" value="STPr"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2747,7 +2747,7 @@
             </instance>
         </population>
         <population id="STPr_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.0633333333333 0.67 0"/>
+            <property tag="color" value="0.483333333333 0.0666666666667 0.373333333333"/>
             <property tag="region" value="STPr"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2755,7 +2755,7 @@
             </instance>
         </population>
         <population id="STPr_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.0633333333333 0.67 0"/>
+            <property tag="color" value="0.483333333333 0.0666666666667 0.373333333333"/>
             <property tag="region" value="STPr"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2763,7 +2763,7 @@
             </instance>
         </population>
         <population id="a24c_L23_E" component="L23_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.0316666666667 0.66 0"/>
+            <property tag="color" value="0.466666666667 0.0333333333333 0.386666666667"/>
             <property tag="region" value="24c"/>
             <property tag="radius" value="0.5"/>
             <instance id="0">
@@ -2771,7 +2771,7 @@
             </instance>
         </population>
         <population id="a24c_L23_I" component="L23_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.0316666666667 0.66 0"/>
+            <property tag="color" value="0.466666666667 0.0333333333333 0.386666666667"/>
             <property tag="region" value="24c"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
@@ -2779,7 +2779,7 @@
             </instance>
         </population>
         <population id="a24c_L56_E" component="L56_E_comp" size="1" type="populationList">
-            <property tag="color" value="0.0316666666667 0.66 0"/>
+            <property tag="color" value="0.466666666667 0.0333333333333 0.386666666667"/>
             <property tag="region" value="24c"/>
             <property tag="radius" value="0.6"/>
             <instance id="0">
@@ -2787,7 +2787,7 @@
             </instance>
         </population>
         <population id="a24c_L56_I" component="L56_I_comp" size="1" type="populationList">
-            <property tag="color" value="0.0316666666667 0.66 0"/>
+            <property tag="color" value="0.466666666667 0.0333333333333 0.386666666667"/>
             <property tag="region" value="24c"/>
             <property tag="radius" value="0.35"/>
             <instance id="0">
