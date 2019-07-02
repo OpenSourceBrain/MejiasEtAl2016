@@ -37,3 +37,4 @@ Matlab/*.png
 /NeuroML2/subgraphData30.mat
 /NeuroML2/clean.sh
 /NeuroML2/*.pov
+/NeuroML2/*.ini

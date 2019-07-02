@@ -241,12 +241,14 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     # Background input
     # Iterate over the different possible areas
     pops = []
-    area_edge = 30
-    area_spacing = 30
-
-    layer_thickness = 30
+    area_edge = 5
+    area_spacing = 10
+    layer_thickness = 5
     
-    pop_radius = 1
+    l23e_radius = .5
+    l23i_radius = .35
+    l56e_radius = .6
+    l56i_radius = .35
     
     for area_idx, area in enumerate(areas):
         
@@ -267,13 +269,16 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
             l56e_color = region_color
             l56i_color = region_color
             
-            layer_thickness = 100
-            pop_radius = 0.5
             separation = 1.5
             
-            l23e_offset_y = separation
+            l23e_offset_x = 0
+            l23i_offset_x = 0
+            l56e_offset_x = 0
+            l56i_offset_x = 0
+            
+            l23e_offset_y = separation*1.4
             l23i_offset_y = separation
-            l56e_offset_y = 0
+            l56e_offset_y = separation*0.4
             l56i_offset_y = 0
             
             l23e_offset_z = 0
@@ -295,9 +300,13 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
             l56e_color = color_str['l56e']
             l56i_color = color_str['l56i']
             
-            l23e_offset_y = layer_thickness*2/3.
+            l23e_offset_x = 0
+            l23i_offset_x = area_edge
+            l56e_offset_x = 0
+            l56i_offset_x = area_edge
+            l23e_offset_y = layer_thickness*1.4/3.
             l23i_offset_y = layer_thickness*1/3.
-            l56e_offset_y = layer_thickness*2/3.
+            l56e_offset_y = layer_thickness*1.4/3.
             l56i_offset_y = layer_thickness*1/3.
             l23e_offset_z = 0
             l23i_offset_z = 0
@@ -308,29 +317,29 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         pl23e = Population(id='%s_L23_E' %(safe_area), 
                            size=1, 
                            component=l23ecell.id, 
-                           properties={'color':l23e_color,'radius':pop_radius},
-                           relative_layout = RelativeLayout(region=l23_region.id,x=0,y=l23e_offset_y,z=l23e_offset_z))
+                           properties={'color':l23e_color,'radius':l23e_radius},
+                           relative_layout = RelativeLayout(region=l23_region.id,x=l23e_offset_x,y=l23e_offset_y,z=l23e_offset_z))
         pops.append(pl23e)
         
         pl23i = Population(id='%s_L23_I' %(safe_area), 
                            size=1, 
                            component=l23icell.id, 
-                           properties={'color':l23i_color,'radius':pop_radius},
-                           relative_layout = RelativeLayout(region=l23_region.id,x=0,y=l23i_offset_y,z=l23i_offset_z))
+                           properties={'color':l23i_color,'radius':l23i_radius},
+                           relative_layout = RelativeLayout(region=l23_region.id,x=l23i_offset_x,y=l23i_offset_y,z=l23i_offset_z))
         pops.append(pl23i)
 
         pl56e = Population(id='%s_L56_E' %(safe_area), 
                            size=1, 
                            component=l56ecell.id, 
-                           properties={'color':l56e_color,'radius':pop_radius},
-                           relative_layout = RelativeLayout(region=l56_region.id,x=0,y=l56e_offset_y,z=l56e_offset_z))
+                           properties={'color':l56e_color,'radius':l56e_radius},
+                           relative_layout = RelativeLayout(region=l56_region.id,x=l56e_offset_x,y=l56e_offset_y,z=l56e_offset_z))
         pops.append(pl56e)
         
         pl56i = Population(id='%s_L56_I' %(safe_area), 
                            size=1, 
                            component=l56icell.id, 
-                           properties={'color':l56i_color,'radius':pop_radius},
-                           relative_layout = RelativeLayout(region=l56_region.id,x=0,y=l56i_offset_y,z=l56i_offset_z))
+                           properties={'color':l56i_color,'radius':l56i_radius},
+                           relative_layout = RelativeLayout(region=l56_region.id,x=l56i_offset_x,y=l56i_offset_y,z=l56i_offset_z))
         pops.append(pl56i)
 
         net.populations.append(pl23e)
