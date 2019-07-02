@@ -276,15 +276,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
             l56e_offset_x = 0
             l56i_offset_x = 0
             
-            l23e_offset_y = separation*1.4
+            l23e_offset_y = 0
             l23i_offset_y = separation
-            l56e_offset_y = separation*0.4
-            l56i_offset_y = 0
+            l56e_offset_y = 0
+            l56i_offset_y = separation
             
-            l23e_offset_z = 0
+            l23e_offset_z = separation
             l23i_offset_z = separation
             l56e_offset_z = 0
-            l56i_offset_z = separation
+            l56i_offset_z = 0
             
         else:
             
