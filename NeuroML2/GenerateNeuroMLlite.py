@@ -19,7 +19,7 @@ def get_scaled_color(area):
             ranking[ws[0]] = int(ws[1])
     r = ranking[area]
     scale = r/30.
-    c = '%s %s %s'%(1-scale,scale,scale)
+    c = '%s %s %s'%(0.95*(1-scale),0.95-0.3*(scale),0)
     print('Color for area %s: %s'%(area,c))
     return c
 
