@@ -8,7 +8,6 @@ NeuroML2/*json
 NeuroML2/x86_64
 
 NeuroML2/LEMS_SimMejiasFig2.xml
-NeuroML2/MERetal14_on_F99.tsv
 NeuroML2/MejiasFig2.net.nml
 NeuroML2/Neuron_2015_Table.csv
 NeuroML2/report.*.txt
@@ -38,3 +37,4 @@ Matlab/*.png
 /NeuroML2/subgraphData30.mat
 /NeuroML2/clean.sh
 /NeuroML2/*.pov
+/NeuroML2/*.ini
