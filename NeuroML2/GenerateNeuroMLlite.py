@@ -1041,9 +1041,11 @@ if __name__ == "__main__":
 
             if '-30rois' in sys.argv:
                 areas = list(ranking['region'])
-                conn = pd.read_csv('../Python/interareal/fln_conn.txt', sep='\t', header=None)
-                # Transfrom dataframe into numpy array
-                conn = np.array(conn)
+                with open('../Python/interareal/connectivity.pickle', 'rb') as handle:
+                    conn = pickle.load(handle)
+                # range compression for the connection weights
+                fln = 1.2 * np.power(conn['fln'], .30)
+                conn = np.multiply(fln, conn['sln'])
 
             net_id='Interareal_%d' %len(areas)
 
