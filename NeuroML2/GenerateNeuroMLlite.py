@@ -348,27 +348,31 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         net.populations.append(pl56e)
         net.populations.append(pl56i)
 
-        safe_area = get_safe_area_name(area)
-        # Add inputs
-        input_source_l23 = InputSource(id='iclamp_%s_L23' %safe_area,
-                                       neuroml2_input='PulseGenerator',
-                                       parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
-        net.input_sources.append(input_source_l23)
-        # Add modulation
-        net.inputs.append(Input(id='modulation_%s_L23_E'%safe_area,
-                                input_source=input_source_l23.id,
-                                population=pl23e.id,
-                                percentage=100))
-        input_source_l56 = InputSource(id='iclamp_%s_L56' %safe_area,
-                                       neuroml2_input='PulseGenerator',
-                                       parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
+        # Force input to be only on V1.
+        if area == 'V1':
+            safe_area = get_safe_area_name('V1')
+            # Add inputs
+            # find index for V1
+            area_idx = areas.index('V1')
+            input_source_l23 = InputSource(id='iclamp_%s_L23' %safe_area,
+                                           neuroml2_input='PulseGenerator',
+                                           parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
+            net.input_sources.append(input_source_l23)
+            # Add modulation
+            net.inputs.append(Input(id='modulation_%s_L23_E'%safe_area,
+                                    input_source=input_source_l23.id,
+                                    population=pl23e.id,
+                                    percentage=100))
+            input_source_l56 = InputSource(id='iclamp_%s_L56' %safe_area,
+                                           neuroml2_input='PulseGenerator',
+                                           parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
 
-        net.input_sources.append(input_source_l56)
-        # Add modulation
-        net.inputs.append(Input(id='modulation_%s_L56_E'%safe_area,
-                                input_source=input_source_l56.id,
-                                population=pl56e.id,
-                                percentage=100))
+            net.input_sources.append(input_source_l56)
+            # Add modulation
+            net.inputs.append(Input(id='modulation_%s_L56_E'%safe_area,
+                                    input_source=input_source_l56.id,
+                                    population=pl56e.id,
+                                    percentage=100))
 
     for pre_pop in pops:
         for post_pop in pops:
