@@ -23,6 +23,34 @@ def get_scaled_color(area):
     print('Color for area %s: %s'%(area,c))
     return c
 
+def get_connectivity(conn, areas, ranking, conn_bin):
+    '''
+    Generate connectivity matrix
+
+    :param conn: Dictionary with the fln and sln information
+    :param conn_bin: binary matrix describing which region is connected to which. This is only necessary
+                     if the fln and sln are not taken into account.
+
+    :param ranking: List of all areas with their rankings
+    :param areas: List of Areas under analysis (assumes that all areas have been sorted by their ranking)
+    :return:
+        conn: The connectivity matrix scalled by fln and sln
+    '''
+    if conn_bin == None:
+        # find fln and sln information for the 4 regions of interest
+        region_indexes = []
+        for area in areas:
+            region_indexes.append(ranking.loc[ranking['region'] == area].index.tolist()[0])
+        # Get the tuple of the combination of connectivity and obtain the correspoding fln and sln values
+        indexes = [i for i in product(region_indexes, repeat=2)]
+        fln = conn['fln'][tuple(np.array(indexes).T)].reshape(len(areas), len(areas))
+        # range compression for the connection weights
+        fln = 1.2 * np.power(fln, .30)
+        sln = conn['sln'][tuple(np.array(indexes).T)].reshape(len(areas), len(areas))
+        conn = np.multiply(fln, sln)
+    else:
+        conn = conn_bin
+    return conn
 
 '''
     Get name without / and not starting with digit
@@ -220,15 +248,15 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                 if conn[row, col] != 0:
                     # Add FF connection
                     if (row, col) in up_tri:
-                        W[row * 4 + 0, col * 4 + 0] = 1. # FF_L2e_l2e
+                        W[row * 4 + 0, col * 4 + 0] = 1. * conn[row, col] # FF_L2e_l2e
 
 
                     # Add FB connection
                     if (row, col) in lw_tri:
-                        W[row *4 + 2, col * 4 + 0] = .1 # FB l5e_l2e
-                        W[row *4 + 2, col * 4 + 3] = .5 # FB l5e_l5i
-                        W[row *4 + 2, col * 4 + 2] = .9 # FB l5e_l5e
-                        W[row *4 + 2, col * 4 + 1] = .5 # FB l5e_l2i
+                        W[row *4 + 2, col * 4 + 0] = .1 * conn[row, col] # FB l5e_l2e
+                        W[row *4 + 2, col * 4 + 3] = .5 * conn[row, col] # FB l5e_l5i
+                        W[row *4 + 2, col * 4 + 2] = .9 * conn[row, col] # FB l5e_l5e
+                        W[row *4 + 2, col * 4 + 1] = .5 * conn[row, col] # FB l5e_l2i
 
     else:
         raise ValueError('Connectivity matrix not defined for more than 3 regions')
@@ -1022,34 +1050,39 @@ if __name__ == "__main__":
 
         else:
             #Load the array with the ordered rank
+            from itertools import product
             import pandas as pd
 
             ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
+            with open('../Python/interareal/connectivity.pickle', 'rb') as handle:
+                conn = pickle.load(handle)
+
+
+
             if '-3rois' in sys.argv:
                 areas = ['V1', 'V4', 'MT']
                 # Create the FB and FF connectiviy between the areas.
                 # Define connections between regions
                 # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
-                conn = np.array([[0, 1, 0],
-                                 [1, 0, 1],
-                                 [0, 1, 0]])
+                conn_bin = np.array([[0, 1, 0],
+                                     [1, 0, 1],
+                                     [0, 1, 0]])
+                conn = get_connectivity(conn, areas, ranking, conn_bin=None)
+
             if '-4rois' in sys.argv:
                 areas = ['V1', 'V4', 'MT', 'TEO']
                 # Create the FB and FF connectiviy between the areas.
                 # Define connections between regions
                 # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
-                conn = np.array([[0, 1, 0, 0],
-                                 [1, 0, 1, 0],
-                                 [0, 1, 0, 0],
-                                 [0, 0, 1, 0]])
+                conn_bin = np.array([[0, 1, 0, 0],
+                                     [1, 0, 1, 0],
+                                     [0, 1, 0, 0],
+                                     [0, 0, 1, 0]])
+                conn = get_connectivity(conn, areas, ranking, conn_bin=None)
 
             if '-30rois' in sys.argv:
                 areas = list(ranking['region'])
-                with open('../Python/interareal/connectivity.pickle', 'rb') as handle:
-                    conn = pickle.load(handle)
-                # range compression for the connection weights
-                fln = 1.2 * np.power(conn['fln'], .30)
-                conn = np.multiply(fln, conn['sln'])
+                conn = get_connectivity(conn, areas, ranking, conn_bin=None)
 
             net_id='Interareal_%d' %len(areas)
 
