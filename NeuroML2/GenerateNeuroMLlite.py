@@ -36,11 +36,14 @@ def get_connectivity(conn, areas, ranking, conn_bin):
     :return:
         conn: The connectivity matrix scalled by fln and sln
     '''
+    # Check if the selected regions are present in the file that describe the ranking
+    assert(len(areas) == sum(ranking['region'].isin(areas)))
+    # sort the regions by the areas in the ranking
+    ranking = ranking[ranking['region'].isin(areas)]
+
     if conn_bin == None:
         # find fln and sln information for the 4 regions of interest
-        region_indexes = []
-        for area in areas:
-            region_indexes.append(ranking.loc[ranking['region'] == area].index.tolist()[0])
+        region_indexes = ranking.index.tolist()
         # Get the tuple of the combination of connectivity and obtain the correspoding fln and sln values
         indexes = [i for i in product(region_indexes, repeat=2)]
         fln = conn['fln'][tuple(np.array(indexes).T)].reshape(len(areas), len(areas))
@@ -1086,10 +1089,6 @@ if __name__ == "__main__":
 
             net_id='Interareal_%d' %len(areas)
 
-            # Check if the selected regions are present in the file that describe the ranking
-            assert(len(areas) == sum(ranking['region'].isin(areas)))
-            # sort the regions by the areas in the ranking
-            ranked_areas = ranking[ranking['region'].isin(areas)]
 
 
             Iext0 = 2; Iext1 = 4 # background current at excitatory population
