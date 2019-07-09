@@ -3,14 +3,16 @@
         "version": "NeuroMLlite v0.1.8", 
         "parameters": {
             "wie": -3.25, 
-            "sigma56": 0.45, 
-            "wee": 1.5, 
+            "iclamp_V1_L23_amp": "8nA", 
             "l5e_l2i": 0.75, 
+            "l2e_l5e": 1, 
+            "wii": -2.5, 
+            "wee": 1.5, 
             "duration_stim": "1e9ms", 
             "wei": 3.5, 
-            "l2e_l5e": 1, 
+            "sigma56": 0.45, 
             "delay_stim": "0ms", 
-            "wii": -2.5, 
+            "iclamp_V1_L56_amp": "8nA", 
             "sigma23": 0.3
         }, 
         "notes": "Testing...", 
@@ -50,7 +52,7 @@
                     "parameters": {
                         "delay": "delay_stim", 
                         "duration": "duration_stim", 
-                        "amplitude": "8nA"
+                        "amplitude": "iclamp_V1_L23_amp"
                     }
                 }
             }, 
@@ -60,7 +62,7 @@
                     "parameters": {
                         "delay": "delay_stim", 
                         "duration": "duration_stim", 
-                        "amplitude": "8nA"
+                        "amplitude": "iclamp_V1_L56_amp"
                     }
                 }
             }

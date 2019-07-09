@@ -386,18 +386,26 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
             # Add inputs
             # find index for V1
             area_idx = areas.index('V1')
-            input_source_l23 = InputSource(id='iclamp_%s_L23' %safe_area,
+            insource_id = 'iclamp_%s_L23'%safe_area
+            insource_param = '%s_amp'%(insource_id)
+            net.parameters[insource_param] = '%snA'%Iext[area_idx][0]
+            input_source_l23 = InputSource(id= insource_id,
                                            neuroml2_input='PulseGenerator',
-                                           parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'delay_stim', 'duration':'duration_stim'})
+                                           parameters={'amplitude':insource_param, 'delay':'delay_stim', 'duration':'duration_stim'})
             net.input_sources.append(input_source_l23)
             # Add modulation
             net.inputs.append(Input(id='modulation_%s_L23_E'%safe_area,
                                     input_source=input_source_l23.id,
                                     population=pl23e.id,
                                     percentage=100))
-            input_source_l56 = InputSource(id='iclamp_%s_L56' %safe_area,
+            
+            insource_id = 'iclamp_%s_L56'%safe_area
+            insource_param = '%s_amp'%(insource_id)
+            net.parameters[insource_param] = '%snA'%Iext[area_idx][1]
+            
+            input_source_l56 = InputSource(id=insource_id,
                                            neuroml2_input='PulseGenerator',
-                                           parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'delay_stim', 'duration':'duration_stim'})
+                                           parameters={'amplitude':insource_param, 'delay':'delay_stim', 'duration':'duration_stim'})
 
             net.input_sources.append(input_source_l56)
             # Add modulation

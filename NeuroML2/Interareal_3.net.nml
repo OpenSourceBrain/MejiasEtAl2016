@@ -5,6 +5,8 @@
     NeuroMLlite parameters: 
         delay_stim = 0ms
         duration_stim = 1e9ms
+        iclamp_V1_L23_amp = 2nA
+        iclamp_V1_L56_amp = 4nA
         l2e_l5e = 1
         l5e_l2i = 0.75
         sigma23 = 0.3
