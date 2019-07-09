@@ -3,11 +3,8 @@
     Generated network: Intralaminar
     Generation seed: 1234
     NeuroMLlite parameters: 
-        FB_l5e_l2e = 0.0
-        FB_l5e_l2i = 0.0
-        FB_l5e_l5e = 0.0
-        FB_l5e_l5i = 0.0
-        FF_l2e_l2e = 0.0
+        delay_stim = 0ms
+        duration_stim = 1e9ms
         l2e_l5e = 0
         l5e_l2i = 0
         sigma23 = 0.3
@@ -27,8 +24,8 @@
     <silentSynapse id="silentSyn_proj_V1_L56_E_V1_L56_I"/>
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L56_E"/>
     <silentSynapse id="silentSyn_proj_V1_L56_I_V1_L56_I"/>
-    <pulseGenerator id="iclamp_V1_L23" delay="0ms" duration="25000ms" amplitude="2nA"/>
-    <pulseGenerator id="iclamp_V1_L56" delay="0ms" duration="25000ms" amplitude="2nA"/>
+    <pulseGenerator id="iclamp_V1_L23" delay="0ms" duration="1e9ms" amplitude="2nA"/>
+    <pulseGenerator id="iclamp_V1_L56" delay="0ms" duration="1e9ms" amplitude="2nA"/>
     <network id="Intralaminar">
         <notes>Testing...</notes>
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">

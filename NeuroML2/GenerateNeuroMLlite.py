@@ -99,11 +99,6 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'wii': wii,
                            'l5e_l2i': i_l5e_l2i,
                            'l2e_l5e': i_l2e_l5e,
-                           'FF_l2e_l2e': FF_l2e_l2e,
-                           'FB_l5e_l2i': FB_l5e_l2i,
-                           'FB_l5e_l5e': FB_l5e_l5e,
-                           'FB_l5e_l5i': FB_l5e_l5i,
-                           'FB_l5e_l2e': FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
     elif len(areas) == 2:
@@ -136,6 +131,12 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'l2e_l5e': i_l2e_l5e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
+                           
+    delay_stim = '0ms'
+    duration_stim = '1e9ms'
+    net.parameters['delay_stim'] = delay_stim
+    net.parameters['duration_stim'] = duration_stim
+    
 
     suffix = '' if noise else '_flat'
 
@@ -387,7 +388,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
             area_idx = areas.index('V1')
             input_source_l23 = InputSource(id='iclamp_%s_L23' %safe_area,
                                            neuroml2_input='PulseGenerator',
-                                           parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
+                                           parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'delay_stim', 'duration':'duration_stim'})
             net.input_sources.append(input_source_l23)
             # Add modulation
             net.inputs.append(Input(id='modulation_%s_L23_E'%safe_area,
@@ -396,7 +397,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                     percentage=100))
             input_source_l56 = InputSource(id='iclamp_%s_L56' %safe_area,
                                            neuroml2_input='PulseGenerator',
-                                           parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
+                                           parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'delay_stim', 'duration':'duration_stim'})
 
             net.input_sources.append(input_source_l56)
             # Add modulation

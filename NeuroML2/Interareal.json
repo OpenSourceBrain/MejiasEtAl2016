@@ -1,0 +1,589 @@
+{
+    "Interareal": {
+        "version": "NeuroMLlite v0.1.8", 
+        "parameters": {
+            "wie": -3.25, 
+            "l5e_l2i": 0.75, 
+            "FF_l2e_l2e": 1.0, 
+            "l2e_l5e": 1, 
+            "wii": -2.5, 
+            "FB_l5e_l2e": 0.1, 
+            "wee": 1.5, 
+            "FB_l5e_l5e": 0.9, 
+            "duration_stim": "1e9ms", 
+            "FB_l5e_l5i": 0.5, 
+            "sigma56": 0.45, 
+            "delay_stim": "0ms", 
+            "FB_l5e_l2i": 0.5, 
+            "wei": 3.5, 
+            "sigma23": 0.3
+        }, 
+        "notes": "Testing...", 
+        "cells": [
+            {
+                "L23_E_comp": {
+                    "lems_source_file": "Prototypes.xml"
+                }
+            }, 
+            {
+                "L23_I_comp": {
+                    "lems_source_file": "RateBased.xml"
+                }
+            }, 
+            {
+                "L56_E_comp": {
+                    "lems_source_file": "NoisyCurrentSource.xml"
+                }
+            }, 
+            {
+                "L56_I_comp": {
+                    "lems_source_file": "Prototypes.xml"
+                }
+            }
+        ], 
+        "synapses": [
+            {
+                "rs": {
+                    "lems_source_file": "Prototypes.xml"
+                }
+            }
+        ], 
+        "input_sources": [
+            {
+                "iclamp_V1_L23": {
+                    "neuroml2_input": "PulseGenerator", 
+                    "parameters": {
+                        "delay": "delay_stim", 
+                        "duration": "duration_stim", 
+                        "amplitude": "17nA"
+                    }
+                }
+            }, 
+            {
+                "iclamp_V1_L56": {
+                    "neuroml2_input": "PulseGenerator", 
+                    "parameters": {
+                        "delay": "delay_stim", 
+                        "duration": "duration_stim", 
+                        "amplitude": "19nA"
+                    }
+                }
+            }
+        ], 
+        "regions": [
+            {
+                "V1_L23": {
+                    "x": 0.0, 
+                    "y": 5.0, 
+                    "z": 0.0, 
+                    "width": 5.0, 
+                    "height": 30.0, 
+                    "depth": 5.0
+                }
+            }, 
+            {
+                "V1_L56": {
+                    "x": 0.0, 
+                    "y": 0.0, 
+                    "z": 0.0, 
+                    "width": 5.0, 
+                    "height": 5.0, 
+                    "depth": 5.0
+                }
+            }, 
+            {
+                "V4_L23": {
+                    "x": 15.0, 
+                    "y": 5.0, 
+                    "z": 0.0, 
+                    "width": 5.0, 
+                    "height": 30.0, 
+                    "depth": 5.0
+                }
+            }, 
+            {
+                "V4_L56": {
+                    "x": 15.0, 
+                    "y": 0.0, 
+                    "z": 0.0, 
+                    "width": 5.0, 
+                    "height": 5.0, 
+                    "depth": 5.0
+                }
+            }
+        ], 
+        "populations": [
+            {
+                "V1_L23_E": {
+                    "size": 1, 
+                    "component": "L23_E_comp", 
+                    "properties": {
+                        "color": ".8 0 0", 
+                        "radius": 0.5
+                    }, 
+                    "relative_layout": {
+                        "region": "V1_L23", 
+                        "x": 0.0, 
+                        "y": 2.33333333333, 
+                        "z": 0.0
+                    }
+                }
+            }, 
+            {
+                "V1_L23_I": {
+                    "size": 1, 
+                    "component": "L23_I_comp", 
+                    "properties": {
+                        "color": "0 0 .8", 
+                        "radius": 0.35
+                    }, 
+                    "relative_layout": {
+                        "region": "V1_L23", 
+                        "x": 5.0, 
+                        "y": 1.66666666667, 
+                        "z": 0.0
+                    }
+                }
+            }, 
+            {
+                "V1_L56_E": {
+                    "size": 1, 
+                    "component": "L56_E_comp", 
+                    "properties": {
+                        "color": "1 .2 0", 
+                        "radius": 0.6
+                    }, 
+                    "relative_layout": {
+                        "region": "V1_L56", 
+                        "x": 0.0, 
+                        "y": 2.33333333333, 
+                        "z": 0.0
+                    }
+                }
+            }, 
+            {
+                "V1_L56_I": {
+                    "size": 1, 
+                    "component": "L56_I_comp", 
+                    "properties": {
+                        "color": "0 .2 1", 
+                        "radius": 0.35
+                    }, 
+                    "relative_layout": {
+                        "region": "V1_L56", 
+                        "x": 5.0, 
+                        "y": 1.66666666667, 
+                        "z": 0.0
+                    }
+                }
+            }, 
+            {
+                "V4_L23_E": {
+                    "size": 1, 
+                    "component": "L23_E_comp", 
+                    "properties": {
+                        "color": ".8 0 0", 
+                        "radius": 0.5
+                    }, 
+                    "relative_layout": {
+                        "region": "V4_L23", 
+                        "x": 0.0, 
+                        "y": 2.33333333333, 
+                        "z": 0.0
+                    }
+                }
+            }, 
+            {
+                "V4_L23_I": {
+                    "size": 1, 
+                    "component": "L23_I_comp", 
+                    "properties": {
+                        "color": "0 0 .8", 
+                        "radius": 0.35
+                    }, 
+                    "relative_layout": {
+                        "region": "V4_L23", 
+                        "x": 5.0, 
+                        "y": 1.66666666667, 
+                        "z": 0.0
+                    }
+                }
+            }, 
+            {
+                "V4_L56_E": {
+                    "size": 1, 
+                    "component": "L56_E_comp", 
+                    "properties": {
+                        "color": "1 .2 0", 
+                        "radius": 0.6
+                    }, 
+                    "relative_layout": {
+                        "region": "V4_L56", 
+                        "x": 0.0, 
+                        "y": 2.33333333333, 
+                        "z": 0.0
+                    }
+                }
+            }, 
+            {
+                "V4_L56_I": {
+                    "size": 1, 
+                    "component": "L56_I_comp", 
+                    "properties": {
+                        "color": "0 .2 1", 
+                        "radius": 0.35
+                    }, 
+                    "relative_layout": {
+                        "region": "V4_L56", 
+                        "x": 5.0, 
+                        "y": 1.66666666667, 
+                        "z": 0.0
+                    }
+                }
+            }
+        ], 
+        "projections": [
+            {
+                "proj_V1_L23_E_V1_L23_E": {
+                    "presynaptic": "V1_L23_E", 
+                    "postsynaptic": "V1_L23_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wee", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L23_E_V1_L23_I": {
+                    "presynaptic": "V1_L23_E", 
+                    "postsynaptic": "V1_L23_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wei", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L23_E_V1_L56_E": {
+                    "presynaptic": "V1_L23_E", 
+                    "postsynaptic": "V1_L56_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "l2e_l5e", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L23_E_V4_L23_E": {
+                    "presynaptic": "V1_L23_E", 
+                    "postsynaptic": "V4_L23_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "FF_l2e_l2e", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L23_I_V1_L23_E": {
+                    "presynaptic": "V1_L23_I", 
+                    "postsynaptic": "V1_L23_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wie", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L23_I_V1_L23_I": {
+                    "presynaptic": "V1_L23_I", 
+                    "postsynaptic": "V1_L23_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wii", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L56_E_V1_L23_I": {
+                    "presynaptic": "V1_L56_E", 
+                    "postsynaptic": "V1_L23_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "l5e_l2i", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L56_E_V1_L56_E": {
+                    "presynaptic": "V1_L56_E", 
+                    "postsynaptic": "V1_L56_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wee", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L56_E_V1_L56_I": {
+                    "presynaptic": "V1_L56_E", 
+                    "postsynaptic": "V1_L56_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wei", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L56_I_V1_L56_E": {
+                    "presynaptic": "V1_L56_I", 
+                    "postsynaptic": "V1_L56_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wie", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V1_L56_I_V1_L56_I": {
+                    "presynaptic": "V1_L56_I", 
+                    "postsynaptic": "V1_L56_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wii", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L23_E_V4_L23_E": {
+                    "presynaptic": "V4_L23_E", 
+                    "postsynaptic": "V4_L23_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wee", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L23_E_V4_L23_I": {
+                    "presynaptic": "V4_L23_E", 
+                    "postsynaptic": "V4_L23_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wei", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L23_E_V4_L56_E": {
+                    "presynaptic": "V4_L23_E", 
+                    "postsynaptic": "V4_L56_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "l2e_l5e", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L23_I_V4_L23_E": {
+                    "presynaptic": "V4_L23_I", 
+                    "postsynaptic": "V4_L23_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wie", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L23_I_V4_L23_I": {
+                    "presynaptic": "V4_L23_I", 
+                    "postsynaptic": "V4_L23_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wii", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_E_V1_L23_E": {
+                    "presynaptic": "V4_L56_E", 
+                    "postsynaptic": "V1_L23_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "FB_l5e_l2e", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_E_V1_L23_I": {
+                    "presynaptic": "V4_L56_E", 
+                    "postsynaptic": "V1_L23_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "FB_l5e_l2i", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_E_V1_L56_E": {
+                    "presynaptic": "V4_L56_E", 
+                    "postsynaptic": "V1_L56_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "FB_l5e_l5e", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_E_V1_L56_I": {
+                    "presynaptic": "V4_L56_E", 
+                    "postsynaptic": "V1_L56_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "FB_l5e_l2i", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_E_V4_L23_I": {
+                    "presynaptic": "V4_L56_E", 
+                    "postsynaptic": "V4_L23_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "l5e_l2i", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_E_V4_L56_E": {
+                    "presynaptic": "V4_L56_E", 
+                    "postsynaptic": "V4_L56_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wee", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_E_V4_L56_I": {
+                    "presynaptic": "V4_L56_E", 
+                    "postsynaptic": "V4_L56_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wei", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_I_V4_L56_E": {
+                    "presynaptic": "V4_L56_I", 
+                    "postsynaptic": "V4_L56_E", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wie", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }, 
+            {
+                "proj_V4_L56_I_V4_L56_I": {
+                    "presynaptic": "V4_L56_I", 
+                    "postsynaptic": "V4_L56_I", 
+                    "synapse": "rs", 
+                    "type": "continuousProjection", 
+                    "delay": 0, 
+                    "weight": "wii", 
+                    "random_connectivity": {
+                        "probability": 1.0
+                    }
+                }
+            }
+        ], 
+        "inputs": [
+            {
+                "modulation_V1_L23_E": {
+                    "input_source": "iclamp_V1_L23", 
+                    "population": "V1_L23_E", 
+                    "percentage": 100.0
+                }
+            }, 
+            {
+                "modulation_V1_L56_E": {
+                    "input_source": "iclamp_V1_L56", 
+                    "population": "V1_L56_E", 
+                    "percentage": 100.0
+                }
+            }
+        ]
+    }
+}

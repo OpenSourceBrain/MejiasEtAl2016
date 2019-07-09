@@ -3,6 +3,8 @@
     Generated network: Interareal_30
     Generation seed: 1234
     NeuroMLlite parameters: 
+        delay_stim = 0ms
+        duration_stim = 1e9ms
         l2e_l5e = 1
         l5e_l2i = 0.75
         sigma23 = 0.3
@@ -11,6 +13,9 @@
         wei = 3.5
         wie = -3.25
         wii = -2.5</notes>
+    <include href="Prototypes.xml"/>
+    <include href="RateBased.xml"/>
+    <include href="NoisyCurrentSource.xml"/>
     <silentSynapse id="silentSyn_proj_V1_L23_E_V1_L23_E"/>
     <silentSynapse id="silentSyn_proj_V1_L23_E_V1_L23_I"/>
     <silentSynapse id="silentSyn_proj_V1_L23_E_V1_L56_E"/>
@@ -1621,8 +1626,8 @@
     <silentSynapse id="silentSyn_proj_a24c_L56_E_a24c_L56_I"/>
     <silentSynapse id="silentSyn_proj_a24c_L56_I_a24c_L56_E"/>
     <silentSynapse id="silentSyn_proj_a24c_L56_I_a24c_L56_I"/>
-    <pulseGenerator id="iclamp_V1_L23" delay="0ms" duration="40000.0ms" amplitude="2nA"/>
-    <pulseGenerator id="iclamp_V1_L56" delay="0ms" duration="40000.0ms" amplitude="4nA"/>
+    <pulseGenerator id="iclamp_V1_L23" delay="0ms" duration="1e9ms" amplitude="2nA"/>
+    <pulseGenerator id="iclamp_V1_L56" delay="0ms" duration="1e9ms" amplitude="4nA"/>
     <network id="Interareal_30">
         <notes>Testing...</notes>
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">

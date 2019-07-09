@@ -1,0 +1,12 @@
+{
+    "SimIntralaminar_0": {
+        "version": "NeuroMLlite v0.1.8", 
+        "network": "Intralaminar.json", 
+        "duration": 25000.0, 
+        "dt": 0.2, 
+        "seed": 0, 
+        "recordRates": {
+            "all": "*"
+        }
+    }
+}

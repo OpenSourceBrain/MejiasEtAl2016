@@ -8,6 +8,8 @@
         FB_l5e_l5e = 0.9
         FB_l5e_l5i = 0.5
         FF_l2e_l2e = 1.0
+        delay_stim = 0ms
+        duration_stim = 1e9ms
         l2e_l5e = 1
         l5e_l2i = 0.75
         sigma23 = 0.3
@@ -44,10 +46,8 @@
     <silentSynapse id="silentSyn_proj_V4_L56_E_V4_L56_I"/>
     <silentSynapse id="silentSyn_proj_V4_L56_I_V4_L56_E"/>
     <silentSynapse id="silentSyn_proj_V4_L56_I_V4_L56_I"/>
-    <pulseGenerator id="iclamp_V1_L23" delay="0ms" duration="40000.0ms" amplitude="17nA"/>
-    <pulseGenerator id="iclamp_V1_L56" delay="0ms" duration="40000.0ms" amplitude="19nA"/>
-    <pulseGenerator id="iclamp_V4_L23" delay="0ms" duration="40000.0ms" amplitude="2nA"/>
-    <pulseGenerator id="iclamp_V4_L56" delay="0ms" duration="40000.0ms" amplitude="4nA"/>
+    <pulseGenerator id="iclamp_V1_L23" delay="0ms" duration="1e9ms" amplitude="17nA"/>
+    <pulseGenerator id="iclamp_V1_L56" delay="0ms" duration="1e9ms" amplitude="19nA"/>
     <network id="Interareal">
         <notes>Testing...</notes>
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">
@@ -194,12 +194,6 @@
         </inputList>
         <inputList id="modulation_V1_L56_E" population="V1_L56_E" component="iclamp_V1_L56">
             <input id="0" target="../V1_L56_E/0/L56_E_comp" destination="synapses"/>
-        </inputList>
-        <inputList id="modulation_V4_L23_E" population="V4_L23_E" component="iclamp_V4_L23">
-            <input id="0" target="../V4_L23_E/0/L23_E_comp" destination="synapses"/>
-        </inputList>
-        <inputList id="modulation_V4_L56_E" population="V4_L56_E" component="iclamp_V4_L56">
-            <input id="0" target="../V4_L56_E/0/L56_E_comp" destination="synapses"/>
         </inputList>
     </network>
 </neuroml>
