@@ -123,12 +123,22 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
 
     elif len(areas) > 2:
+        FF_l2e_l2e = 1.0
+        FB_l5e_l2i = .5
+        FB_l5e_l5e = .9
+        FB_l5e_l5i = .5
+        FB_l5e_l2e = .1
         net.parameters = { 'wee': wee,
                            'wei': wei,
                            'wie': wie,
                            'wii': wii,
                            'l5e_l2i': i_l5e_l2i,
                            'l2e_l5e': i_l2e_l5e,
+                           'FF_l2e_l2e': FF_l2e_l2e,
+                           'FB_l5e_l2i': FB_l5e_l2i,
+                           'FB_l5e_l5e': FB_l5e_l5e,
+                           'FB_l5e_l5i': FB_l5e_l5i,
+                           'FB_l5e_l2e': FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
                            
@@ -169,7 +179,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         print('    Connection %s -> %s weight %s'%(pre_pop.id, post_pop.id, weight))
         zero_weight = False
         try:
-            zero_weight = float(weight)==0
+            zero_weight = len(weight)==0 or float(weight)==0
         except:
             pass
         if not zero_weight:
@@ -236,7 +246,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                          ])
 
         # Define the main connectivity matrix
-        W = np.zeros((n_areas * nlayers, n_areas * nlayers))
+        W = np.empty((n_areas * nlayers, n_areas * nlayers),dtype='U34')
 
         # Get the upper or the lower diagonal. This information is useful to now if the connection is FF(uper triangular matrix)
         #  or FB (lower triangular matrix)
@@ -252,15 +262,14 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                 if conn[row, col] != 0:
                     # Add FF connection
                     if (row, col) in up_tri:
-                        W[row * 4 + 0, col * 4 + 0] = 1. * conn[row, col] # FF_L2e_l2e
-
+                        W[row * 4 + 0, col * 4 + 0] = 'FF_l2e_l2e * %s' % conn[row, col] # FF_L2e_l2e
 
                     # Add FB connection
                     if (row, col) in lw_tri:
-                        W[row *4 + 2, col * 4 + 0] = .1 * conn[row, col] # FB l5e_l2e
-                        W[row *4 + 2, col * 4 + 3] = .5 * conn[row, col] # FB l5e_l5i
-                        W[row *4 + 2, col * 4 + 2] = .9 * conn[row, col] # FB l5e_l5e
-                        W[row *4 + 2, col * 4 + 1] = .5 * conn[row, col] # FB l5e_l2i
+                        W[row *4 + 2, col * 4 + 0] = 'FB_l5e_l2e * %s' % conn[row, col] # FB l5e_l2e
+                        W[row *4 + 2, col * 4 + 3] = 'FB_l5e_l5i * %s' % conn[row, col] # FB l5e_l5i
+                        W[row *4 + 2, col * 4 + 2] = 'FB_l5e_l5e * %s' % conn[row, col] # FB l5e_l5e
+                        W[row *4 + 2, col * 4 + 1] = 'FB_l5e_l2i * %s' % conn[row, col] # FB l5e_l2i
 
     else:
         raise ValueError('Connectivity matrix not defined for more than 3 regions')

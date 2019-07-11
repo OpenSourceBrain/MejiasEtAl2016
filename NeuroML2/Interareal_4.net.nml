@@ -3,6 +3,11 @@
     Generated network: Interareal_4
     Generation seed: 1234
     NeuroMLlite parameters: 
+        FB_l5e_l2e = 0.1
+        FB_l5e_l2i = 0.5
+        FB_l5e_l5e = 0.9
+        FB_l5e_l5i = 0.5
+        FF_l2e_l2e = 1.0
         delay_stim = 0ms
         duration_stim = 1e9ms
         iclamp_V1_L23_amp = 2nA

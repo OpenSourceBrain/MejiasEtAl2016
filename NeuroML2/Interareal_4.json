@@ -5,14 +5,19 @@
             "wie": -3.25, 
             "iclamp_V1_L23_amp": "2nA", 
             "l5e_l2i": 0.75, 
+            "FF_l2e_l2e": 1.0, 
             "l2e_l5e": 1, 
             "wii": -2.5, 
+            "FB_l5e_l2e": 0.1, 
             "wee": 1.5, 
+            "FB_l5e_l5e": 0.9, 
             "duration_stim": "1e9ms", 
-            "wei": 3.5, 
+            "FB_l5e_l5i": 0.5, 
             "sigma56": 0.45, 
             "delay_stim": "0ms", 
+            "FB_l5e_l2i": 0.5, 
             "iclamp_V1_L56_amp": "4nA", 
+            "wei": 3.5, 
             "sigma23": 0.3
         }, 
         "notes": "Testing...", 
@@ -454,7 +459,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.19192441275410568", 
+                    "weight": "FF_l2e_l2e * 0.19192441275410568", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -467,7 +472,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.0888694940343316", 
+                    "weight": "FF_l2e_l2e * 0.0888694940343316", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -480,7 +485,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.039008034094570536", 
+                    "weight": "FF_l2e_l2e * 0.039008034094570536", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -623,7 +628,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.2636298574461792", 
+                    "weight": "FF_l2e_l2e * 0.2636298574461792", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -636,7 +641,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.33566502045800584", 
+                    "weight": "FF_l2e_l2e * 0.33566502045800584", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -675,7 +680,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.032049400124285844", 
+                    "weight": "FB_l5e_l2e * 0.32049400124285843", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -688,7 +693,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.16024700062142921", 
+                    "weight": "FB_l5e_l2i * 0.32049400124285843", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -701,7 +706,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.2884446011185726", 
+                    "weight": "FB_l5e_l5e * 0.32049400124285843", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -714,7 +719,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.16024700062142921", 
+                    "weight": "FB_l5e_l5i * 0.32049400124285843", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -831,7 +836,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.14992272502968587", 
+                    "weight": "FF_l2e_l2e * 0.14992272502968587", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -870,7 +875,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.03253866018255928", 
+                    "weight": "FB_l5e_l2e * 0.32538660182559276", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -883,7 +888,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.16269330091279638", 
+                    "weight": "FB_l5e_l2i * 0.32538660182559276", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -896,7 +901,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.2928479416430335", 
+                    "weight": "FB_l5e_l5e * 0.32538660182559276", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -909,7 +914,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.16269330091279638", 
+                    "weight": "FB_l5e_l5i * 0.32538660182559276", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -922,7 +927,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.055275422722726876", 
+                    "weight": "FB_l5e_l2e * 0.5527542272272687", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -935,7 +940,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.2763771136136344", 
+                    "weight": "FB_l5e_l2i * 0.5527542272272687", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -948,7 +953,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.4974788045045419", 
+                    "weight": "FB_l5e_l5e * 0.5527542272272687", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -961,7 +966,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.2763771136136344", 
+                    "weight": "FB_l5e_l5i * 0.5527542272272687", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1104,7 +1109,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.052943518663214374", 
+                    "weight": "FB_l5e_l2e * 0.5294351866321437", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1117,7 +1122,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.26471759331607186", 
+                    "weight": "FB_l5e_l2i * 0.5294351866321437", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1130,7 +1135,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.4764916679689294", 
+                    "weight": "FB_l5e_l5e * 0.5294351866321437", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1143,7 +1148,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.26471759331607186", 
+                    "weight": "FB_l5e_l5i * 0.5294351866321437", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1156,7 +1161,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.01670831081915849", 
+                    "weight": "FB_l5e_l2e * 0.1670831081915849", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1169,7 +1174,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.08354155409579245", 
+                    "weight": "FB_l5e_l2i * 0.1670831081915849", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1182,7 +1187,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.1503747973724264", 
+                    "weight": "FB_l5e_l5e * 0.1670831081915849", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
@@ -1195,7 +1200,7 @@
                     "synapse": "rs", 
                     "type": "continuousProjection", 
                     "delay": 0, 
-                    "weight": "0.08354155409579245", 
+                    "weight": "FB_l5e_l5i * 0.1670831081915849", 
                     "random_connectivity": {
                         "probability": 1.0
                     }
