@@ -72,6 +72,8 @@
     <pulseGenerator id="iclamp_V1_L56" delay="0ms" duration="1e9ms" amplitude="4nA"/>
     <network id="Interareal_3">
         <notes>Testing...</notes>
+        <property tag="required_dt_ms" value="0.2"/>
+        <property tag="recommended_duration_ms" value="1000.0"/>
         <population id="V1_L23_E" component="L23_E_comp" size="1" type="populationList">
             <property tag="color" value=".8 0 0"/>
             <property tag="region" value="V1_L23"/>
