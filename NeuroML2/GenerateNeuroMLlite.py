@@ -7,11 +7,78 @@ import pickle
 import sys
 sys.path.append("../Python")
 
+'''
+    Get a color for the area/region, possibly depending on level in functional hierarchy 
+'''
+def get_scaled_color(area):
+    
+    ranking = {}
+    for l in open('../Python/interareal/areas_ranking.txt'):
+        if not 'region' in l:
+            ws = [w.strip() for w in l.split(',')]
+            ranking[ws[0]] = int(ws[1])
+    r = ranking[area]
+    scale = r/30.
+    c = '%s %s %s'%(0.95-0.5*(scale),1-scale,0.4*(scale))
+    print('Color for area %s: %s'%(area,c))
+    return c
+
+def get_connectivity(conn, areas, ranking, conn_bin):
+    '''
+    Generate connectivity matrix
+
+    :param conn: Dictionary with the fln and sln information
+    :param conn_bin: binary matrix describing which region is connected to which. This is only necessary
+                     if the fln and sln are not taken into account.
+
+    :param ranking: List of all areas with their rankings
+    :param areas: List of Areas under analysis (assumes that all areas have been sorted by their ranking)
+    :return:
+        conn: The connectivity matrix scalled by fln and sln
+    '''
+    # Check if the selected regions are present in the file that describe the ranking
+    assert(len(areas) == sum(ranking['region'].isin(areas)))
+    # sort the regions by the areas in the ranking
+    ranking = ranking[ranking['region'].isin(areas)]
+
+    if conn_bin == None:
+        # find fln and sln information for the 4 regions of interest
+        region_indexes = ranking.index.tolist()
+        # Get the tuple of the combination of connectivity and obtain the correspoding fln and sln values
+        indexes = [i for i in product(region_indexes, repeat=2)]
+        fln = conn['fln'][tuple(np.array(indexes).T)].reshape(len(areas), len(areas))
+        # range compression for the connection weights
+        fln = 1.2 * np.power(fln, .30)
+        sln = conn['sln'][tuple(np.array(indexes).T)].reshape(len(areas), len(areas))
+        conn = np.multiply(fln, sln)
+    else:
+        conn = conn_bin
+    return conn
+
+'''
+    Get name without / and not starting with digit
+'''
+def get_safe_area_name(area):
+    return 'a%s'%area.replace('/','_') if area[0].isdigit() else area.replace('/','_')
+
+'''
+    Main generate method
+'''
 def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
              i_l5e_l2i=0., i_l2e_l5e=0.,
              areas=['V1'],
              sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[[0, 0]], count=0,
              net_id='MejiasFig2', conn=None):
+          
+    scale = 1
+    centres = {}
+
+    # From https://scalablebrainatlas.incf.org/macaque/MERetal14
+    f = open('MERetal14_on_F99.tsv') 
+    for l in f:
+        w = l.split()
+        id = w[0].replace('-','_').lower()
+        centres[id] = (float(w[2])*scale,float(w[3])*scale,float(w[4])*scale)
 
     ################################################################################
     ###   Build new network
@@ -32,11 +99,6 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'wii': wii,
                            'l5e_l2i': i_l5e_l2i,
                            'l2e_l5e': i_l2e_l5e,
-                           'FF_l2e_l2e': FF_l2e_l2e,
-                           'FB_l5e_l2i': FB_l5e_l2i,
-                           'FB_l5e_l5e': FB_l5e_l5e,
-                           'FB_l5e_l5i': FB_l5e_l5i,
-                           'FB_l5e_l2e': FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
     elif len(areas) == 2:
@@ -61,14 +123,30 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
 
     elif len(areas) > 2:
+        FF_l2e_l2e = 1.0
+        FB_l5e_l2i = .5
+        FB_l5e_l5e = .9
+        FB_l5e_l5i = .5
+        FB_l5e_l2e = .1
         net.parameters = { 'wee': wee,
                            'wei': wei,
                            'wie': wie,
                            'wii': wii,
                            'l5e_l2i': i_l5e_l2i,
                            'l2e_l5e': i_l2e_l5e,
+                           'FF_l2e_l2e': FF_l2e_l2e,
+                           'FB_l5e_l2i': FB_l5e_l2i,
+                           'FB_l5e_l5e': FB_l5e_l5e,
+                           'FB_l5e_l5i': FB_l5e_l5i,
+                           'FB_l5e_l2e': FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
+                           
+    delay_stim = '0ms'
+    duration_stim = '1e9ms'
+    net.parameters['delay_stim'] = delay_stim
+    net.parameters['duration_stim'] = duration_stim
+    
 
     suffix = '' if noise else '_flat'
 
@@ -101,7 +179,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         print('    Connection %s -> %s weight %s'%(pre_pop.id, post_pop.id, weight))
         zero_weight = False
         try:
-            zero_weight = float(weight)==0
+            zero_weight = len(weight)==0 or float(weight)==0
         except:
             pass
         if not zero_weight:
@@ -160,16 +238,6 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
         nlayers = 4 #(L2/3E, L5/6, L2/3I, L5/6I)
 
-        # If a FF or a FB connection the opposite connection cannot be specified. Therefore, check if the user did not
-        # specifiy both a FF and FB connection between two regions.
-        # extract values for the lower diagonal matrix
-        conn_tril = conn[np.tril_indices(n_areas, -1)]
-        conn_triu = conn[np.triu_indices(n_areas, 1)]
-        # if any(conn_tril + conn_triu >= 2):
-        #     raise ValueError('Both a FF and FB connection was specified for one of the areas. '
-        #                      'Please check your connectivity matrix')
-
-
         # Define connections to self areas (diagonal entries)
         interlayer_conn_diag = np.array([[wee, wei, i_l2e_l5e, 0],
                                          [wie, wii, 0, 0],
@@ -178,7 +246,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                          ])
 
         # Define the main connectivity matrix
-        W = np.zeros((n_areas * nlayers, n_areas * nlayers))
+        W = np.empty((n_areas * nlayers, n_areas * nlayers),dtype='U34')
 
         # Get the upper or the lower diagonal. This information is useful to now if the connection is FF(uper triangular matrix)
         #  or FB (lower triangular matrix)
@@ -194,15 +262,14 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                 if conn[row, col] != 0:
                     # Add FF connection
                     if (row, col) in up_tri:
-                        W[row * 4 + 0, col * 4 + 0] = 1. # FF_L2e_l2e
-
+                        W[row * 4 + 0, col * 4 + 0] = 'FF_l2e_l2e * %s' % conn[row, col] # FF_L2e_l2e
 
                     # Add FB connection
                     if (row, col) in lw_tri:
-                        W[row *4 + 2, col * 4 + 0] = .1 # FB l5e_l2e
-                        W[row *4 + 2, col * 4 + 3] = .5 # FB l5e_l5i
-                        W[row *4 + 2, col * 4 + 2] = .9 # FB l5e_l5e
-                        W[row *4 + 2, col * 4 + 1] = .5 # FB l5e_l2i
+                        W[row *4 + 2, col * 4 + 0] = 'FB_l5e_l2e * %s' % conn[row, col] # FB l5e_l2e
+                        W[row *4 + 2, col * 4 + 3] = 'FB_l5e_l5i * %s' % conn[row, col] # FB l5e_l5i
+                        W[row *4 + 2, col * 4 + 2] = 'FB_l5e_l5e * %s' % conn[row, col] # FB l5e_l5e
+                        W[row *4 + 2, col * 4 + 1] = 'FB_l5e_l2i * %s' % conn[row, col] # FB l5e_l2i
 
     else:
         raise ValueError('Connectivity matrix not defined for more than 3 regions')
@@ -215,45 +282,105 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     # Background input
     # Iterate over the different possible areas
     pops = []
-    area_edge = 30
-    area_spacing = 30
-
-    layer_thickness = 30
+    area_edge = 5
+    area_spacing = 10
+    layer_thickness = 5
+    
+    l23e_radius = .5
+    l23i_radius = .35
+    l56e_radius = .6
+    l56i_radius = .35
     
     for area_idx, area in enumerate(areas):
-        # Add populations
-        x_offset = area_idx*(area_edge + area_spacing)
-        l23 = RectangularRegion(id='%s_L23' %(area), x=x_offset, y=layer_thickness, z=0, width=area_edge, height=30, depth=area_edge)
-        net.regions.append(l23)
-        l56 = RectangularRegion(id='%s_L56' %(area), x=x_offset, y=0, z=0, width=area_edge, height=layer_thickness, depth=area_edge)
-        net.regions.append(l56)
         
-        pl23e = Population(id='%s_L23_E' %(area), 
+        if len(areas)>4:
+            
+            region_color = get_scaled_color(area)
+            
+            p = centres[area.replace('/','_').lower()]
+            
+            x_offset = area_idx*(area_edge + area_spacing)
+            region = RectangularRegion(id='%s' %(area), x=p[0], y=p[1], z=p[2], width=area_edge, height=30, depth=area_edge)
+            net.regions.append(region)
+            l23_region = region
+            l56_region = region
+            
+            l23e_color = region_color
+            l23i_color = region_color
+            l56e_color = region_color
+            l56i_color = region_color
+            
+            separation = 1.5
+            
+            l23e_offset_x = 0
+            l23i_offset_x = 0
+            l56e_offset_x = 0
+            l56i_offset_x = 0
+            
+            l23e_offset_y = 0
+            l23i_offset_y = separation
+            l56e_offset_y = 0
+            l56i_offset_y = separation
+            
+            l23e_offset_z = separation
+            l23i_offset_z = separation
+            l56e_offset_z = 0
+            l56i_offset_z = 0
+            
+        else:
+            
+            # Add populations
+            x_offset = area_idx*(area_edge + area_spacing)
+            l23_region = RectangularRegion(id='%s_L23' %(area), x=x_offset, y=layer_thickness, z=0, width=area_edge, height=30, depth=area_edge)
+            net.regions.append(l23_region)
+            l56_region = RectangularRegion(id='%s_L56' %(area), x=x_offset, y=0, z=0, width=area_edge, height=layer_thickness, depth=area_edge)
+            net.regions.append(l56_region)
+            
+            l23e_color = color_str['l23e']
+            l23i_color = color_str['l23i']
+            l56e_color = color_str['l56e']
+            l56i_color = color_str['l56i']
+            
+            l23e_offset_x = 0
+            l23i_offset_x = area_edge
+            l56e_offset_x = 0
+            l56i_offset_x = area_edge
+            l23e_offset_y = layer_thickness*1.4/3.
+            l23i_offset_y = layer_thickness*1/3.
+            l56e_offset_y = layer_thickness*1.4/3.
+            l56i_offset_y = layer_thickness*1/3.
+            l23e_offset_z = 0
+            l23i_offset_z = 0
+            l56e_offset_z = 0
+            l56i_offset_z = 0
+        
+        safe_area = get_safe_area_name(area)
+        pl23e = Population(id='%s_L23_E' %(safe_area), 
                            size=1, 
                            component=l23ecell.id, 
-                           properties={'color':color_str['l23e']},
-                           relative_layout = RelativeLayout(region=l23.id,x=0,y=layer_thickness*2/3.,z=0))
+                           properties={'color':l23e_color,'radius':l23e_radius},
+                           relative_layout = RelativeLayout(region=l23_region.id,x=l23e_offset_x,y=l23e_offset_y,z=l23e_offset_z))
         pops.append(pl23e)
         
-        pl23i = Population(id='%s_L23_I' %(area), 
+        pl23i = Population(id='%s_L23_I' %(safe_area), 
                            size=1, 
                            component=l23icell.id, 
-                           properties={'color':color_str['l23i']},
-                           relative_layout = RelativeLayout(region=l23.id,x=0,y=layer_thickness*1/3.,z=0))
+                           properties={'color':l23i_color,'radius':l23i_radius},
+                           relative_layout = RelativeLayout(region=l23_region.id,x=l23i_offset_x,y=l23i_offset_y,z=l23i_offset_z))
         pops.append(pl23i)
 
-        pl56e = Population(id='%s_L56_E' %(area), 
+        pl56e = Population(id='%s_L56_E' %(safe_area), 
                            size=1, 
                            component=l56ecell.id, 
-                           properties={'color':color_str['l56e']},
-                           relative_layout = RelativeLayout(region=l56.id,x=0,y=layer_thickness*2/3.,z=0))
+                           properties={'color':l56e_color,'radius':l56e_radius},
+                           relative_layout = RelativeLayout(region=l56_region.id,x=l56e_offset_x,y=l56e_offset_y,z=l56e_offset_z))
         pops.append(pl56e)
         
-        pl56i = Population(id='%s_L56_I' %(area), 
+        pl56i = Population(id='%s_L56_I' %(safe_area), 
                            size=1, 
                            component=l56icell.id, 
-                           properties={'color':color_str['l56i']},
-                           relative_layout = RelativeLayout(region=l56.id,x=0,y=layer_thickness*1/3.,z=0))
+                           properties={'color':l56i_color,'radius':l56i_radius},
+                           relative_layout = RelativeLayout(region=l56_region.id,x=l56i_offset_x,y=l56i_offset_y,z=l56i_offset_z))
         pops.append(pl56i)
 
         net.populations.append(pl23e)
@@ -262,26 +389,39 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         net.populations.append(pl56e)
         net.populations.append(pl56i)
 
-        # Add inputs
-        input_source_l23 = InputSource(id='iclamp_%s_L23' %area,
-                                       neuroml2_input='PulseGenerator',
-                                       parameters={'amplitude':'%snA'%Iext[area_idx][0], 'delay':'0ms', 'duration':'%sms'%duration})
-        net.input_sources.append(input_source_l23)
-        # Add modulation
-        net.inputs.append(Input(id='modulation_%s_L23_E'%area,
-                                input_source=input_source_l23.id,
-                                population=pl23e.id,
-                                percentage=100))
-        input_source_l56 = InputSource(id='iclamp_%s_L56' %area,
-                                       neuroml2_input='PulseGenerator',
-                                       parameters={'amplitude':'%snA'%Iext[area_idx][1], 'delay':'0ms', 'duration':'%sms'%duration})
+        # Force input to be only on V1.
+        if area == 'V1':
+            safe_area = get_safe_area_name('V1')
+            # Add inputs
+            # find index for V1
+            area_idx = areas.index('V1')
+            insource_id = 'iclamp_%s_L23'%safe_area
+            insource_param = '%s_amp'%(insource_id)
+            net.parameters[insource_param] = '%snA'%Iext[area_idx][0]
+            input_source_l23 = InputSource(id= insource_id,
+                                           neuroml2_input='PulseGenerator',
+                                           parameters={'amplitude':insource_param, 'delay':'delay_stim', 'duration':'duration_stim'})
+            net.input_sources.append(input_source_l23)
+            # Add modulation
+            net.inputs.append(Input(id='modulation_%s_L23_E'%safe_area,
+                                    input_source=input_source_l23.id,
+                                    population=pl23e.id,
+                                    percentage=100))
+            
+            insource_id = 'iclamp_%s_L56'%safe_area
+            insource_param = '%s_amp'%(insource_id)
+            net.parameters[insource_param] = '%snA'%Iext[area_idx][1]
+            
+            input_source_l56 = InputSource(id=insource_id,
+                                           neuroml2_input='PulseGenerator',
+                                           parameters={'amplitude':insource_param, 'delay':'delay_stim', 'duration':'duration_stim'})
 
-        net.input_sources.append(input_source_l56)
-        # Add modulation
-        net.inputs.append(Input(id='modulation_%s_L56_E'%area,
-                                input_source=input_source_l56.id,
-                                population=pl56e.id,
-                                percentage=100))
+            net.input_sources.append(input_source_l56)
+            # Add modulation
+            net.inputs.append(Input(id='modulation_%s_L56_E'%safe_area,
+                                    input_source=input_source_l56.id,
+                                    population=pl56e.id,
+                                    percentage=100))
 
     for pre_pop in pops:
         for post_pop in pops:
@@ -820,7 +960,9 @@ if __name__ == "__main__":
         net_id='Interareal'
 
 
-        if '-3rois' not in sys.argv and '-4rois' not in sys.argv:
+        if '-3rois' not in sys.argv and \
+           '-4rois' not in sys.argv and \
+           '-30rois' not in sys.argv:
             # Background current simulation.
             # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
             # passed
@@ -929,33 +1071,42 @@ if __name__ == "__main__":
 
         else:
             #Load the array with the ordered rank
+            from itertools import product
             import pandas as pd
+
+            ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
+            with open('../Python/interareal/connectivity.pickle', 'rb') as handle:
+                conn = pickle.load(handle)
+
+
 
             if '-3rois' in sys.argv:
                 areas = ['V1', 'V4', 'MT']
                 # Create the FB and FF connectiviy between the areas.
                 # Define connections between regions
                 # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
-                conn = np.array([[0, 1, 0],
-                                 [1, 0, 1],
-                                 [0, 1, 0]])
+                conn_bin = np.array([[0, 1, 0],
+                                     [1, 0, 1],
+                                     [0, 1, 0]])
+                conn = get_connectivity(conn, areas, ranking, conn_bin=None)
+
             if '-4rois' in sys.argv:
                 areas = ['V1', 'V4', 'MT', 'TEO']
                 # Create the FB and FF connectiviy between the areas.
                 # Define connections between regions
                 # NOTE: This analysis assumes that the matrix has been organised by the areas ranking
-                conn = np.array([[0, 1, 0, 0],
-                                 [1, 0, 1, 0],
-                                 [0, 1, 0, 0],
-                                 [0, 0, 1, 0]])
-                
+                conn_bin = np.array([[0, 1, 0, 0],
+                                     [1, 0, 1, 0],
+                                     [0, 1, 0, 0],
+                                     [0, 0, 1, 0]])
+                conn = get_connectivity(conn, areas, ranking, conn_bin=None)
+
+            if '-30rois' in sys.argv:
+                areas = list(ranking['region'])
+                conn = get_connectivity(conn, areas, ranking, conn_bin=None)
+
             net_id='Interareal_%d' %len(areas)
 
-            ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
-            # Check if the selected regions are present in the file that describe the ranking
-            assert(len(areas) == sum(ranking['region'].isin(areas)))
-            # sort the regions by the areas in the ranking
-            ranked_areas = ranking[ranking['region'].isin(areas)]
 
 
             Iext0 = 2; Iext1 = 4 # background current at excitatory population

@@ -1,0 +1,91 @@
+1, somatosensory area 1 
+2, somatosensory area 2 
+3, somatosensory area 3 
+5, somatosensory area 5
+9, area 9 
+10, area 10 
+11, area 11 
+12, area 12 
+13, area 13 
+14, area 14 
+23, area 23 
+25, area 25 
+31, area 31
+32, area 32 
+44, area 44 
+7A, area 7A 
+7B, area 7B
+7m, area 7m 
+7op, area 7op (parietal operculum)
+8B, area 8B
+8l, lateral part of area 8 
+8m, medial part of area 8 
+8r, rostral part of area 8 
+9-46d, area 9/46, dorsal part
+9-46v, area 9/46, ventral part
+24a, area 24a
+24b, area 24b
+24c, area 24c
+24d, area 24d
+29-30, area 29/30
+45A, area 45A
+45B, area 45B
+46d, area 46
+46v, area 46
+AIP, anterior intraparietal area
+Core, core region of the auditory cortex
+DP, dorsal prelunate area
+ENTO, entorhinal
+F1, frontal area F1
+F2, frontal area F2
+F3, frontal area F3
+F4, frontal area F4
+F5, frontal area F5
+F6, frontal area F6
+F7, frontal area F7
+FST, fundus of superior temporal area
+Gu, gustatory cortex
+INS, insula
+IPa, area IPa
+LB, lateral belt
+LIP, lateral intraparietal area
+MB, medial belt
+MIP, medial intraparietal area
+MST, medial superior temporal area
+MT, middle temporal area
+OPAI, orbital periallocortex
+OPRO, orbital proisocortex
+PBc, parabelt, caudal part
+PBr, parabelt, rostral part
+PERI, perirhinal
+PGa, area PGa
+Pi, parainsula
+PIP, posterior intraparietal area
+PIR, piriform
+POLE, temporal pole
+ProM, area ProM
+ProSt, prostriata 
+SII, secondary somatosensory area
+STPc, superior temporal polysensory, caudal part
+STPi, superior temporal polysensory, intermediate part
+STPr, superior temporal polysensory, rostral part
+SUB, subiculum
+TEad, area TE, anterior-dorsal part
+TEam-a, area TE of the superior temporal sulcus, ant part
+TEam-p, area TE of the superior temporal sulcus, post part
+TEav, area TE, anterior-ventral part 
+TEO, area TEO
+TEOm, area TEO medial part
+TEpd, area TE, posterior-dorsal part
+TEpv, area TE, posterior-ventral part
+TH-TF, area TH/TF
+TPt, temporo-parietal area
+V1, visual area 1
+V2, visual area 2
+V3, visual area 3
+V3A, visual area 3A
+V4, visual area 4
+V4t, transitional visual area 4
+V6, area V6
+V6A, area V6A 
+VIP, ventral intraparietal area
