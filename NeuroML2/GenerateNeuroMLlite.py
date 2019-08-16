@@ -451,7 +451,6 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 if __name__ == "__main__":
 
     from neuromllite.NetworkGenerator import check_to_generate_or_run
-    from neuromllite.sweep.ParameterSweep import *
     from pyneuroml import pynml
 
     JEE = 1.5
@@ -468,6 +467,7 @@ if __name__ == "__main__":
 
     if '-test' in sys.argv or '-dt' in sys.argv:
 
+        from neuromllite.sweep.ParameterSweep import *
         if '-test' in sys.argv:
 
             arg_options = {'No connections; no noise':[{'wee':0, 'wei':0, 'wie':0, 'wii':0,
@@ -651,6 +651,7 @@ if __name__ == "__main__":
         plt.show()
 
     elif '-intralaminar' in sys.argv:
+        from neuromllite.sweep.ParameterSweep import *
 
         from intralaminar import intralaminar_analysis, intralaminar_plt
 
@@ -702,6 +703,7 @@ if __name__ == "__main__":
 
 
     elif '-interlaminar' in sys.argv:
+        from neuromllite.sweep.ParameterSweep import *
         import matplotlib.pylab as plt
 
         from interlaminar import calculate_interlaminar_power_spectrum, plot_interlaminar_power_spectrum, \
@@ -947,6 +949,7 @@ if __name__ == "__main__":
             plt.show()
 
     elif '-interareal' in sys.argv:
+        from neuromllite.sweep.ParameterSweep import *
         from interareal import interareal_analysis, interareal_plt
 
         # Set model settings
