@@ -207,34 +207,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                        [l5e_l2e, l5e_l2i, l5e_l5e, l5e_l5i],
                        [l5i_l2e, l5i_l2i, l5i_l5e, l5i_l5i]], dtype='U14')
 
-    elif n_areas == 2:
-        v1_v1_l2e_l2e = v4_v4_l2e_l2e = 'wee'; v1_v1_l5e_l5e = v4_v4_l5e_l5e = 'wee'
-        v1_v1_l2e_l2i = v4_v4_l2e_l2i = 'wei'; v1_v1_l5e_l5i = v4_v4_l5e_l5i = 'wei'
-        v1_v1_l2i_l2e = v4_v4_l2i_l2e = 'wie'; v1_v1_l5i_l5e = v4_v4_l5i_l5e = 'wie'
-        v1_v1_l2i_l2i = v4_v4_l2i_l2i = 'wii'; v1_v1_l5i_l5i = v4_v4_l5i_l5i = 'wii'
-
-        v1_v1_l2e_l5e = v4_v4_l2e_l5e = 'l2e_l5e'; v1_v1_l2e_l5i = v4_v4_l2e_l5i = 0;
-        v1_v1_l5e_l2i = v4_v4_l5e_l2i = 'l5e_l2i'; v1_v1_l5e_l2e = v4_v4_l5e_l2e = 0;
-        v1_v1_l2i_l5e = v4_v4_l2i_l5e = 0; v1_v1_l5i_l2i = v4_v4_l5i_l2i = 0;
-        v1_v1_l5i_l2e = v4_v4_l5i_l2e = 0; v1_v1_l2i_l5i = v4_v4_l2i_l5i = 0;
-
-        # interareal
-        v1_v4_l2e_l2e = 'FF_l2e_l2e'; v4_v1_l2e_l2e = 0; v1_v4_l2e_l2i = v4_v1_l2e_l2i = 0; v1_v4_l2e_l5e = v4_v1_l2e_l5e = 0; v1_v4_l2e_l5i = v4_v1_l2e_l5i= 0;
-        v1_v4_l2i_l2e = v4_v1_l2i_l2e = 0; v1_v4_l2i_l2i = v4_v1_l2i_l2i = 0; v1_v4_l2i_l5e = v4_v1_l2i_l5e = 0; v1_v4_l2i_l5i = v4_v1_l2i_l5i= 0;
-        v1_v4_l5e_l2e = 0; v4_v1_l5e_l2e = 'FB_l5e_l2e'; v1_v4_l5e_l2i = 0; v4_v1_l5e_l2i = 'FB_l5e_l2i'; v1_v4_l5e_l5e = 0;  v4_v1_l5e_l5e = 'FB_l5e_l5e'; v1_v4_l5e_l5i = 0; v4_v1_l5e_l5i= 'FB_l5e_l2i';
-        v1_v4_l5i_l2e = v4_v1_l5i_l2e = 0; v1_v4_l5i_l2i = v4_v1_l5i_l2i = 0; v1_v4_l5i_l5e = v4_v1_l5i_l5e = 0; v1_v4_l5i_l5i = v4_v1_l5i_l5i= 0;
-
-        W = np.array([ [v1_v1_l2e_l2e, v1_v1_l2e_l2i, v1_v1_l2e_l5e, v1_v1_l2e_l5i, v1_v4_l2e_l2e, v1_v4_l2e_l2i, v1_v4_l2e_l5e, v1_v4_l2e_l5i],
-                       [v1_v1_l2i_l2e, v1_v1_l2i_l2i, v1_v1_l2i_l5e, v1_v1_l2i_l5i, v1_v4_l2i_l2e, v1_v4_l2i_l2i, v1_v4_l2i_l5e, v1_v4_l2i_l5i],
-                       [v1_v1_l5e_l2e, v1_v1_l5e_l2i, v1_v1_l5e_l5e, v1_v1_l5e_l5i, v1_v4_l5e_l2e, v1_v4_l5e_l2i, v1_v4_l5e_l5e, v1_v4_l5e_l5i],
-                       [v1_v1_l5i_l2e, v1_v1_l5i_l2i, v1_v1_l5i_l5e, v1_v1_l5i_l5i, v1_v4_l5i_l2e, v1_v4_l5i_l2i, v1_v4_l5i_l5e, v1_v4_l5i_l5i],
-                       [v4_v1_l2e_l2e, v4_v1_l2e_l2i, v4_v1_l2e_l5e, v4_v1_l2e_l5i, v4_v4_l2e_l2e, v4_v4_l2e_l2i, v4_v4_l2e_l5e, v4_v4_l2e_l5i],
-                       [v4_v1_l2i_l2e, v4_v1_l2i_l2i, v4_v1_l2i_l5e, v4_v1_l2i_l5i, v4_v4_l2i_l2e, v4_v4_l2i_l2i, v4_v4_l2i_l5e, v4_v4_l2i_l5i],
-                       [v4_v1_l5e_l2e, v4_v1_l5e_l2i, v4_v1_l5e_l5e, v4_v1_l5e_l5i, v4_v4_l5e_l2e, v4_v4_l5e_l2i, v4_v4_l5e_l5e, v4_v4_l5e_l5i],
-                       [v4_v1_l5i_l2e, v4_v1_l5i_l2i, v4_v1_l5i_l5e, v4_v1_l5i_l5i, v4_v4_l5i_l2e, v4_v4_l5i_l2i, v4_v4_l5i_l5e, v4_v4_l5i_l5i]],
-                     dtype='U14')
-
-    elif n_areas > 2:
+    elif n_areas >= 2:
 
         nlayers = 4 #(L2/3E, L5/6, L2/3I, L5/6I)
 
@@ -951,6 +924,13 @@ if __name__ == "__main__":
     elif '-interareal' in sys.argv:
         from neuromllite.sweep.ParameterSweep import *
         from interareal import interareal_analysis, interareal_plt
+        from itertools import product
+        import pandas as pd
+
+        ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
+        with open('../Python/interareal/connectivity.pickle', 'rb') as handle:
+            conn = pickle.load(handle)
+
 
         # Set model settings
         wee = JEE; wei = JIE; wie = JEI; wii = JII; l5e_l2i = .75; l2e_l5e = 1
@@ -960,7 +940,6 @@ if __name__ == "__main__":
         minfreq_l23 = 30. # Hz
         minfreq_l56 = 3. # Hz
         
-        net_id='Interareal'
 
 
         if '-3rois' not in sys.argv and \
@@ -970,7 +949,8 @@ if __name__ == "__main__":
             # Note: For testing porpose, only the rest simulation is performed if the flag '-analysis' is not
             # passed
             areas = ['V1', 'V4']
-            nareas = len(areas)
+            conn = get_connectivity(conn, areas, ranking, conn_bin=None)
+            net_id='Interareal_%d' %(len(areas))
 
             # for testing purpose generate one single simulation
             if '-analysis' in sys.argv:
@@ -1006,7 +986,7 @@ if __name__ == "__main__":
                                               i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                               areas=areas,
                                               dt=dt, duration=duration, Iext=Iext_rest, count=stat,
-                                              net_id=net_id)
+                                              net_id=net_id, conn=conn)
                 # Run in some simulators
                 check_to_generate_or_run(sys.argv, sim_rest)
                 simulator = 'jNeuroML'
@@ -1021,7 +1001,7 @@ if __name__ == "__main__":
                                               i_l5e_l2i=l5e_l2i, i_l2e_l5e=l2e_l5e,
                                               areas=areas,
                                               dt=dt, duration=duration, Iext=Iext_stim, count=stat,
-                                              net_id=net_id)
+                                              net_id=net_id, conn=conn)
                 # Run in some simulators
                 check_to_generate_or_run(sys.argv, sim_stim)
                 simulator = 'jNeuroML'
@@ -1074,14 +1054,6 @@ if __name__ == "__main__":
 
         else:
             #Load the array with the ordered rank
-            from itertools import product
-            import pandas as pd
-
-            ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
-            with open('../Python/interareal/connectivity.pickle', 'rb') as handle:
-                conn = pickle.load(handle)
-
-
 
             if '-3rois' in sys.argv:
                 areas = ['V1', 'V4', 'MT']
