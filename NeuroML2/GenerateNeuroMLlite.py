@@ -158,10 +158,10 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         print('Using a value for dt which is not supported!!')
         quit()
 
-    l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
-    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
-    l56icell = Cell(id='L56_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma23'})
+    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma23'}) 
+    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma56'}) 
+    l56icell = Cell(id='L56_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma56'})
 
 
     net.cells.append(l23ecell)

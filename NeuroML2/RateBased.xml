@@ -216,7 +216,7 @@
         <InstanceRequirement name="peer" type="baseGradedSynapse"/>
 
         <Dynamics>
-            <DerivedVariable name="I" exposure="I"  value="0"/>
+            <DerivedVariable name="I" exposure="I" dimension="none" value="0"/>
         </Dynamics>
 
     </ComponentType>
@@ -239,7 +239,7 @@
 
         <Dynamics>
             <DerivedVariable name="rpeer" dimension="none" select="peer/R"/>
-            <DerivedVariable name="I" exposure="I"  value="weight * SEC * rpeer"/>
+            <DerivedVariable name="I" exposure="I" dimension="none" value="weight * SEC * rpeer"/>
         </Dynamics>
     </ComponentType>
 
@@ -265,7 +265,7 @@
 
         <Dynamics>
             <DerivedVariable name="rpeer" dimension="per_time" select="peer/r"/>
-            <DerivedVariable name="i" exposure="i"  value="0"/>
+            <DerivedVariable name="i" exposure="i" dimension="current" value="0"/>
         </Dynamics>
 
     </ComponentType>
@@ -284,7 +284,7 @@
 
         <Dynamics>
             <DerivedVariable name="rpeer" dimension="per_time" select="peer/r"/>
-            <DerivedVariable name="i" exposure="i"  value="weight * SEC * NAMP_SCALE * rpeer"/>
+            <DerivedVariable name="i" exposure="i" dimension="current" value="weight * SEC * NAMP_SCALE * rpeer"/>
         </Dynamics>
     </ComponentType>
 
@@ -302,7 +302,7 @@
 
         <Dynamics>
             <DerivedVariable name="rpeer" dimension="per_time" select="peer/r"/>
-            <DerivedVariable name="i" exposure="i"  value="weight * SEC * PAMP_SCALE * rpeer"/>
+            <DerivedVariable name="i" exposure="i" dimension="current" value="weight * SEC * PAMP_SCALE * rpeer"/>
         </Dynamics>
     </ComponentType>
 
