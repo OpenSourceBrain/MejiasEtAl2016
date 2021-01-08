@@ -44,5 +44,5 @@ The data on 3D positions of areas ([MERetal14_on_F99.tsv](NeuroML2/MERetal14_on_
 - Rembrandt Bakker, Paul Tiesinga, Rolf Kötter (2015) "The Scalable Brain Atlas: instant web-based access to public brain atlases and related content." Neuroinformatics. http://link.springer.com/content/pdf/10.1007/s12021-014-9258-x ([arXiv](http://arxiv.org/abs/1312.6310)) 
 
 
-[![Build Status](https://travis-ci.org/OpenSourceBrain/MejiasEtAl2016.svg?branch=master)](https://travis-ci.org/OpenSourceBrain/MejiasEtAl2016)
+[![Build Status](https://travis-ci.com/OpenSourceBrain/MejiasEtAl2016.svg?branch=master)](https://travis-ci.com/OpenSourceBrain/MejiasEtAl2016)
 
