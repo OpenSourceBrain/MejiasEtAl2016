@@ -3,30 +3,30 @@ sudo: false
 addons:
    apt:
      packages:
-        - python-numpy 
-        - python-scipy 
-        - python-matplotlib 
+        - python-numpy
+        - python-scipy
+        - python-matplotlib
         - python-sympy
         - python-tk
-        - python-tables 
+        - python-tables
         - python-tornado
-    
+
 
 language: python
-python: 2.7
+python:
+  - 2.7
+  - 3.8
 
- 
-virtualenv:
-   system_site_packages: true
+
 
 env:
     - OMV_ENGINE=jNeuroML
     - OMV_ENGINE=jNeuroML_NEURON
-    - OMV_ENGINE=Brian     # Python script runs with Brian; should be just Python, but Brian engine is quick to set up...
+    - OMV_ENGINE=Brian2     # Python script runs with Brian; should be just Python, but Brian engine is quick to set up...
 
-install: 
+install:
     - pip install git+https://github.com/OpenSourceBrain/osb-model-validation
-    
+
     # install pyelectro
     - pip install git+https://github.com/NeuralEnsemble/pyelectro.git
 
@@ -40,9 +40,4 @@ install:
 
 script:
     - omv all -V
-    - omv list -V 
-    
-    
-    
-    
-
+    - omv list -V

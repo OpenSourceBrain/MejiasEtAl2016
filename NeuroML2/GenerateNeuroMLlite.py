@@ -8,10 +8,10 @@ import sys
 sys.path.append("../Python")
 
 '''
-    Get a color for the area/region, possibly depending on level in functional hierarchy 
+    Get a color for the area/region, possibly depending on level in functional hierarchy
 '''
 def get_scaled_color(area):
-    
+
     ranking = {}
     for l in open('../Python/interareal/areas_ranking.txt'):
         if not 'region' in l:
@@ -69,12 +69,12 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
              areas=['V1'],
              sigma23=.3, sigma56=.45, noise=True, duration=1000, dt=0.2, Iext=[[0, 0]], count=0,
              net_id='MejiasFig2', conn=None):
-          
+
     scale = 1
     centres = {}
 
     # From https://scalablebrainatlas.incf.org/macaque/MERetal14
-    f = open('MERetal14_on_F99.tsv') 
+    f = open('MERetal14_on_F99.tsv')
     for l in f:
         w = l.split()
         id = w[0].replace('-','_').lower()
@@ -141,12 +141,12 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                            'FB_l5e_l2e': FB_l5e_l2e,
                            'sigma23': sigma23,
                            'sigma56': sigma56 }
-                           
+
     delay_stim = '0ms'
     duration_stim = '1e9ms'
     net.parameters['delay_stim'] = delay_stim
     net.parameters['duration_stim'] = duration_stim
-    
+
 
     suffix = '' if noise else '_flat'
 
@@ -193,7 +193,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                               random_connectivity=RandomConnectivity(probability=1)))
         else:
             print('    Ignoring, as weight=0...')
-            
+
 
 
     n_areas = len(areas)
@@ -285,62 +285,62 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
     area_edge = 5
     area_spacing = 10
     layer_thickness = 5
-    
+
     l23e_radius = .5
     l23i_radius = .35
     l56e_radius = .6
     l56i_radius = .35
-    
+
     for area_idx, area in enumerate(areas):
-        
+
         if len(areas)>4:
-            
+
             region_color = get_scaled_color(area)
-            
+
             p = centres[area.replace('/','_').lower()]
-            
+
             x_offset = area_idx*(area_edge + area_spacing)
             region = RectangularRegion(id='%s' %(area), x=p[0], y=p[1], z=p[2], width=area_edge, height=30, depth=area_edge)
             net.regions.append(region)
             l23_region = region
             l56_region = region
-            
+
             l23e_color = region_color
             l23i_color = region_color
             l56e_color = region_color
             l56i_color = region_color
-            
+
             separation = 1.5
-            
+
             l23e_offset_x = 0
             l23i_offset_x = 0
             l56e_offset_x = 0
             l56i_offset_x = 0
-            
+
             l23e_offset_y = 0
             l23i_offset_y = separation
             l56e_offset_y = 0
             l56i_offset_y = separation
-            
+
             l23e_offset_z = separation
             l23i_offset_z = separation
             l56e_offset_z = 0
             l56i_offset_z = 0
-            
+
         else:
-            
+
             # Add populations
             x_offset = area_idx*(area_edge + area_spacing)
             l23_region = RectangularRegion(id='%s_L23' %(area), x=x_offset, y=layer_thickness, z=0, width=area_edge, height=30, depth=area_edge)
             net.regions.append(l23_region)
             l56_region = RectangularRegion(id='%s_L56' %(area), x=x_offset, y=0, z=0, width=area_edge, height=layer_thickness, depth=area_edge)
             net.regions.append(l56_region)
-            
+
             l23e_color = color_str['l23e']
             l23i_color = color_str['l23i']
             l56e_color = color_str['l56e']
             l56i_color = color_str['l56i']
-            
+
             l23e_offset_x = 0
             l23i_offset_x = area_edge
             l56e_offset_x = 0
@@ -353,32 +353,32 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
             l23i_offset_z = 0
             l56e_offset_z = 0
             l56i_offset_z = 0
-        
+
         safe_area = get_safe_area_name(area)
-        pl23e = Population(id='%s_L23_E' %(safe_area), 
-                           size=1, 
-                           component=l23ecell.id, 
+        pl23e = Population(id='%s_L23_E' %(safe_area),
+                           size=1,
+                           component=l23ecell.id,
                            properties={'color':l23e_color,'radius':l23e_radius},
                            relative_layout = RelativeLayout(region=l23_region.id,x=l23e_offset_x,y=l23e_offset_y,z=l23e_offset_z))
         pops.append(pl23e)
-        
-        pl23i = Population(id='%s_L23_I' %(safe_area), 
-                           size=1, 
-                           component=l23icell.id, 
+
+        pl23i = Population(id='%s_L23_I' %(safe_area),
+                           size=1,
+                           component=l23icell.id,
                            properties={'color':l23i_color,'radius':l23i_radius},
                            relative_layout = RelativeLayout(region=l23_region.id,x=l23i_offset_x,y=l23i_offset_y,z=l23i_offset_z))
         pops.append(pl23i)
 
-        pl56e = Population(id='%s_L56_E' %(safe_area), 
-                           size=1, 
-                           component=l56ecell.id, 
+        pl56e = Population(id='%s_L56_E' %(safe_area),
+                           size=1,
+                           component=l56ecell.id,
                            properties={'color':l56e_color,'radius':l56e_radius},
                            relative_layout = RelativeLayout(region=l56_region.id,x=l56e_offset_x,y=l56e_offset_y,z=l56e_offset_z))
         pops.append(pl56e)
-        
-        pl56i = Population(id='%s_L56_I' %(safe_area), 
-                           size=1, 
-                           component=l56icell.id, 
+
+        pl56i = Population(id='%s_L56_I' %(safe_area),
+                           size=1,
+                           component=l56icell.id,
                            properties={'color':l56i_color,'radius':l56i_radius},
                            relative_layout = RelativeLayout(region=l56_region.id,x=l56i_offset_x,y=l56i_offset_y,z=l56i_offset_z))
         pops.append(pl56i)
@@ -407,11 +407,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                                     input_source=input_source_l23.id,
                                     population=pl23e.id,
                                     percentage=100))
-            
+
             insource_id = 'iclamp_%s_L56'%safe_area
             insource_param = '%s_amp'%(insource_id)
             net.parameters[insource_param] = '%snA'%Iext[area_idx][1]
-            
+
             input_source_l56 = InputSource(id=insource_id,
                                            neuroml2_input='PulseGenerator',
                                            parameters={'amplitude':insource_param, 'delay':'delay_stim', 'duration':'duration_stim'})
@@ -618,7 +618,7 @@ if __name__ == "__main__":
                     histlabels.append(pop)
                     histcolors.append(pop_colors[pop])
 
-            print colors
+            print(colors)
             pynml.generate_plot(xs,
                                 ys,
                                 a,
@@ -959,7 +959,7 @@ if __name__ == "__main__":
         duration = 4e04
         minfreq_l23 = 30. # Hz
         minfreq_l56 = 3. # Hz
-        
+
         net_id='Interareal'
 
 
@@ -1122,7 +1122,7 @@ if __name__ == "__main__":
             # Run in some simulators
             check_to_generate_or_run(sys.argv, sim_rest)
             simulator = 'jNeuroML'
-            
+
     else:
 
         sim, net = generate()
@@ -1132,4 +1132,3 @@ if __name__ == "__main__":
 
 
         check_to_generate_or_run(sys.argv, sim)
-
