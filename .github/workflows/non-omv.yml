@@ -1,5 +1,5 @@
 
-name: Continuous build using OMV
+name: Non OMV based tests
 
 on:
   push:
@@ -15,7 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [ 3.7, 3.9 ]
-        engine: [ NetPyNE, jNeuroML, jNeuroML_NEURON, jNeuroML_NetPyNE, jNeuroML_validate ]
 
     steps:
     - uses: actions/checkout@v2
