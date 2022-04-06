@@ -1,5 +1,7 @@
 ## Mejias et al. 2016
 
+[![Continuous build using OMV](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/omv-ci.yml/badge.svg)](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/omv-ci.yml)
+
 Implementation in in Matlab, Python and in NeuroML2/LEMS of Jorge F. Mejias, John D. Murray, Henry Kennedy, and Xiao-Jing Wang, “Feedforward and Feedback Frequency-Dependent Interactions in a Large-Scale Laminar Network of the Primate Cortex.” [Science Advances](http://advances.sciencemag.org/content/2/11/e1601335), 2016 ([bioRxiv](https://doi.org/10.1101/065854)).
 
 ### The model
@@ -43,6 +45,4 @@ The data on 3D positions of areas ([MERetal14_on_F99.tsv](NeuroML2/MERetal14_on_
 
 - Rembrandt Bakker, Paul Tiesinga, Rolf Kötter (2015) "The Scalable Brain Atlas: instant web-based access to public brain atlases and related content." Neuroinformatics. http://link.springer.com/content/pdf/10.1007/s12021-014-9258-x ([arXiv](http://arxiv.org/abs/1312.6310)) 
 
-
-[![Build Status](https://travis-ci.com/OpenSourceBrain/MejiasEtAl2016.svg?branch=master)](https://travis-ci.com/OpenSourceBrain/MejiasEtAl2016)
 
