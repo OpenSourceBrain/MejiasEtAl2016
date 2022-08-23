@@ -36,7 +36,7 @@ lxml==4.6.3
 MarkupSafe==1.0
 matplotlib==2.2.2
 mistune==0.8.3
-nbconvert==5.3.1
+nbconvert==6.5.1
 nbformat==4.4.0
 neo==0.6.1
 neuromllite==0.1.4
