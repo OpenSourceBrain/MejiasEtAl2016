@@ -253,7 +253,7 @@ def firing_rate_analysis(noconns=False,
     #                                                      Intralaminar
     ########################################################################################################################
     tstop = testduration/1000. # sec
-    t = np.linspace(0, tstop, tstop/dt)
+    t = np.linspace(0, int(tstop), int(tstop/dt))
     # speciy number of areas that communicate with each other
     Nareas = 1
 
@@ -281,7 +281,7 @@ def firing_rate_analysis(noconns=False,
     ########################################################################################################################
 
     tstop = testduration/1000. # sec
-    t = np.linspace(0, tstop, tstop/dt)
+    t = np.linspace(0, int(tstop), int(tstop/dt))
     transient = 5
     # speciy number of areas that communicate with each other
     Nareas = 1

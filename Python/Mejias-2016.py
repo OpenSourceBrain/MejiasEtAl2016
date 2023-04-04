@@ -87,7 +87,7 @@ if __name__ == "__main__":
         # Define dt and the trial length
         dt = args.dt
         tstop = 25 # s
-        t = np.linspace(0, tstop, tstop/dt)
+        t = np.linspace(0, int(tstop), int(tstop/dt))
         transient = 5
         # speciy number of areas that communicate with each other
         Nareas = 1

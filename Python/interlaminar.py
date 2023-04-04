@@ -263,8 +263,8 @@ def plot_power_spectrum_neurodsp(dt, rate_conn, rate_noconn, analysis):
     fs = 1/dt
 
     # Plot the results for L23
-    freq_mean_L23_conn, P_mean_L23_conn = spectral.compute_spectrum(rate_conn[0, :, 0], fs, method='mean')
-    freq_mean_L23_noconn, P_mean_L23_noconn = spectral.compute_spectrum(rate_noconn[0, :, 0], fs, method='mean')
+    freq_mean_L23_conn, P_mean_L23_conn = spectral.compute_spectrum(rate_conn[0, :, 0], fs, avg_type='mean')
+    freq_mean_L23_noconn, P_mean_L23_noconn = spectral.compute_spectrum(rate_noconn[0, :, 0], fs, avg_type='mean')
 
     plt.figure()
     plt.loglog(freq_mean_L23_conn, P_mean_L23_conn, label='Coupled', linewidth=2, color='g')
@@ -276,8 +276,8 @@ def plot_power_spectrum_neurodsp(dt, rate_conn, rate_noconn, analysis):
     plt.legend()
 
     # Plot the results for L56
-    freq_mean_L56_conn, P_mean_L56_conn = spectral.compute_spectrum(rate_conn[2, :, 0], fs, method='mean')
-    freq_mean_L56_noconn, P_mean_L56_noconn = spectral.compute_spectrum(rate_noconn[2, :, 0], fs, method='mean')
+    freq_mean_L56_conn, P_mean_L56_conn = spectral.compute_spectrum(rate_conn[2, :, 0], fs, avg_type='mean')
+    freq_mean_L56_noconn, P_mean_L56_noconn = spectral.compute_spectrum(rate_noconn[2, :, 0], fs, avg_type='mean')
 
     plt.figure()
     plt.loglog(freq_mean_L56_conn, P_mean_L56_conn, label='Coupled', linewidth=2, color='#FF7F50')
