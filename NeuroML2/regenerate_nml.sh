@@ -1,3 +1,5 @@
+#!/bin/bash
+set -ex
 
 python GenerateNeuroMLlite.py -intralaminar # generate json files for NMLlite
 python GenerateNeuroMLlite.py -intralaminar -jnml # Run in jnml just to ensure they run

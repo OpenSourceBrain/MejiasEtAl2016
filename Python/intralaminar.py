@@ -63,7 +63,7 @@ def intralaminar_plt(psd_dic):
     fxx_plt = psd_dic['fxx_bin'][fxx_plt_idx]
 
     # find the correspondent mean and std pxx for this range
-    Iexts = psd_dic.keys()
+    Iexts = list(psd_dic.keys())
     # remove the fxx_bin key
     if 'fxx_bin' in Iexts:
         Iexts.remove('fxx_bin')
