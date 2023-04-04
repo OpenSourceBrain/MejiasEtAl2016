@@ -159,8 +159,8 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         quit()
 
     l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
-    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
+    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml') #  hack to include this file too.
+    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml') #  hack to include this file too.
     l56icell = Cell(id='L56_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
 
 
@@ -276,7 +276,11 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
 
 
     net.synapses.append(Synapse(id='rs',
-                                lems_source_file='Prototypes.xml'))
+                                lems_source_file='Prototypes.xml'))    
+
+    net.synapses.append(Synapse(id='silent1',
+                                lems_source_file='RateBased.xml')) # silent synapse not used, just using this to include RateBased.xml...
+
 
 
     # Background input
@@ -442,7 +446,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
                      duration=duration,
                      dt=dt,
                      seed=count,
-                     recordRates={'all':'*'})
+                     record_rates={'all':'*'})
 
     sim.to_json_file()
 
@@ -714,7 +718,7 @@ if __name__ == "__main__":
         #  generated the pickle file with the results).
         simulation_file = '../Python/debug/interlaminar_a/simulation.pckl'
         with open(simulation_file, 'rb') as filename:
-            pyrate = pickle.load(filename)
+            pyrate = pickle.load(filename, encoding='latin1')
 
         dt = 2e-01
         transient = 10
@@ -1043,13 +1047,13 @@ if __name__ == "__main__":
                 rate_rest_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
                 for stat in range(stats):
                     for idx, key in enumerate(sorted(traces_rest_stats[stat].keys())):
-                        if key is not 't':
+                        if key != 't':
                             rate_rest_all[idx, :, stat] = traces_rest_stats[stat][key]
                 # With stimulus
                 rate_stim_all = np.zeros((len(traces_rest_stats[0]) - 1, len(traces_rest_stats[0]['V1_L23_E/0/L23_E_comp/r']), stats))
                 for stat in range(stats):
                     for idx, key in enumerate(sorted(traces_stim_stats[stat].keys())):
-                        if key is not 't':
+                        if key != 't':
                             rate_stim_all[idx, :, stat] = traces_stim_stats[stat][key]
 
                 # TODO: Make this more obvious
@@ -1079,7 +1083,7 @@ if __name__ == "__main__":
 
             ranking = pd.read_csv('../Python/interareal/areas_ranking.txt')
             with open('../Python/interareal/connectivity.pickle', 'rb') as handle:
-                conn = pickle.load(handle)
+                conn = pickle.load(handle, encoding='latin1')
 
 
 
