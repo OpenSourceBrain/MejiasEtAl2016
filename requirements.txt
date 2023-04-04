@@ -32,7 +32,7 @@ kiwisolver==1.0.1
 lazyarray==0.3.2
 libNeuroML==0.2.45
 llvmlite==0.24.0
-lxml==4.6.3
+lxml==4.9.1
 MarkupSafe==1.0
 matplotlib==2.2.2
 mistune==0.8.3
