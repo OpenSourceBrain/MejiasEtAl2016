@@ -1,6 +1,6 @@
 ## Mejias et al. 2016
 
-[![Continuous build using OMV](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/omv-ci.yml/badge.svg)](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/omv-ci.yml)
+[![Continuous build using OMV](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/omv-ci.yml/badge.svg)](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/omv-ci.yml) [![Non OMV based tests](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/non-omv.yml/badge.svg)](https://github.com/OpenSourceBrain/MejiasEtAl2016/actions/workflows/non-omv.yml)
 
 Implementation in in Matlab, Python and in NeuroML2/LEMS of Jorge F. Mejias, John D. Murray, Henry Kennedy, and Xiao-Jing Wang, “Feedforward and Feedback Frequency-Dependent Interactions in a Large-Scale Laminar Network of the Primate Cortex.” [Science Advances](http://advances.sciencemag.org/content/2/11/e1601335), 2016 ([bioRxiv](https://doi.org/10.1101/065854)).
 
