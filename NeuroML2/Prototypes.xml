@@ -1,5 +1,6 @@
 <Lems>
 
+    <Include file="RateBased.xml"/>
 
     <mejiasEtAl2016Cell id="L23_E_comp" tau="6ms" r0="1Hz" sig=".3" noiseDt="0.2ms"/> <!-- This must match dt in LEMS*.xml!!! -->
     <mejiasEtAl2016Cell id="L23_I_comp" tau="15ms" r0="1Hz" sig=".3" noiseDt="0.2ms"/>

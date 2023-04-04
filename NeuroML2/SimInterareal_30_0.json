@@ -1,6 +1,6 @@
 {
     "SimInterareal_30_0": {
-        "version": "NeuroMLlite v0.1.8", 
+        "version": "NeuroMLlite v0.2.0", 
         "network": "Interareal_30.json", 
         "duration": 40000.0, 
         "dt": 0.2, 

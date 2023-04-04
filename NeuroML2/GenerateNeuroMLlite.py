@@ -158,10 +158,10 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5,
         print('Using a value for dt which is not supported!!')
         quit()
 
-    l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
-    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='RateBased.xml') #  hack to include this file too.
-    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='NoisyCurrentSource.xml') #  hack to include this file too.
-    l56icell = Cell(id='L56_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml')
+    l23ecell = Cell(id='L23_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma23'})
+    l23icell = Cell(id='L23_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma23'}) 
+    l56ecell = Cell(id='L56_E_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma56'}) 
+    l56icell = Cell(id='L56_I_comp'+suffix+suffix2, lems_source_file='Prototypes.xml', parameters={'sig': 'sigma56'})
 
 
     net.cells.append(l23ecell)
@@ -515,7 +515,7 @@ if __name__ == "__main__":
             incl_23 = True
             incl_56 = False
             incl_56 = True
-            traces, events = nmllr.run_once('/tmp')
+            traces, events = nmllr.run_once('.')
             xs = []
             ys = []
             labels = []
@@ -688,7 +688,7 @@ if __name__ == "__main__":
                     nmllr = NeuroMLliteRunner('%s.json'%sim.id,
                                               simulator=simulator)
 
-                    traces, events = nmllr.run_once('/tmp')
+                    traces, events = nmllr.run_once('.')
 
                     simulation[Iext][run] = {}
                     # For the purpose of this analysis we will save only the traces related to the excitatory L23 population
@@ -738,7 +738,7 @@ if __name__ == "__main__":
 
             nmllr = NeuroMLliteRunner('%s.json' % sim.id,
                                       simulator=simulator)
-            traces, events = nmllr.run_once('/tmp')
+            traces, events = nmllr.run_once('.')
 
             rate_conn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
                                   np.array(traces['V1_L23_I/0/L23_I_comp/r']),
@@ -846,7 +846,7 @@ if __name__ == "__main__":
 
             nmllr = NeuroMLliteRunner('%s.json' % sim.id,
                                       simulator=simulator)
-            traces, events = nmllr.run_once('/tmp')
+            traces, events = nmllr.run_once('.')
             rate_noconn = np.stack((np.array(traces['V1_L23_E/0/L23_E_comp/r']),
                                   np.array(traces['V1_L23_I/0/L23_I_comp/r']),
                                   np.array(traces['V1_L56_E/0/L56_E_comp/r']),
@@ -1013,7 +1013,7 @@ if __name__ == "__main__":
 
                 nmllr_rest = NeuroMLliteRunner('%s.json' %sim_rest.id,
                                                simulator=simulator)
-                traces_rest, events_rest = nmllr_rest.run_once('/tmp')
+                traces_rest, events_rest = nmllr_rest.run_once('.')
                 # if -analysis is not passed generate a single network using the rest as default
 
                 # Run simulation with microsimulation
@@ -1028,7 +1028,7 @@ if __name__ == "__main__":
 
                 nmllr_stim = NeuroMLliteRunner('%s.json' %sim_stim.id,
                                                simulator=simulator)
-                traces_stim, events_stim = nmllr_stim.run_once('/tmp')
+                traces_stim, events_stim = nmllr_stim.run_once('.')
 
 
 

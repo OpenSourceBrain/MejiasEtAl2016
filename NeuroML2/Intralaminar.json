@@ -1,6 +1,6 @@
 {
     "Intralaminar": {
-        "version": "NeuroMLlite v0.1.8", 
+        "version": "NeuroMLlite v0.2.0", 
         "parameters": {
             "wie": -3.25, 
             "iclamp_V1_L23_amp": "2nA", 
@@ -19,22 +19,34 @@
         "cells": [
             {
                 "L23_E_comp": {
-                    "lems_source_file": "Prototypes.xml"
+                    "lems_source_file": "Prototypes.xml", 
+                    "parameters": {
+                        "sig": "sigma23"
+                    }
                 }
             }, 
             {
                 "L23_I_comp": {
-                    "lems_source_file": "RateBased.xml"
+                    "lems_source_file": "Prototypes.xml", 
+                    "parameters": {
+                        "sig": "sigma23"
+                    }
                 }
             }, 
             {
                 "L56_E_comp": {
-                    "lems_source_file": "NoisyCurrentSource.xml"
+                    "lems_source_file": "Prototypes.xml", 
+                    "parameters": {
+                        "sig": "sigma56"
+                    }
                 }
             }, 
             {
                 "L56_I_comp": {
-                    "lems_source_file": "Prototypes.xml"
+                    "lems_source_file": "Prototypes.xml", 
+                    "parameters": {
+                        "sig": "sigma56"
+                    }
                 }
             }
         ], 
@@ -165,7 +177,7 @@
                     "delay": 0, 
                     "weight": "wee", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -178,7 +190,7 @@
                     "delay": 0, 
                     "weight": "wei", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -191,7 +203,7 @@
                     "delay": 0, 
                     "weight": "l2e_l5e", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -204,7 +216,7 @@
                     "delay": 0, 
                     "weight": "wie", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -217,7 +229,7 @@
                     "delay": 0, 
                     "weight": "wii", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -230,7 +242,7 @@
                     "delay": 0, 
                     "weight": "l5e_l2i", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -243,7 +255,7 @@
                     "delay": 0, 
                     "weight": "wee", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -256,7 +268,7 @@
                     "delay": 0, 
                     "weight": "wei", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -269,7 +281,7 @@
                     "delay": 0, 
                     "weight": "wie", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }, 
@@ -282,7 +294,7 @@
                     "delay": 0, 
                     "weight": "wii", 
                     "random_connectivity": {
-                        "probability": 1.0
+                        "probability": 1
                     }
                 }
             }
