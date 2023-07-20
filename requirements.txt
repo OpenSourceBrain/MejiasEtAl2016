@@ -53,7 +53,7 @@ pickleshare==0.7.4
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 pyelectro==0.1.9
-Pygments==2.7.4
+Pygments==2.15.0
 PyLEMS==0.4.9.1
 PyNEST==2.14.0
 pyNeuroML==0.3.12
