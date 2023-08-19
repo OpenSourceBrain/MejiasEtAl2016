@@ -1,6 +1,6 @@
 {
     "Intralaminar": {
-        "version": "NeuroMLlite v0.5.3",
+        "version": "NeuroMLlite v0.5.6",
         "notes": "Testing...",
         "parameters": {
             "wee": 1.5,
@@ -248,12 +248,12 @@
             "modulation_V1_L23_E": {
                 "input_source": "iclamp_V1_L23",
                 "population": "V1_L23_E",
-                "percentage": 100.0
+                "percentage": 100
             },
             "modulation_V1_L56_E": {
                 "input_source": "iclamp_V1_L56",
                 "population": "V1_L56_E",
-                "percentage": 100.0
+                "percentage": 100
             }
         }
     }
