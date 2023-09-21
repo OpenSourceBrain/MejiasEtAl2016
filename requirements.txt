@@ -65,7 +65,7 @@ pyzmq==17.0.0
 qtconsole==4.3.1
 quantities==0.12.2
 scandir==1.7
-scipy==1.1.0
+scipy==1.10.0
 Send2Trash==1.5.0
 simplegeneric==0.8.1
 singledispatch==3.4.0.3
