@@ -85,7 +85,7 @@ def generate(wee = 1.5, wei = -3.25, wie = 3.5, wii = -2.5, interlaminar1=0,
             if not tgt in all_tgts: #and 'V' in tgt and 'V' in src:
                 all_tgts.append(tgt)
 
-    print all_tgts
+    print(all_tgts)
     print(len(all_tgts))
 
     f = open('Neuron_2015_Table.csv')
