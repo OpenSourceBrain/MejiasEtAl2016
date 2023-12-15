@@ -14,7 +14,6 @@
     <Constant name="NAMP_SCALE" value="1 nA" dimension="current"/>
     <Constant name="MS_SCALE" value=".001 s" dimension="time"/>
     <Constant name="HZ_SCALE" value="1 Hz" dimension="per_time"/>
-    <Constant name="MVOLT_SCALE" value="1mV" dimension="voltage"/>
     <Attachments name="synapses" type="basePointCurrent"/>
     <Exposure name="phi" dimension="none"/>
     <Exposure name="iSyn" dimension="current"/>
@@ -68,30 +67,12 @@
       </OnCondition>
     </Dynamics>
   </ComponentType>
-  <ComponentType name="isoclineDL" extends="baseRateUnitDL" description="Work in progress...">
-    <Parameter name="e0" dimension="none"/>
-    <Parameter name="w1" dimension="none"/>
-    <Parameter name="w2" dimension="none"/>
-    <Parameter name="z" dimension="none"/>
-    <Exposure name="f_inverse" dimension="none"/>
-    <Exposure name="R_iso" dimension="none"/>
-    <Exposure name="x" dimension="none"/>
-    <Dynamics>
-      <DerivedVariable name="x" dimension="none" exposure="x" value="e0 / 1 - (1 * e0)"/>
-      <DerivedVariable name="f_inverse" dimension="none" exposure="f_inverse" value="-log((1/x) - 1) + z"/>
-      <DerivedVariable name="R_iso" dimension="none" exposure="R_iso" value="((w1 * e0) - f_inverse)/w2"/>
-      <OnCondition test="R_iso .lt. 0">
-        <EventOut port="spike"/>
-      </OnCondition>
-    </Dynamics>
-  </ComponentType>
   <ComponentType name="wilsonCowanCell" extends="baseRateUnit" description="Work in progress...">
     <Parameter name="tau" dimension="time"/>
     <Parameter name="r0" dimension="per_time"/>
     <Parameter name="z" dimension="current"/>
     <Constant name="NAMP_SCALE" value="1 nA" dimension="current"/>
     <Constant name="HZ_SCALE" value="1 Hz" dimension="per_time"/>
-    <Constant name="MVOLT_SCALE" value="1mV" dimension="voltage"/>
     <Attachments name="synapses" type="basePointCurrent"/>
     <Exposure name="f" dimension="none"/>
     <Exposure name="iSyn" dimension="current"/>
@@ -135,11 +116,12 @@
   </ComponentType>
   <ComponentType name="silentRateSynapse" extends="baseGradedSynapse" description="Dummy synapse which emits no current. Used as presynaptic endpoint for analog synaptic connection.">
     <Property name="weight" dimension="none" defaultValue="1"/>
+    <Constant name="NAMP_SCALE" value="1 nA" dimension="current"/>
     <Exposure name="i" dimension="current"/>
     <InstanceRequirement name="peer" type="baseGradedSynapse"/>
     <Dynamics>
       <DerivedVariable name="rpeer" dimension="per_time" select="peer/r"/>
-      <DerivedVariable name="i" exposure="i" value="0"/>
+      <DerivedVariable name="i" dimension="current" exposure="i" value="0*NAMP_SCALE"/>
     </Dynamics>
   </ComponentType>
   <ComponentType name="rateSynapse" extends="baseRateSynapse" description="...">
@@ -149,7 +131,7 @@
     <InstanceRequirement name="peer" type="rateSynapse"/>
     <Dynamics>
       <DerivedVariable name="rpeer" dimension="per_time" select="peer/r"/>
-      <DerivedVariable name="i" exposure="i" value="weight * SEC * NAMP_SCALE * rpeer"/>
+      <DerivedVariable name="i" dimension="current" exposure="i" value="weight * SEC * NAMP_SCALE * rpeer"/>
     </Dynamics>
   </ComponentType>
   <ComponentType name="rateSynapsePicoAmp" extends="baseRateSynapse" description="...">
